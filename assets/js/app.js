@@ -243,7 +243,7 @@
         (now ? '<span class="dc-now">지금</span>' : '') +
         '</div>';
     }).join('');
-    $('daeunNote').textContent = d.directionReason + ' 나이는 만 나이 기준이고, 시작 연도는 태어난 해에 대운수를 더해 표시합니다.';
+    $('daeunNote').textContent = d.directionReason + ' 나이는 만 나이 기준이고, 시작 연도는 태어난 해에 대운수를 더해 표시합니다. 표는 옆으로 넘겨 8개 대운을 모두 볼 수 있습니다.';
     $('daeunHead').textContent = d.head;
     $('daeunBody').textContent = d.body;
     $('daeun2027').textContent = d.with2027;

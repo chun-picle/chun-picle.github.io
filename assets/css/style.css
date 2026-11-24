@@ -507,9 +507,11 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 
 /* ---------- 대운 ---------- */
 .daeun-strip {
-  display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 8px;
+  display: flex; gap: 6px; overflow-x: auto; padding: 8px 0 4px;
   scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.daeun-strip::-webkit-scrollbar { display: none; }
 .daeun-cell {
   flex: 0 0 auto; width: 84px; scroll-snap-align: start;
   border: 1px solid var(--line); border-radius: 12px;
@@ -535,7 +537,7 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 }
 
 /* ---------- 4대 영역 ---------- */
-.domain-grid { display: grid; gap: 10px; }
+.domain-grid { display: grid; gap: 10px; align-items: start; }
 .domain-card { padding: 20px 18px; }
 .dm-head { display: flex; gap: 11px; align-items: flex-start; margin-bottom: 11px; }
 .dm-mark {
