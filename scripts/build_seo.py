@@ -49,6 +49,7 @@ YEAR_SHORT = "丁未 · 2027"
 PUBLISH_DATE = "2026-11-24"          # 최초 발행일 (JSON-LD datePublished)
 BUILD_DATE = datetime.date.today().isoformat()   # 생성일 (sitemap lastmod, dateModified)
 CSS_VERSION = "20261124h"
+CONTACT_EMAIL = "wolryeong.saju@gmail.com"   # 문의 메일 (사이트 푸터·약관과 동일)
 
 ROOT = Path(__file__).resolve().parent.parent
 ILJU_DIR = ROOT / "ilju"
@@ -508,6 +509,7 @@ def footer(ctx):
     <a href="./">60갑자 일주별 운세</a>
     <a href="../terms.html">이용약관·환불정책</a>
   </p>
+  <p class="footer-info">문의 <a href="mailto:{CONTACT_EMAIL}">{CONTACT_EMAIL}</a></p>
   <p class="footer-copy">© 2026 월령. 본 서비스는 참고·오락 목적의 콘텐츠입니다.</p>
 </footer>"""
 

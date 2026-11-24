@@ -43,7 +43,7 @@ var CONFIG = {
   serviceYear: 2027,
 
   /* ---- 문의 (비워두면 화면에서 숨김) ---- */
-  contactEmail: '',            // 예: 'hello@example.com'
+  contactEmail: 'wolryeong.saju@gmail.com',   // 월령 문의 전용 메일
   businessInfo: '사업자 정보 준비 중'  // 상호·대표·사업자등록번호·통신판매업 신고번호
 };
 
