@@ -613,6 +613,267 @@
     return { list: [wealth, career, love, health], wealth: wealth, career: career, love: love, health: health };
   }
 
+  /* ---------- 원국 심층 해부 ---------- */
+
+  var POS_DEF = [
+    { key: 'year', label: '년주', palace: '초년 · 뿌리', range: '0~15세' },
+    { key: 'month', label: '월주', palace: '청년 · 사회', range: '16~30세' },
+    { key: 'day', label: '일주', palace: '나 · 배우자', range: '31~45세' },
+    { key: 'hour', label: '시주', palace: '말년 · 자녀', range: '46세~' }
+  ];
+
+  var REL_AREA = {
+    'year-month': '집안과 사회가 맞물리는 지점',
+    'year-day': '초년의 습관이 지금의 나에게 남은 자리',
+    'year-hour': '집안과 말년이 먼 거리에서 연결되는 지점',
+    'month-day': '직장과 내 자리·배우자가 맞물리는 지점',
+    'month-hour': '사회와 말년이 이어지는 지점',
+    'day-hour': '배우자와 자녀·말년이 맞물리는 지점'
+  };
+
+  var LABEL_KEY = { '년주': 'year', '월주': 'month', '일주': 'day', '시주': 'hour' };
+
+  function pairArea(a, b) {
+    var ka = LABEL_KEY[a], kb = LABEL_KEY[b];
+    if (!ka || !kb) return '';
+    var order = ['year', 'month', 'day', 'hour'];
+    if (order.indexOf(ka) > order.indexOf(kb)) { var t = ka; ka = kb; kb = t; }
+    return REL_AREA[ka + '-' + kb] || '';
+  }
+
+  function buildWonguk(core, st, ssMap) {
+    var p = core.pillarName, dg = core.dayGan;
+    var gmDay = S.gongmang(core.dayIndex);
+    var gmYear = S.gongmang(S.pillarIndex(core.yearPillar));
+    var rel = S.scanRelations(core);
+
+    function branchText(arr) {
+      return arr.map(function (j) { return S.JI[j].h + '(' + S.JI[j].han + ')'; }).join('·');
+    }
+
+    var rows = [];
+    POS_DEF.forEach(function (d) {
+      var pl = p[d.key];
+      if (!pl) return;
+      var hidden = S.janganSipsung(dg, pl.ji);
+      var uns = S.unsung(dg, pl.ji);
+      rows.push({
+        key: d.key, label: d.label, palace: d.palace, range: d.range,
+        ganH: pl.ganH, ganHan: pl.ganHan, ganSS: pl.sipsungGan, ganEl: pl.elGan,
+        jiH: pl.jiH, jiHan: pl.jiHan, jiSS: pl.sipsungJi, jiEl: pl.elJi,
+        hidden: hidden, unsung: uns,
+        gongmang: gmDay.indexOf(pl.ji) >= 0,
+        gongmangYear: gmYear.indexOf(pl.ji) >= 0
+      });
+    });
+
+    var gmPillars = rows.filter(function (r) { return r.gongmang; }).map(function (r) { return r.label; });
+    var gmYearPillars = rows.filter(function (r) { return r.gongmangYear; }).map(function (r) { return r.label; });
+
+    /* 2027 정미년 — 12운성 · 공망 */
+    var uns2027 = S.unsung(dg, 7);
+    var uns2027Text = C.UNSUNG_TEXT[uns2027.name];
+    var y2027Gongmang = gmDay.indexOf(7) >= 0;
+
+    /* 격국 */
+    var gk = S.gyeokguk(core);
+    var gt = C.GYEOK_TEXT[gk.name] || { head: gk.name, body: '' };
+    var gyeokBody = '월지 ' + gk.monthJiH + '(' + gk.monthJiHan + ')의 정기 ' +
+      gk.jeonggiH + '(' + gk.jeonggiHan + ')' + josa(gk.jeonggiH, '이', '가') + ' 일간에게 ' + gk.ss + '으로 작동해 ' + gk.name + '이 섭니다. ';
+    gyeokBody += gk.tugan
+      ? '이 정기 ' + gk.jeonggiH + '이 ' + gk.tuganPillars.join('·') + ' 천간에 그대로 드러나(透出) 격이 겉으로도 뚜렷합니다. '
+      : '정기가 천간으로 올라오지 않아, 격이 밖으로 드러나기보다 안쪽에서 조용히 작동합니다. ';
+    if (gk.junggi) {
+      gyeokBody += '월지 중기 ' + gk.junggi.h + '(' + gk.junggi.ss + ')도 함께 깔려 ' +
+        (C.SS_TRAIT[gk.junggi.ss] || '') + '이 격의 결을 더합니다. ';
+    }
+    gyeokBody += gt.body
+      .replace(/^월지 정기가 [^.]+입니다\. /, '')
+      .replace(/^월지가 일간의 [^.]+입니다\. /, '');
+
+    /* 십성 구조 패턴 */
+    var sik = ssMap['식신'] + ssMap['상관'];
+    var jae = ssMap['편재'] + ssMap['정재'];
+    var gwan = ssMap['편관'] + ssMap['정관'];
+    var in_ = ssMap['편인'] + ssMap['정인'];
+    var bi = ssMap['비견'] + ssMap['겁재'];
+    var flags = {
+      식상생재: sik >= 1 && jae >= 1,
+      관인상생: gwan >= 1 && in_ >= 1,
+      살인상생: ssMap['편관'] >= 1 && in_ >= 1,
+      재다신약: jae >= 3 && st.label === '신약',
+      비겁다자: bi >= 3,
+      무재: jae === 0,
+      무관: gwan === 0,
+      관살혼잡: ssMap['정관'] >= 1 && ssMap['편관'] >= 1,
+      식상다자: sik >= 3,
+      인성과다: in_ >= 3
+    };
+    var patterns = [];
+    Object.keys(C.PATTERN_TEXT).forEach(function (k) {
+      if (!flags[k]) return;
+      var t = C.PATTERN_TEXT[k];
+      patterns.push({ key: k, name: t.name, head: t.head, body: t.body });
+    });
+    if (!patterns.length) {
+      patterns.push({
+        key: 'balanced', name: '중화 균형', head: '어느 한 힘도 과하지 않은 구조',
+        body: '오행과 십성이 크게 치우치지 않았습니다. 강점이 튀지 않는 대신 약점도 적어, 환경과 선택에 따라 결과가 달라집니다. 어느 해에 무엇을 할지 고르는 눈이 이 사주의 재산입니다.'
+      });
+    }
+
+    /* 합·충·형·파·해 */
+    var relItems = [];
+    function pushRel(r, groupKey) {
+      var t = C.REL_TEXT[r.type] || { head: r.type, body: '' };
+      var area = pairArea(r.a, r.b);
+      relItems.push({
+        type: r.type, name: r.name, a: r.a, b: r.b, adjacent: r.adjacent !== false,
+        head: t.head,
+        body: t.body + (area ? ' ' + area + '입니다.' : '')
+      });
+    }
+    rel.gan.forEach(function (r) { pushRel(r); });
+    rel.ji.forEach(function (r) { pushRel(r); });
+    rel.groups.forEach(function (g) {
+      var t = C.REL_TEXT[g.type] || { head: g.type, body: '' };
+      relItems.push({
+        type: g.type, name: g.name, a: g.pillars.join('·'), b: '', adjacent: true,
+        head: g.name + ' — ' + t.head, body: t.body + ' ' + g.pillars.join('·') + '의 ' + g.branches.join('') + '이 ' + g.el + ' 기운으로 묶입니다.'
+      });
+    });
+
+    /* 이 주에 걸린 관계 */
+    var touch = {};
+    relItems.forEach(function (r) {
+      if (r.b) {
+        [r.a, r.b].forEach(function (lab) {
+          touch[lab] = touch[lab] || [];
+          touch[lab].push(r.name);
+        });
+      } else {
+        r.a.split('·').forEach(function (lab) {
+          touch[lab] = touch[lab] || [];
+          touch[lab].push(r.name);
+        });
+      }
+    });
+
+    /* 신살 */
+    var rawSinsal = S.scanSinsal(core);
+    var kindOrder = { good: 0, neutral: 1, caution: 2 };
+    var sinsal = rawSinsal.slice().sort(function (a, b) {
+      return (kindOrder[a.kind] || 1) - (kindOrder[b.kind] || 1);
+    }).map(function (s) {
+      var t = C.SINSAL_TEXT[s.key] || { head: s.name, body: '' };
+      return {
+        key: s.key, name: s.name, han: s.han, base: s.base, pillars: s.pillars,
+        kind: s.kind, head: t.head, body: t.body
+      };
+    });
+
+    /* 겉과 속 */
+    var gans = rows.filter(function (r) { return r.key !== 'day'; });
+    var ganCount = {};
+    gans.forEach(function (r) { ganCount[r.ganSS] = (ganCount[r.ganSS] || 0) + 1; });
+    var ganTop = Object.keys(ganCount).sort(function (a, b) { return ganCount[b] - ganCount[a]; })[0] || '비견';
+    var ganList = gans.map(function (r) { return r.ganH + '(' + r.ganSS + ')'; }).join(' · ');
+
+    var hw = {};
+    rows.forEach(function (r) {
+      r.hidden.forEach(function (h) {
+        var w = h.role === '정기' ? 3 : h.role === '중기' ? 2 : 1;
+        hw[h.ss] = (hw[h.ss] || 0) + w;
+      });
+    });
+    var hidTop = Object.keys(hw).sort(function (a, b) { return hw[b] - hw[a]; })[0] || ganTop;
+    var mainHiddenAll = [];
+    rows.forEach(function (r) {
+      var last = r.hidden[r.hidden.length - 1];
+      if (last) mainHiddenAll.push(last.h);
+    });
+
+    var outer = {
+      head: '겉으로 보이는 나 — 천간 ' + ganList,
+      body: '천간은 바깥에서 먼저 읽히는 자리입니다. ' + ganList + '이 드러나 ' +
+        (C.SS_TRAIT[ganTop] || '') + '이 사람을 만날 때의 첫인상이 됩니다. ' +
+        (ganCount[ganTop] >= 2
+          ? '같은 십성이 ' + ganCount[ganTop] + '개 겹쳐 그 성질이 처음 보는 사람에게도 강하게 각인됩니다.'
+          : '한 글자씩 다른 결로 서 있어, 상대에 따라 다른 얼굴이 나옵니다.') +
+        ' 다만 천간은 포장이기도 해서, 여기서 보이는 모습과 실제 판단이 다를 수 있습니다.'
+    };
+    var inner = {
+      head: '속에 깔린 나 — 지장간 ' + mainHiddenAll.join('·'),
+      body: '지지는 겉글자보다 안쪽을 더 많이 담습니다. 지장간에서 가장 무거운 것은 ' + hidTop + '으로, ' +
+        (C.SS_TRAIT[hidTop] || '') + '이 실제 판단과 행동의 바닥에 깔려 있습니다. ' +
+        (hidTop === ganTop
+          ? '겉과 속이 같은 결이라, 보이는 모습과 실제가 크게 어긋나지 않습니다. 일관성이 이 사주의 무기입니다.'
+          : '겉은 ' + ganTop + ', 속은 ' + hidTop + '으로 결이 다릅니다. 처음에는 ' + (C.SS_TRAIT[ganTop] || '') +
+            ' 쪽으로 보이지만, 가까워질수록 ' + (C.SS_TRAIT[hidTop] || '') + ' 쪽이 드러납니다. 이 간극을 아는 사람이 이 사주를 가장 정확히 읽습니다.') +
+        (st.label === '신약' ? ' 일간의 힘이 약한 편이라, 속의 기운이 겉으로 올라오기까지 시간이 걸립니다.' : '')
+    };
+
+    /* 4대 궁 */
+    var palaces = rows.map(function (r) {
+      var t = C.PALACE_TEXT[r.key];
+      var lead = t ? t.lead : '';
+      var mainHidden = r.hidden[r.hidden.length - 1];
+      var ganLine = r.key === 'day'
+        ? '천간 ' + r.ganH + '(' + r.ganHan + ')' + josa(r.ganH, '은', '는') + ' 일간 자신입니다. 이 자리가 곧 ‘나’이고, 지지 ' + r.jiH + josa(r.jiH, '이', '가') + ' 내가 앉는 자리입니다.'
+        : '천간 ' + r.ganH + '(' + r.ganHan + ')' + josa(r.ganH, '이', '가') + ' ' + r.ganSS + '으로 서서 ' + (C.SS_TRAIT[r.ganSS] || '') + '으로 이 자리를 씁니다.';
+      var unsLine = '지지 ' + r.jiH + '(' + r.jiHan + ')' + josa(r.jiH, '은', '는') + ' ' + r.unsung.name + '(' + r.unsung.han + ') — ' +
+        ((C.UNSUNG_TEXT[r.unsung.name] || {}).short || '') + '.';
+      var hidLine = '속으로는 ' + r.hidden.map(function (h) {
+        return h.role + ' ' + h.h + '(' + h.ss + ')';
+      }).join(' · ') + josa(mainHidden ? mainHidden.h : '기', '이', '가') + ' 깔려 ' + (mainHidden ? (C.SS_TRAIT[mainHidden.ss] || '') + '이 이 자리의 실제 동력입니다.' : '있습니다.');
+      var gmLine = r.gongmang
+        ? '일주 기준 공망에 든 자리입니다. 채워지지 않는 궁이라 여기서 얻으려 하기보다 다른 궁에서 채우는 편이 낫습니다.'
+        : (r.gongmangYear ? '년주 기준 공망에 걸려 있습니다. 집안·초년의 몫이 비어 있어 스스로 만들어야 하는 자리입니다.' : '');
+      var relLine = '';
+      if (touch[r.label] && touch[r.label].length) {
+        relLine = '다른 주와는 ' + touch[r.label].join(', ') + '으로 얽혀 있어, 이 자리의 일이 그 관계를 통해 실제 사건으로 나타납니다.';
+      }
+      return {
+        key: r.key, title: t ? t.title : r.label, label: r.label,
+        palace: r.palace, range: r.range,
+        head: (r.key === 'day' ? '일간(나)' : r.ganSS + ' 겉') + ' · ' + (mainHidden ? mainHidden.ss + ' 속' : ''),
+        body: [lead, ganLine, unsLine, hidLine, gmLine, relLine].filter(Boolean).join(' ')
+      };
+    });
+
+    return {
+      rows: rows,
+      palaces: palaces,
+      outer: outer,
+      inner: inner,
+      gyeok: {
+        name: gk.name, ss: gk.ss,
+        monthJiH: gk.monthJiH, monthJiHan: gk.monthJiHan,
+        jeonggiH: gk.jeonggiH, jeonggiHan: gk.jeonggiHan,
+        tugan: gk.tugan, tuganPillars: gk.tuganPillars,
+        head: gt.head, body: gyeokBody
+      },
+      patterns: patterns,
+      relations: relItems,
+      relationCount: relItems.length,
+      sinsal: sinsal,
+      gongmang: {
+        dayBranches: gmDay.map(function (j) { return { h: S.JI[j].h, han: S.JI[j].han }; }),
+        yearBranches: gmYear.map(function (j) { return { h: S.JI[j].h, han: S.JI[j].han }; }),
+        dayText: branchText(gmDay), yearText: branchText(gmYear),
+        pillars: gmPillars, yearPillars: gmYearPillars
+      },
+      year2027: {
+        unsung: uns2027, unsungShort: uns2027Text ? uns2027Text.short : '',
+        unsungBody: uns2027Text ? uns2027Text.body : '',
+        gongmang: y2027Gongmang,
+        note: y2027Gongmang
+          ? '2027 정미년 미(未)가 내 일주 기준 공망에 듭니다. 그해에 잡은 기회가 채워지지 않고 지나가기 쉬우니, 벌이기보다 남기는 일에 집중하는 편이 낫습니다.'
+          : '2027 정미년 미(未)는 내 공망에 들지 않아, 그해의 움직임이 실제 결과로 남기 좋은 자리입니다.'
+      }
+    };
+  }
+
   /* ---------- build ---------- */
 
   function build(core, opt) {
@@ -695,6 +956,7 @@
     var months = buildMonthly(core, st, ys);
     var quarters = buildQuarters(months);
     var domains = buildDomains(core, st, ys, months, daeun, ySS, yJiSS);
+    var wonguk = buildWonguk(core, st, ss.map);
 
     var attack = domains.wealth.attack;
     var defend = domains.wealth.defend;
@@ -726,6 +988,7 @@
       sipsung: { map: ss.map, rows: ss.rows, jae: jae, sik: sik, bi: bi, in_: in_, gwan: gwan },
       strength: strength,
       yongsin: ys,
+      wonguk: wonguk,
       y2027: {
         gan: '정(丁)', ji: '미(未)',
         ganSS: ySS, jiSS: yJiSS, rel: yRel,

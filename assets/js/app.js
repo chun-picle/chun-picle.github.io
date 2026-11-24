@@ -289,8 +289,142 @@
     }).join('');
   }
 
+  /* ---------- 원국 정밀 해부 ---------- */
+  function renderWonguk(rep) {
+    var w = rep.wonguk;
+    if (!w || !$('wongukTable')) return;
+    var rows = w.rows;
+
+    $('wongukLead').textContent =
+      '팔자를 네 기둥으로 쪼개, 기둥마다 천간·지지와 그 안에 숨은 지장간, 12운성, 공망까지 폅니다. ' +
+      '지지는 겉글자보다 안쪽을 더 많이 담기 때문에, 실제 성격과 운의 바탕은 지장간에서 드러납니다.';
+
+    var table = $('wongukTable');
+    table.style.gridTemplateColumns = '52px repeat(' + rows.length + ', minmax(86px, 1fr))';
+
+    var html = '<div class="wk-cell wk-head wk-corner">구분</div>' + rows.map(function (r) {
+      return '<div class="wk-cell wk-head' + (r.key === 'day' ? ' is-day' : '') + '">' +
+        '<b>' + r.label + '</b><span>' + r.palace + '</span></div>';
+    }).join('');
+
+    function line(label, fn) {
+      return '<div class="wk-cell wk-rowhead">' + label + '</div>' + rows.map(function (r) {
+        return '<div class="wk-cell' + (r.key === 'day' ? ' is-day' : '') + '">' + fn(r) + '</div>';
+      }).join('');
+    }
+
+    html += line('천간', function (r) {
+      return '<p class="wk-char">' + r.ganHan + '</p>' +
+        '<p class="wk-ko">' + r.ganH + ' · ' + r.ganEl + '</p>' +
+        '<p class="wk-ss">' + (r.key === 'day' ? '일간' : r.ganSS) + '</p>';
+    });
+    html += line('지지', function (r) {
+      return '<p class="wk-char">' + r.jiHan + '</p>' +
+        '<p class="wk-ko">' + r.jiH + ' · ' + r.jiEl + '</p>' +
+        '<p class="wk-ss">' + r.jiSS + '</p>';
+    });
+    html += line('지장간', function (r) {
+      return '<div class="wk-hidden">' + r.hidden.map(function (h) {
+        return '<p><span class="wkh-role">' + h.role + '</span><b>' + h.han + '</b>' +
+          '<span class="wkh-ss">' + h.ss + '</span></p>';
+      }).join('') + '</div>';
+    });
+    html += line('12운성', function (r) {
+      return '<p class="wk-us">' + r.unsung.name + '</p><p class="wk-han">' + r.unsung.han + '</p>';
+    });
+    html += line('공망', function (r) {
+      var tags = [];
+      if (r.gongmang) tags.push('<span class="wk-gm">일주</span>');
+      if (r.gongmangYear) tags.push('<span class="wk-gm is-year">년주</span>');
+      return tags.length ? tags.join('') : '<span class="wk-none">–</span>';
+    });
+    table.innerHTML = html;
+
+    var y = w.year2027, gm = w.gongmang;
+    $('wonguk2027').innerHTML =
+      '<p class="mini-label">2027 정미년 세운 12운성</p>' +
+      '<p class="wk-2027-head">' + y.unsung.name + '(' + y.unsung.han + ') — ' + y.unsungShort + '</p>' +
+      '<p class="body-text">' + y.unsungBody + '</p>' +
+      '<div class="divider"></div>' +
+      '<p class="mini-label">공망(空亡) 감정</p>' +
+      '<div class="gm-box">' +
+      '<p class="gm-line"><b>일주 기준</b> ' + gm.dayText + ' — ' +
+      (gm.pillars.length ? gm.pillars.join('·') + '가 공망에 듭니다' : '해당하는 기둥 없음') + '</p>' +
+      '<p class="gm-line"><b>년주 기준</b> ' + gm.yearText + ' — ' +
+      (gm.yearPillars.length ? gm.yearPillars.join('·') + '가 공망에 듭니다' : '해당하는 기둥 없음') + '</p>' +
+      '<p class="gm-note">' + y.note + '</p>' +
+      '</div>';
+  }
+
+  function renderGyeok(rep) {
+    var w = rep.wonguk;
+    if (!w || !$('gyeokName')) return;
+    $('gyeokName').textContent = w.gyeok.name;
+    $('gyeokHead').textContent = w.gyeok.head;
+    $('gyeokBody').textContent = w.gyeok.body;
+
+    $('patternList').innerHTML = w.patterns.map(function (p) {
+      return '<div class="pat-row"><p class="pat-name">' + p.name + '<span>' + p.head + '</span></p>' +
+        '<p class="pat-body">' + p.body + '</p></div>';
+    }).join('');
+
+    $('natureGrid').innerHTML = [w.outer, w.inner].map(function (n, i) {
+      return '<div class="nature-card' + (i ? ' is-inner' : '') + '">' +
+        '<p class="nature-head">' + n.head + '</p>' +
+        '<p class="body-text">' + n.body + '</p></div>';
+    }).join('');
+
+    $('palaceGrid').innerHTML = w.palaces.map(function (p) {
+      return '<div class="card plain palace-card">' +
+        '<div class="palace-top"><p class="palace-key">' + p.title + '</p>' +
+        '<span class="palace-range">' + p.range + '</span></div>' +
+        '<p class="palace-head">' + p.head + '</p>' +
+        '<p class="body-text">' + p.body + '</p></div>';
+    }).join('');
+  }
+
+  function renderRelations(rep) {
+    var w = rep.wonguk;
+    if (!w || !$('relList')) return;
+    var badge = {
+      충: 'is-chung', 천간충: 'is-chung', 형: 'is-hyung', 파: 'is-pa', 해: 'is-hae',
+      원진: 'is-wonjin', 합: 'is-hap', 천간합: 'is-hap', 삼합: 'is-hap',
+      반합: 'is-hap', 방합: 'is-hap', 반방: 'is-hap'
+    };
+
+    $('relList').innerHTML = w.relations.length ? w.relations.map(function (r) {
+      return '<div class="rel-row">' +
+        '<span class="rel-badge ' + (badge[r.type] || '') + '">' + r.type + '</span>' +
+        '<div class="rel-main"><p class="rel-name">' + r.name +
+        (r.adjacent === false ? '<span class="rel-far">기둥이 떨어짐</span>' : '') + '</p>' +
+        '<p class="rel-body">' + r.body + '</p></div></div>';
+    }).join('')
+      : '<p class="body-text">원국 안에서 뚜렷하게 성립한 합·충·형·파·해가 없습니다. 기둥끼리 서로 간섭하지 않아, 바깥 사건보다 자기 선택으로 판이 갈리는 사주입니다.</p>';
+
+    $('relNote').textContent =
+      '천간합·천간충은 이웃한 기둥끼리 성립하고, 지지 관계는 거리가 멀수록 힘이 약해집니다. ' +
+      '대운·세운이 들어오면 여기서 잡힌 관계가 실제 사건으로 다시 흔들립니다.';
+
+    $('sinsalGrid').innerHTML = w.sinsal.length ? w.sinsal.map(function (s) {
+      var kindText = s.kind === 'good' ? '귀인' : s.kind === 'caution' ? '주의' : '특성';
+      return '<div class="sinsal-card is-' + s.kind + '">' +
+        '<div class="sinsal-top"><p class="sinsal-name">' + s.name +
+        ' <span>' + s.han + '</span></p><span class="sinsal-kind">' + kindText + '</span></div>' +
+        '<p class="sinsal-pillars">' + s.base + ' · ' + s.pillars.join('·') + '</p>' +
+        '<p class="sinsal-head">' + s.head + '</p>' +
+        '<p class="sinsal-body">' + s.body + '</p></div>';
+    }).join('')
+      : '<p class="body-text">원국에 뚜렷하게 걸린 신살이 없습니다. 신살은 강조점일 뿐이라, 없다고 해서 삶의 결이 비어 있는 것은 아닙니다.</p>';
+
+    $('sinsalNote').textContent =
+      '신살은 사주의 뼈대(오행·격국)를 바꾸지 않고 색을 더하는 요소입니다. 여기서는 원국에 실제로 글자가 있는 것만 추렸습니다.';
+  }
+
   function renderPremium(rep) {
     renderStrength(rep);
+    renderWonguk(rep);
+    renderGyeok(rep);
+    renderRelations(rep);
     renderDaeun(rep);
     renderDomains(rep);
     renderQuarters(rep);

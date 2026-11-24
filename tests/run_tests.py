@@ -59,7 +59,15 @@ check_file("config.js 데모 코드 제거", "assets/js/config.js",
 check_file("app.js 사용 횟수 제한", "assets/js/app.js",
            ["increment_uses_count=true", "maxCodeUses", "최대 사용 횟수"], ["TEST2027"])
 check_file("index.html 데모 코드 안내 제거", "index.html",
-           ["라이선스 키"], ["TEST2027", "데모 코드"])
+           ["라이선스 키", "내 사주 원국 정밀 해부", "wongukTable", "gyeokName", "relList", "sinsalGrid"], ["TEST2027", "데모 코드"])
+check_file("app.js 원국 심층 렌더", "assets/js/app.js",
+           ["renderWonguk", "renderGyeok", "renderRelations"])
+check_file("report.js 원국 심층 생성", "assets/js/report.js",
+           ["buildWonguk", "wonguk: wonguk"])
+check_file("saju-core.js 원국 심층 엔진", "assets/js/saju-core.js",
+           ["JANGAN", "unsung", "gongmang", "gyeokguk", "scanRelations", "scanSinsal"])
+check_file("style.css 원국 심층 스타일", "assets/css/style.css",
+           [".wk-table", ".palace-grid", ".sinsal-grid", ".rel-badge"])
 
 if text:
     print(text)

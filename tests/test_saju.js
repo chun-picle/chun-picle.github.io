@@ -169,7 +169,74 @@
   check('시각 미상 대운 8개', rep6.daeun.list.length, 8);
   check('시각 미상 12개월', rep6.months.length, 12);
 
-  /* ---- 11. 결과 출력 ---- */
+  /* ---- 11. 원국 심층 분석 (지장간·12운성·공망·격국·신살·합충) ---- */
+  check('지장간 묘(卯)', SajuCore.jangan(3).map(function (h) { return h.h + '/' + h.role; }).join(','),
+    '갑/초기,을/정기');
+  check('지장간 축(丑) 한자', SajuCore.jangan(1).map(function (h) { return h.han; }).join(''), '癸辛己');
+  check('지장간 오(午) 정기', SajuCore.GAN[SajuCore.jeonggi(6)].h, '정');
+  check('지장간 인(寅) 정기', SajuCore.GAN[SajuCore.jeonggi(2)].h, '갑');
+  check('지장간 유(酉)', SajuCore.jangan(9).map(function (h) { return h.h; }).join(''), '경신');
+
+  check('12운성 갑-인', SajuCore.unsung(0, 2).name, '임관');
+  check('12운성 갑-묘', SajuCore.unsung(0, 3).name, '제왕');
+  check('12운성 을-인', SajuCore.unsung(1, 2).name, '제왕');
+  check('12운성 경-유', SajuCore.unsung(6, 9).name, '제왕');
+  check('12운성 계-자', SajuCore.unsung(9, 0).name, '임관');
+  check('12운성 기-오', SajuCore.unsung(5, 6).name, '임관');
+  check('12운성 기-축', SajuCore.unsung(5, 1).name, '묘');
+
+  check('공망 갑자순', SajuCore.gongmang(0).map(function (j) { return SajuCore.JI[j].h; }).join(''), '술해');
+  check('공망 갑술순', SajuCore.gongmang(10).map(function (j) { return SajuCore.JI[j].h; }).join(''), '신유');
+  check('공망 갑인순', SajuCore.gongmang(50).map(function (j) { return SajuCore.JI[j].h; }).join(''), '자축');
+  check('공망 기축일주', SajuCore.gongmang(core.dayIndex).map(function (j) { return SajuCore.JI[j].h; }).join(''), '오미');
+
+  var gk = SajuCore.gyeokguk(core);
+  check('격국 = 편관격', gk.name, '편관격');
+  check('격국 정기 을', gk.jeonggiH, '을');
+  check('격국 투간 없음', gk.tugan, false);
+  check('격국 중기 없음(卯)', gk.junggi, null);
+
+  var wrel = SajuCore.scanRelations(core);
+  check('원국 지지관계 4건', wrel.ji.length, 4);
+  check('년-월 오묘파', wrel.ji.filter(function (r) { return r.type === '파'; })[0].name, '오묘파');
+  check('년-일 오축해', wrel.ji.filter(function (r) { return r.type === '해'; })[0].name, '오축해');
+  check('원진 2건', wrel.ji.filter(function (r) { return r.type === '원진'; }).length, 2);
+
+  var ssl = SajuCore.scanSinsal(core);
+  var ssKeys = ssl.map(function (s) { return s.key; });
+  check('천을귀인 성립(시주 신)', ssKeys.indexOf('천을귀인') >= 0, true);
+  check('도화살 성립', ssKeys.indexOf('도화살') >= 0, true);
+  check('역마살 성립', ssKeys.indexOf('역마살') >= 0, true);
+  check('화개살 성립', ssKeys.indexOf('화개살') >= 0, true);
+  check('원진살 성립', ssKeys.indexOf('원진살') >= 0, true);
+  check('천덕귀인 중복 없음', ssl.filter(function (s) { return s.key === '천덕귀인'; })[0].pillars.length, 1);
+
+  var w = rep.wonguk;
+  check('원국 표 4주', w.rows.length, 4);
+  check('일주 지장간 3개', w.rows[2].hidden.length, 3);
+  check('일주 12운성 묘', w.rows[2].unsung.name, '묘');
+  check('년주 12운성 임관', w.rows[0].unsung.name, '임관');
+  check('년주 일주기준 공망', w.rows[0].gongmang, true);
+  check('일주 공망 아님', w.rows[2].gongmang, false);
+  check('2027 12운성 관대', w.year2027.unsung.name, '관대');
+  check('2027 미 공망', w.year2027.gongmang, true);
+  check('격국 리포트', w.gyeok.name, '편관격');
+  check('핵심 구조 3개', w.patterns.length, 3);
+  check('4대 궁 4개', w.palaces.length, 4);
+  check('신살 5개 이상', w.sinsal.length >= 5, true);
+  check('원국 관계 4개', w.relations.length, 4);
+  check('겉/속 모두 생성', !!(w.outer.body && w.inner.body), true);
+  var shortPalace = 0;
+  w.palaces.forEach(function (p) { if (!p.body || p.body.length < 120) shortPalace++; });
+  check('4대 궁 본문 충실', shortPalace, 0);
+
+  var w6 = rep6.wonguk;
+  check('시각 미상 표 3주', w6.rows.length, 3);
+  check('시각 미상 궁 3개', w6.palaces.length, 3);
+  check('시각 미상 격국', w6.gyeok.name, '편관격');
+  check('시각 미상 신살', w6.sinsal.length >= 3, true);
+
+  /* ---- 12. 결과 출력 ---- */
   out.push('');
   out.push('== 결과 요약 ==');
   out.push('1990-03-25 15:30 → ' + c1.text + ' / ' + c1.hanja + ' / 오행 ' + JSON.stringify(c1.counts));
@@ -181,6 +248,11 @@
     rep.daeun.list[0].label + ' … 현재 ' + rep.daeun.current.label + ' (' + rep.daeun.age + '세)');
   out.push('최고 달 ' + rep.wealth.best.no + '월(' + rep.wealth.best.label + ') / 분기 ' +
     rep.quarters.map(function (q) { return q.key + ' ' + q.label; }).join(' '));
+  out.push('원국 심층 — 격국 ' + w.gyeok.name + ' / 구조 ' +
+    w.patterns.map(function (p) { return p.name; }).join('·') + ' / 신살 ' +
+    w.sinsal.map(function (s) { return s.name; }).join('·'));
+  out.push('공망 — 일주 기준 ' + w.gongmang.dayText + ' / 년주 기준 ' + w.gongmang.yearText +
+    ' / 2027 12운성 ' + w.year2027.unsung.name);
   out.push('');
   out.push(fail === 0 ? 'ALL PASS' : ('FAILED: ' + fail));
 

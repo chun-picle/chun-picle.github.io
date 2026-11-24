@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261124i">
+<link rel="stylesheet" href="assets/css/style.css?v=20261125c">
 </head>
 <body>
 
@@ -172,6 +172,57 @@
           </div>
         </div>
 
+        <!-- 2. 원국 정밀 해부 -->
+        <div class="section">
+          <h3 class="section-title">내 사주 원국 정밀 해부 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <p class="wonguk-lead" id="wongukLead"></p>
+            <div class="wk-scroll">
+              <div class="wk-table" id="wongukTable"></div>
+            </div>
+            <p class="note">
+              지장간은 지지 안에 숨은 천간으로, 초기·중기·정기 순입니다. 정기가 그 지지의 본바탕이고,
+              작은 글씨는 일간 기준 십성입니다. 12운성은 일간 기준, 공망은 일주(일진)·년주 기준으로 표시했습니다.
+            </p>
+            <div class="divider"></div>
+            <div class="wk-2027" id="wonguk2027"></div>
+          </div>
+        </div>
+
+        <!-- 3. 격국 · 4대 궁 -->
+        <div class="section">
+          <h3 class="section-title">타고난 격국·기질과 4대 궁 해부 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <p class="mini-label">타고난 격국(格局)</p>
+            <div class="gyeok-box">
+              <p class="gyeok-name" id="gyeokName"></p>
+              <p class="gyeok-head" id="gyeokHead"></p>
+              <p class="body-text" id="gyeokBody"></p>
+            </div>
+            <div class="divider"></div>
+            <p class="mini-label">사주 핵심 구조</p>
+            <div class="pattern-list" id="patternList"></div>
+            <div class="divider"></div>
+            <p class="mini-label">겉으로 보이는 나와 속에 깔린 나</p>
+            <div class="nature-grid" id="natureGrid"></div>
+          </div>
+          <div class="palace-grid" id="palaceGrid"></div>
+        </div>
+
+        <!-- 4. 합충 · 신살 -->
+        <div class="section">
+          <h3 class="section-title">원국 합·충·형·파·해와 신살 감정 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <p class="mini-label">원국 내부 관계</p>
+            <div class="rel-list" id="relList"></div>
+            <p class="note" id="relNote"></p>
+            <div class="divider"></div>
+            <p class="mini-label">원국에서 실제로 성립한 신살·귀인</p>
+            <div class="sinsal-grid" id="sinsalGrid"></div>
+            <p class="note" id="sinsalNote"></p>
+          </div>
+        </div>
+
         <!-- 2. 대운 -->
         <div class="section">
           <h3 class="section-title">10년 대운과 지금 <span class="tag">유료</span></h3>
@@ -255,7 +306,8 @@
           <p class="lock-icon">◈</p>
           <p class="lock-title">프리미엄 리포트</p>
           <p class="lock-desc">
-            신강·신약과 용신 처방, 10년 대운, 2027 4대 영역,<br>
+            원국 지장간·12운성·공망·격국·신살 정밀 해부와<br>
+            신강·신약·용신 처방, 10년 대운, 2027 4대 영역,<br>
             12개월 심화 운세와 분기 로드맵까지 — 전부 열립니다.
           </p>
           <p class="lock-price">
@@ -371,6 +423,7 @@
     <p class="eyebrow">프리미엄 리포트</p>
     <h3 id="modalTitle">2027 정미년 전체 리포트</h3>
     <ul class="modal-list">
+      <li>원국 지장간·12운성·공망·격국·신살 정밀 해부</li>
       <li>신강·신약 판정과 용신·희신·기신 처방</li>
       <li>10년 대운표와 현재 대운 × 2027 세운</li>
       <li>2027 재물·직업·연애·건강 4대 영역</li>
@@ -400,11 +453,11 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/solar-terms.js?v=20261125b"></script>
-<script src="assets/js/saju-core.js?v=20261125b"></script>
-<script src="assets/js/content.js?v=20261125b"></script>
-<script src="assets/js/report.js?v=20261125b"></script>
-<script src="assets/js/config.js?v=20261125b"></script>
-<script src="assets/js/app.js?v=20261125b"></script>
+<script src="assets/js/solar-terms.js?v=20261125c"></script>
+<script src="assets/js/saju-core.js?v=20261125c"></script>
+<script src="assets/js/content.js?v=20261125c"></script>
+<script src="assets/js/report.js?v=20261125c"></script>
+<script src="assets/js/config.js?v=20261125c"></script>
+<script src="assets/js/app.js?v=20261125c"></script>
 </body>
 </html>

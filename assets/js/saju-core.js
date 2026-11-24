@@ -580,6 +580,382 @@
     return null;
   }
 
+  /* ============================================================
+   * 원국 심층 분석 — 지장간(藏干) · 12운성(十二運星) · 공망(空亡)
+   * ============================================================ */
+
+  var POS_LABEL = { year: '년주', month: '월주', day: '일주', hour: '시주' };
+
+  /* 지지별 지장간: 초기 · 중기 · 정기 (간 인덱스) */
+  var JANGAN = [
+    [{ g: 8, r: '초' }, { g: 9, r: '정' }],                    /* 자 子 : 壬 癸 */
+    [{ g: 9, r: '초' }, { g: 7, r: '중' }, { g: 5, r: '정' }], /* 축 丑 : 癸 辛 己 */
+    [{ g: 4, r: '초' }, { g: 2, r: '중' }, { g: 0, r: '정' }], /* 인 寅 : 戊 丙 甲 */
+    [{ g: 0, r: '초' }, { g: 1, r: '정' }],                    /* 묘 卯 : 甲 乙 */
+    [{ g: 1, r: '초' }, { g: 9, r: '중' }, { g: 4, r: '정' }], /* 진 辰 : 乙 癸 戊 */
+    [{ g: 4, r: '초' }, { g: 6, r: '중' }, { g: 2, r: '정' }], /* 사 巳 : 戊 庚 丙 */
+    [{ g: 2, r: '초' }, { g: 5, r: '중' }, { g: 3, r: '정' }], /* 오 午 : 丙 己 丁 */
+    [{ g: 3, r: '초' }, { g: 1, r: '중' }, { g: 5, r: '정' }], /* 미 未 : 丁 乙 己 */
+    [{ g: 4, r: '초' }, { g: 8, r: '중' }, { g: 6, r: '정' }], /* 신 申 : 戊 壬 庚 */
+    [{ g: 6, r: '초' }, { g: 7, r: '정' }],                    /* 유 酉 : 庚 辛 */
+    [{ g: 7, r: '초' }, { g: 3, r: '중' }, { g: 4, r: '정' }], /* 술 戌 : 辛 丁 戊 */
+    [{ g: 4, r: '초' }, { g: 0, r: '중' }, { g: 8, r: '정' }]  /* 해 亥 : 戊 甲 壬 */
+  ];
+  var JANGAN_ROLE = { '초': '초기', '중': '중기', '정': '정기' };
+
+  function jangan(jiIdx) {
+    var arr = JANGAN[((jiIdx % 12) + 12) % 12];
+    return arr.map(function (x) {
+      return {
+        gan: x.g, h: GAN[x.g].h, han: GAN[x.g].han, el: GAN[x.g].el,
+        role: JANGAN_ROLE[x.r], roleKey: x.r
+      };
+    });
+  }
+
+  /* 월지 정기 — 격국 판정의 기준 */
+  function jeonggi(jiIdx) {
+    var arr = JANGAN[((jiIdx % 12) + 12) % 12];
+    return arr[arr.length - 1].g;
+  }
+
+  function janganSipsung(dayGan, jiIdx) {
+    return jangan(jiIdx).map(function (x) {
+      x.ss = sipsung(dayGan, x.gan);
+      return x;
+    });
+  }
+
+  /* ---------- 12운성 ---------- */
+  var UNSUNG_NAME = ['장생', '목욕', '관대', '임관', '제왕', '쇠', '병', '사', '묘', '절', '태', '양'];
+  var UNSUNG_HAN = ['長生', '沐浴', '冠帶', '臨官', '帝旺', '衰', '病', '死', '墓', '絶', '胎', '養'];
+  /* 일간별 장생지: 갑해 을오 병인 정유 무인 기유 경사 신자 임신 계묘 */
+  var UNSUNG_START = [11, 6, 2, 9, 2, 9, 5, 0, 8, 3];
+
+  function unsung(dayGan, jiIdx) {
+    var g = ((dayGan % 10) + 10) % 10;
+    var j = ((jiIdx % 12) + 12) % 12;
+    var start = UNSUNG_START[g];
+    var diff = GAN[g].yang ? (j - start) : (start - j);
+    var k = ((diff % 12) + 12) % 12;
+    return { idx: k, name: UNSUNG_NAME[k], han: UNSUNG_HAN[k], yang: GAN[g].yang };
+  }
+
+  /* ---------- 공망(空亡) ---------- */
+  /* 60갑자 10일 순(旬)에서 짝이 없는 두 지지 */
+  function gongmang(index) {
+    var i = ((index % 60) + 60) % 60;
+    var s = Math.floor(i / 10) * 10;
+    var ji0 = s % 12;
+    return [(ji0 + 10) % 12, (ji0 + 11) % 12];
+  }
+
+  /* ---------- 격국(格局) ---------- */
+  var GYEOK_OF = {
+    정관: '정관격', 편관: '편관격', 정재: '정재격', 편재: '편재격',
+    식신: '식신격', 상관: '상관격', 정인: '정인격', 편인: '편인격',
+    비견: '건록격', 겁재: '양인격'
+  };
+
+  function gyeokguk(core) {
+    var mj = core.monthPillar.ji;
+    var jg = jeonggi(mj);
+    var ss = sipsung(core.dayGan, jg);
+    var p = core.pillarName;
+    var tuganPillars = [];
+    ['year', 'month', 'hour'].forEach(function (k) {
+      if (p[k] && p[k].gan === jg) tuganPillars.push(POS_LABEL[k]);
+    });
+    var hidden = janganSipsung(core.dayGan, mj);
+    var junggi = null;
+    for (var i = 0; i < hidden.length; i++) {
+      if (hidden[i].roleKey === '중') junggi = hidden[i];
+    }
+    return {
+      monthJi: mj, monthJiH: JI[mj].h, monthJiHan: JI[mj].han,
+      jeonggiGan: jg, jeonggiH: GAN[jg].h, jeonggiHan: GAN[jg].han,
+      jeonggiEl: GAN[jg].el, ss: ss, name: GYEOK_OF[ss] || (ss + '격'),
+      tugan: tuganPillars.length > 0, tuganPillars: tuganPillars,
+      junggi: junggi, hidden: hidden
+    };
+  }
+
+  /* ============================================================
+   * 원국 내부 합(合) · 충(沖) · 형(刑) · 파(破) · 해(害) 전수 스캔
+   * ============================================================ */
+
+  var GAN_HAP = [
+    { a: 0, b: 5, el: '토', name: '갑기합토' },
+    { a: 1, b: 6, el: '금', name: '을경합금' },
+    { a: 2, b: 7, el: '수', name: '병신합수' },
+    { a: 3, b: 8, el: '목', name: '정임합목' },
+    { a: 4, b: 9, el: '화', name: '무계합화' }
+  ];
+  var GAN_CHUNG = [[0, 6], [1, 7], [2, 8], [3, 9]];
+  var YUKHAP = [
+    { a: 0, b: 1, el: '토', name: '자축합토' },
+    { a: 2, b: 11, el: '목', name: '인해합목' },
+    { a: 3, b: 10, el: '화', name: '묘술합화' },
+    { a: 4, b: 9, el: '금', name: '진유합금' },
+    { a: 5, b: 8, el: '수', name: '사신합수' },
+    { a: 6, b: 7, el: '토', name: '오미합토' }
+  ];
+  var SAMHAP = [
+    { el: '수', branches: [8, 0, 4], name: '신자진 수국' },
+    { el: '목', branches: [11, 3, 7], name: '해묘미 목국' },
+    { el: '화', branches: [2, 6, 10], name: '인오술 화국' },
+    { el: '금', branches: [5, 9, 1], name: '사유축 금국' }
+  ];
+  var WANG_JI = { 수: 0, 목: 3, 화: 6, 금: 9 };
+  var BANGHAP = [
+    { el: '목', branches: [2, 3, 4], name: '인묘진 목방' },
+    { el: '화', branches: [5, 6, 7], name: '사오미 화방' },
+    { el: '금', branches: [8, 9, 10], name: '신유술 금방' },
+    { el: '수', branches: [11, 0, 1], name: '해자축 수방' }
+  ];
+  var YUANJIN = [[0, 7], [1, 6], [2, 9], [3, 8], [4, 11], [5, 10]]; /* 자미 축오 인유 묘신 진해 사술 */
+
+  function activePillars(core) {
+    var out = [];
+    ['year', 'month', 'day', 'hour'].forEach(function (k) {
+      if (core.pillarName[k]) {
+        out.push({ key: k, label: POS_LABEL[k], pl: core.pillarName[k] });
+      }
+    });
+    return out;
+  }
+
+  function scanRelations(core) {
+    var pos = activePillars(core);
+    var gan = [], ji = [], groups = [];
+    var i, j, h;
+
+    for (i = 0; i < pos.length; i++) {
+      for (j = i + 1; j < pos.length; j++) {
+        var A = pos[i], B = pos[j];
+        var adj = (j - i === 1);
+        var ga = A.pl.gan, gb = B.pl.gan, ja = A.pl.ji, jb = B.pl.ji;
+
+        for (h = 0; h < GAN_HAP.length; h++) {
+          var GH = GAN_HAP[h];
+          if ((GH.a === ga && GH.b === gb) || (GH.a === gb && GH.b === ga)) {
+            gan.push({ type: '천간합', name: GH.name, el: GH.el, a: A.label, b: B.label, adjacent: adj });
+          }
+        }
+        for (h = 0; h < GAN_CHUNG.length; h++) {
+          var GC = GAN_CHUNG[h];
+          if ((GC[0] === ga && GC[1] === gb) || (GC[0] === gb && GC[1] === ga)) {
+            gan.push({ type: '천간충', name: GAN[ga].h + GAN[gb].h + '충', a: A.label, b: B.label, adjacent: adj });
+          }
+        }
+
+        if (hasPair(CHUNG, ja, jb)) {
+          ji.push({ type: '충', name: JI[ja].h + JI[jb].h + '충', a: A.label, b: B.label, adjacent: adj });
+        }
+        for (h = 0; h < YUKHAP.length; h++) {
+          var YH = YUKHAP[h];
+          if ((YH.a === ja && YH.b === jb) || (YH.a === jb && YH.b === ja)) {
+            ji.push({ type: '합', name: YH.name, el: YH.el, a: A.label, b: B.label, adjacent: adj });
+          }
+        }
+        if (hasPair(HYUNG, ja, jb)) {
+          ji.push({
+            type: '형', name: ja === jb ? JI[ja].h + '자형' : JI[ja].h + JI[jb].h + '형',
+            a: A.label, b: B.label, adjacent: adj
+          });
+        }
+        if (hasPair(PA, ja, jb)) {
+          ji.push({ type: '파', name: JI[ja].h + JI[jb].h + '파', a: A.label, b: B.label, adjacent: adj });
+        }
+        if (hasPair(HAE, ja, jb)) {
+          ji.push({ type: '해', name: JI[ja].h + JI[jb].h + '해', a: A.label, b: B.label, adjacent: adj });
+        }
+        if (hasPair(YUANJIN, ja, jb)) {
+          ji.push({ type: '원진', name: JI[ja].h + JI[jb].h + '원진', a: A.label, b: B.label, adjacent: adj });
+        }
+      }
+    }
+
+    /* 삼합 · 반합 · 방합 */
+    function collect(group) {
+      var found = [];
+      for (var k = 0; k < pos.length; k++) {
+        if (group.branches.indexOf(pos[k].pl.ji) >= 0 &&
+          !found.some(function (f) { return f.ji === pos[k].pl.ji; })) {
+          found.push({ ji: pos[k].pl.ji, label: pos[k].label });
+        }
+      }
+      return found;
+    }
+
+    SAMHAP.forEach(function (g) {
+      var f = collect(g);
+      if (f.length === 3) {
+        groups.push({
+          type: '삼합', el: g.el, name: g.name, size: 3,
+          branches: f.map(function (x) { return JI[x.ji].h; }),
+          pillars: f.map(function (x) { return x.label; })
+        });
+      } else if (f.length === 2 && f.some(function (x) { return x.ji === WANG_JI[g.el]; })) {
+        groups.push({
+          type: '반합', el: g.el, name: '반합 ' + g.el + '국', size: 2,
+          branches: f.map(function (x) { return JI[x.ji].h; }),
+          pillars: f.map(function (x) { return x.label; })
+        });
+      }
+    });
+
+    BANGHAP.forEach(function (g) {
+      var f = collect(g);
+      if (f.length === 3) {
+        groups.push({
+          type: '방합', el: g.el, name: g.name, size: 3,
+          branches: f.map(function (x) { return JI[x.ji].h; }),
+          pillars: f.map(function (x) { return x.label; })
+        });
+      } else if (f.length === 2) {
+        groups.push({
+          type: '반방', el: g.el, name: '반방 ' + g.el + '방', size: 2,
+          branches: f.map(function (x) { return JI[x.ji].h; }),
+          pillars: f.map(function (x) { return x.label; })
+        });
+      }
+    });
+
+    return {
+      gan: gan, ji: ji, groups: groups,
+      total: gan.length + ji.length + groups.length
+    };
+  }
+
+  /* ============================================================
+   * 신살(神殺) · 귀인(貴人) 전수 스캔
+   * ============================================================ */
+
+  var CHEONEUL = [[1, 7], [0, 8], [11, 9], [11, 9], [1, 7], [0, 8], [1, 7], [2, 6], [3, 5], [3, 5]];
+  var MUNCHANG = [5, 6, 8, 9, 8, 9, 11, 0, 2, 3];   /* 갑사 을오 병신 정유 무신 기유 경해 신자 임인 계묘 */
+  var HONGYEOM = [6, 6, 2, 7, 4, 4, 10, 9, 0, 8];   /* 갑오 을오 병인 정미 무진 기진 경술 신유 임자 계신 */
+  var YANGIN = [3, -1, 6, -1, 6, -1, 9, -1, 0, -1]; /* 양간의 제왕지 */
+  var GROUP_OF = {
+    2: '화', 6: '화', 10: '화', 8: '수', 0: '수', 4: '수',
+    11: '목', 3: '목', 7: '목', 5: '금', 9: '금', 1: '금'
+  };
+  var DOHWA_BY = { 화: 3, 수: 9, 목: 0, 금: 6 };      /* 인오술→묘 신자진→유 해묘미→자 사유축→오 */
+  var YEOKMA_BY = { 화: 8, 수: 2, 목: 5, 금: 11 };    /* 인오술→신 신자진→인 해묘미→사 사유축→해 */
+  var HWAGAE_BY = { 화: 10, 수: 4, 목: 7, 금: 1 };    /* 인오술→술 신자진→진 해묘미→미 사유축→축 */
+  var CHEONDEOK = {
+    2: { k: 'gan', i: 3 }, 3: { k: 'ji', i: 8 }, 4: { k: 'gan', i: 8 },
+    5: { k: 'gan', i: 7 }, 6: { k: 'ji', i: 11 }, 7: { k: 'gan', i: 0 },
+    8: { k: 'gan', i: 9 }, 9: { k: 'ji', i: 2 }, 10: { k: 'gan', i: 2 },
+    11: { k: 'gan', i: 1 }, 0: { k: 'ji', i: 5 }, 1: { k: 'gan', i: 6 }
+  };
+  var WOLDEOK = { 화: 2, 수: 8, 목: 0, 금: 6 };        /* 병 임 갑 경 */
+  var GWIIN = [[16, 46, 28, 34], [40, 31, 22, 13, 4, 58, 49]]; /* 괴강 / 백호 */
+
+  function scanSinsal(core) {
+    var pos = activePillars(core);
+    var dg = core.dayGan;
+    var out = [];
+
+    function jiHits(target) {
+      var r = [];
+      for (var i = 0; i < pos.length; i++) {
+        if (pos[i].pl.ji === target) r.push(pos[i].label);
+      }
+      return r;
+    }
+    function ganHits(target) {
+      var r = [];
+      for (var i = 0; i < pos.length; i++) {
+        if (pos[i].pl.gan === target) r.push(pos[i].label);
+      }
+      return r;
+    }
+    function push(key, name, han, base, pillars, kind) {
+      if (!pillars.length) return;
+      for (var i = 0; i < out.length; i++) {
+        if (out[i].key === key && out[i].base === base) {
+          out[i].pillars = out[i].pillars.concat(
+            pillars.filter(function (x) { return out[i].pillars.indexOf(x) < 0; }));
+          return;
+        }
+      }
+      out.push({ key: key, name: name, han: han, base: base, pillars: pillars, kind: kind });
+    }
+
+    /* 천을귀인 — 일간 기준 */
+    push('천을귀인', '천을귀인', '天乙貴人', '일간 ' + GAN[dg].h,
+      jiHits(CHEONEUL[dg][0]).concat(jiHits(CHEONEUL[dg][1])).filter(function (v, i, a) { return a.indexOf(v) === i; }), 'good');
+    /* 문창귀인 — 일간 기준 */
+    push('문창귀인', '문창귀인', '文昌貴人', '일간 ' + GAN[dg].h, jiHits(MUNCHANG[dg]), 'good');
+    /* 학당귀인 — 일간 장생지 */
+    push('학당귀인', '학당귀인', '學堂貴人', '일간 ' + GAN[dg].h, jiHits(UNSUNG_START[dg]), 'good');
+
+    /* 천덕귀인 — 월지 기준 (천간 또는 지지 중 지정된 쪽) */
+    var cd = CHEONDEOK[core.monthPillar.ji];
+    if (cd) {
+      push('천덕귀인', '천덕귀인', '天德貴人', '월지 ' + JI[core.monthPillar.ji].h,
+        cd.k === 'gan' ? ganHits(cd.i) : jiHits(cd.i), 'good');
+    }
+    /* 월덕귀인 — 월지 삼합국 기준 (천간) */
+    var mg = GROUP_OF[core.monthPillar.ji];
+    if (mg) {
+      push('월덕귀인', '월덕귀인', '月德貴人', '월지 ' + JI[core.monthPillar.ji].h,
+        ganHits(WOLDEOK[mg]), 'good');
+    }
+
+    /* 도화 · 역마 · 화개 — 일지·년지 삼합국 기준 */
+    var bases = [{ label: '일지', ji: core.dayJi }];
+    if (core.yearPillar.ji !== core.dayJi) bases.push({ label: '년지', ji: core.yearPillar.ji });
+    bases.forEach(function (b) {
+      var g = GROUP_OF[b.ji];
+      if (!g) return;
+      push('도화살', '도화살', '桃花殺', b.label + ' ' + JI[b.ji].h + ' 기준', jiHits(DOHWA_BY[g]), 'neutral');
+      push('역마살', '역마살', '驛馬殺', b.label + ' ' + JI[b.ji].h + ' 기준', jiHits(YEOKMA_BY[g]), 'neutral');
+      push('화개살', '화개살', '華蓋殺', b.label + ' ' + JI[b.ji].h + ' 기준', jiHits(HWAGAE_BY[g]), 'neutral');
+    });
+
+    /* 양인 · 홍염 — 일간 기준 */
+    if (YANGIN[dg] >= 0) push('양인살', '양인살', '羊刃殺', '일간 ' + GAN[dg].h, jiHits(YANGIN[dg]), 'caution');
+    push('홍염살', '홍염살', '紅艶殺', '일간 ' + GAN[dg].h, jiHits(HONGYEOM[dg]), 'neutral');
+
+    /* 괴강 · 백호 — 일주(및 다른 주) */
+    GWIIN[0].forEach(function (idx) {
+      for (var i = 0; i < pos.length; i++) {
+        if (pos[i].pl.gan === idx % 10 && pos[i].pl.ji === idx % 12) {
+          push('괴강살', '괴강살', '魁罡殺', '일주 기준', [pos[i].label], 'caution');
+        }
+      }
+    });
+    GWIIN[1].forEach(function (idx) {
+      for (var i = 0; i < pos.length; i++) {
+        if (pos[i].pl.gan === idx % 10 && pos[i].pl.ji === idx % 12) {
+          push('백호대살', '백호대살', '白虎大殺', '일주 기준', [pos[i].label], 'caution');
+        }
+      }
+    });
+
+    /* 원진 — 일지·년지 대 다른 지지 */
+    (function () {
+      var pairs = [];
+      for (var i = 0; i < pos.length; i++) {
+        for (var j = i + 1; j < pos.length; j++) {
+          if (hasPair(YUANJIN, pos[i].pl.ji, pos[j].pl.ji)) {
+            pairs.push(pos[i].label + '·' + pos[j].label);
+          }
+        }
+      }
+      if (pairs.length) {
+        out.push({
+          key: '원진살', name: '원진살', han: '怨嗔殺', base: '지지 관계',
+          pillars: pairs, kind: 'caution'
+        });
+      }
+    })();
+
+    return out;
+  }
+
   var API = {
     GAN: GAN, JI: JI, ELEMENTS: ELEMENTS, ELEMENT_HAN: ELEMENT_HAN,
     MONTH_ORDER_NAME: MONTH_ORDER_NAME,
@@ -603,7 +979,20 @@
     ganjiHan: ganjiHan,
     hourBranchIndex: hourBranchIndex,
     saeng: saeng,
-    geuk: geuk
+    geuk: geuk,
+    /* 원국 심층 분석 */
+    JANGAN: JANGAN,
+    POS_LABEL: POS_LABEL,
+    jangan: jangan,
+    janganSipsung: janganSipsung,
+    jeonggi: jeonggi,
+    unsung: unsung,
+    gongmang: gongmang,
+    gyeokguk: gyeokguk,
+    activePillars: activePillars,
+    scanRelations: scanRelations,
+    scanSinsal: scanSinsal,
+    pillarIndex: pillarIndex
   };
 
   root.SajuCore = API;

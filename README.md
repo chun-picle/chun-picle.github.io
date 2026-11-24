@@ -20,13 +20,13 @@ sitemap.xml               사이트맵 (메인·약관·일주 목록·60개 일
 robots.txt                크롤러 허용 + 사이트맵 위치
 assets/css/style.css      스타일 (모바일 퍼스트, 720px 이상 데스크톱 확장)
 assets/js/solar-terms.js  절입 시각 테이블 (KST, 1910~2050, 천문 계산)
-assets/js/saju-core.js    만세력 계산 엔진 (년주·월주·일주·시주·오행·십성·지지관계)
-assets/js/content.js      해석 콘텐츠 (60갑자 일주, 일간, 오행, 십성, 2027 세운, 월운 템플릿)
-assets/js/report.js       원국 → 화면용 리포트 (재물 구간·월별 등급·귀인 방위 계산)
+assets/js/saju-core.js    만세력 엔진 (사주·오행·십성·지장간·12운성·공망·격국·합충·신살)
+assets/js/content.js      해석 콘텐츠 (60갑자 일주, 일간, 오행, 십성, 격국, 신살, 2027 세운, 월운 템플릿)
+assets/js/report.js       원국 → 화면용 리포트 (원국 심층 해부·재물 구간·월별 등급·귀인 방위 계산)
 assets/js/config.js       ★ 결제 링크·가격·잠금 코드 (여기만 고치면 됨)
 assets/js/app.js          화면 로직 (폼·렌더·잠금·공유)
 scripts/build_seo.py      ★ 일주 60개 페이지 · sitemap · robots 생성기 (도메인 한 줄로 전체 치환)
-tests/test_saju.js        계산 검증 테스트 (25개)
+tests/test_saju.js        계산 검증 테스트 (116개)
 tests/run_tests.py        테스트 러너 (quickjs 또는 node)
 ```
 
@@ -80,7 +80,7 @@ accessCodes: ['TEST2027', 'A7F2K9'],           // 수동 판매한 열람 코드
 
 ```bash
 python3 -m pip install quickjs     # 최초 1회
-python3 tests/run_tests.py         # 25개 케이스, ALL PASS 확인
+python3 tests/run_tests.py         # 116개 케이스, ALL PASS 확인
 # 또는 node tests/test_saju.js
 ```
 
@@ -99,7 +99,7 @@ python3 tests/run_tests.py         # 25개 케이스, ALL PASS 확인
 | 구분 | 내용 |
 |---|---|
 | 무료 | 사주팔자 8글자, 오행 밸런스, 일주 성격, 일간 기질, 2027 정미년 한 줄 총운 |
-| 유료 (프리미엄) | 2027 재물운·투자 타이밍(공격/방어 구간), 1~12월 상세 운세(5단계 등급), 피해야 할 달, 귀인 방위, 십성 구조 |
+| 유료 (프리미엄) | ① 원국 지장간·12운성·공망 정밀 표 ② 타고난 격국·십성 구조·겉과 속·4대 궁 해부 ③ 원국 합·충·형·파·해·원진과 신살·귀인 감정 ④ 신강·신약과 용신 처방 ⑤ 10년 대운 ⑥ 2027 4대 영역·12개월·분기 로드맵·귀인 방위 |
 | 가격 | config.js `price: 4900` / `priceLabel: '4,900원'` (정가 9,900원에서 50% 할인, 정가는 취소선으로 병기) |
 | 결제 | Gumroad (`wolryeong-2027`, 4,900원) — 카드·애플페이, 구매 시 라이선스 키 발급 (1회성 디지털 콘텐츠) |
 | 바이럴 | Web Share API 공유 버튼 (iOS 공유 시트) + 클립보드 폴백 |
