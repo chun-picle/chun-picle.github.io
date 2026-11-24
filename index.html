@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>월령 · 2027 정미년 사주 리포트 | 절기로 읽는 재물운</title>
+<meta name="description" content="절기(節氣) 시각까지 계산한 정밀 만세력. 생년월일만 넣으면 사주팔자와 오행 균형, 2027 정미년 재물운·월별 운세를 바로 확인할 수 있습니다.">
+<meta name="theme-color" content="#F7F4EE">
+<meta property="og:type" content="website">
+<meta property="og:title" content="월령 · 2027 정미년 사주 리포트">
+<meta property="og:description" content="절기로 읽는 정밀 만세력. 사주팔자·오행 균형은 무료, 2027 재물운과 월별 운세는 리포트로.">
+<meta property="og:url" content="https://chun-picle.github.io/">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314120F'/%3E%3Ctext x='32' y='43' font-size='30' font-family='serif' fill='%23F7F4EE' text-anchor='middle'%3E月%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="./">
+    <span class="brand-mark">月</span>
+    <span class="brand-name">월령</span>
+  </a>
+  <a class="topbar-link" href="#form">내 사주 보기</a>
+</header>
+
+<main>
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" id="top">
+    <p class="eyebrow">2027 정미년 · 정밀 만세력</p>
+    <h1>내 사주로 읽는<br><em>2027년의 돈</em></h1>
+    <p class="lede">
+      절기(節氣)의 시각까지 계산한 만세력으로 사주팔자를 세웁니다.<br>
+      태어난 날과 시각만 넣으면, 2027년 어느 달에 돈이 움직이는지 나옵니다.
+    </p>
+
+    <form id="birthForm" class="card form" novalidate>
+      <div class="field">
+        <span class="field-label">성별</span>
+        <div class="segmented" role="radiogroup" aria-label="성별">
+          <button type="button" class="seg is-on" data-gender="f" role="radio" aria-checked="true">여성</button>
+          <button type="button" class="seg" data-gender="m" role="radio" aria-checked="false">남성</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="birthDate">양력 생년월일</label>
+        <input id="birthDate" name="birthDate" type="date" min="1920-01-01" max="2040-12-31" autocomplete="bday" required>
+        <p class="field-help">음력이 아니라 <strong>양력</strong> 기준입니다. (주민등록상 생년월일)</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="birthTime">출생 시각</label>
+        <input id="birthTime" name="birthTime" type="time" value="12:00" autocomplete="off">
+        <label class="checkline">
+          <input id="timeUnknown" type="checkbox">
+          <span>출생 시각을 몰라요</span>
+        </label>
+      </div>
+
+      <button class="btn btn-primary btn-block" type="submit">
+        내 사주 보기 <span class="btn-arrow">→</span>
+      </button>
+      <p class="privacy-line">입력한 정보는 서버로 전송되지 않고, 이 브라우저 안에서만 계산됩니다.</p>
+    </form>
+
+    <ul class="trust">
+      <li><span>節</span><div><strong>절기 시각 계산</strong>입춘·경칩 등 절입 시각을 분 단위로 반영</div></li>
+      <li><span>私</span><div><strong>서버 저장 없음</strong>생년월일이 어디에도 남지 않습니다</div></li>
+      <li><span>無</span><div><strong>사주팔자 무료</strong>원국·오행 균형은 결제 없이 공개</div></li>
+    </ul>
+  </section>
+
+  <!-- ================= RESULT ================= -->
+  <section id="result" class="result" hidden aria-live="polite">
+
+    <div class="result-head">
+      <div>
+        <p class="eyebrow" id="resultEyebrow">사주 원국</p>
+        <h2 class="result-title" id="resultTitle">기축일주 · 기토</h2>
+        <p class="result-sub" id="resultSub">1990.03.25 15:30 · 여성</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="recalcBtn" type="button">다시 계산</button>
+    </div>
+
+    <!-- 원국 -->
+    <div class="card plain">
+      <div class="pillars" id="pillars"></div>
+      <p class="note" id="pillarNote"></p>
+    </div>
+
+    <!-- 무료: 오행 -->
+    <div class="section">
+      <h3 class="section-title">오행 균형</h3>
+      <div class="card plain">
+        <div class="elements" id="elements"></div>
+        <div class="balance">
+          <p class="balance-title" id="balanceTitle"></p>
+          <p class="balance-body" id="balanceBody"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 무료: 일주 -->
+    <div class="section">
+      <h3 class="section-title">일주 성격</h3>
+      <div class="card plain">
+        <p class="ilju-key" id="iljuKey"></p>
+        <h4 class="ilju-title" id="iljuTitle"></h4>
+        <p class="body-text" id="iljuBody"></p>
+        <div class="divider"></div>
+        <p class="dm-line"><span class="dm-name" id="dmName"></span><span class="dm-sub" id="dmSub"></span></p>
+        <p class="body-text dim" id="dmBody"></p>
+      </div>
+    </div>
+
+    <!-- 무료: 2027 한 줄 -->
+    <div class="section">
+      <h3 class="section-title">2027 정미년 총운</h3>
+      <div class="card accent-card">
+        <p class="year-label">丁未 · 2027</p>
+        <p class="year-line" id="yearLine"></p>
+        <p class="body-text dim" id="yearLead"></p>
+      </div>
+    </div>
+
+    <!-- ===== 프리미엄 ===== -->
+    <div class="premium" id="premium">
+      <div class="premium-inner" id="premiumInner">
+
+        <div class="section">
+          <h3 class="section-title">2027 재물운 · 투자 타이밍</h3>
+          <div class="card plain">
+            <p class="wealth-head" id="wealthHead"></p>
+            <p class="body-text" id="wealthBody"></p>
+            <div class="divider"></div>
+            <div class="timing">
+              <div class="timing-row">
+                <span class="timing-tag good">공격 구간</span>
+                <span class="timing-val" id="attackList"></span>
+              </div>
+              <div class="timing-row">
+                <span class="timing-tag bad">방어 구간</span>
+                <span class="timing-val" id="defendList"></span>
+              </div>
+            </div>
+            <p class="note" id="bestMonthNote"></p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">월별 상세 운세</h3>
+          <div class="card plain">
+            <div class="months" id="months"></div>
+            <p class="note">월 구분은 달력이 아니라 절입일(節入日) 기준입니다. 예: 1월은 소한~입춘 구간, 2월은 입춘~경칩 구간.</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">피해야 할 달과 귀인 방위</h3>
+          <div class="card plain">
+            <div class="avoid-block">
+              <p class="mini-label">주의할 달</p>
+              <p class="body-text" id="avoidMonths"></p>
+            </div>
+            <div class="divider"></div>
+            <div class="noble-block">
+              <p class="mini-label">귀인(貴人)의 방위</p>
+              <p class="noble-dirs" id="nobleDirs"></p>
+              <p class="body-text" id="nobleBody"></p>
+            </div>
+            <div class="divider"></div>
+            <div class="sipsung-block">
+              <p class="mini-label">십성 구조</p>
+              <div class="ss-bars" id="sipsungBars"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 잠금 오버레이 -->
+      <div class="lock" id="lockOverlay">
+        <div class="lock-box">
+          <p class="lock-icon">◈</p>
+          <p class="lock-title">프리미엄 리포트</p>
+          <p class="lock-desc">
+            2027 재물운과 투자 타이밍, 12개월 상세 운세,<br>
+            피해야 할 달과 귀인 방위까지 — 전부 열립니다.
+          </p>
+          <button class="btn btn-primary btn-block" id="unlockBtn" type="button">
+            <span id="unlockBtnLabel">리포트 열기</span> · <span id="unlockBtnPrice">9,900원</span>
+          </button>
+          <p class="lock-sub">사주팔자·오행·일주 성격은 계속 무료입니다</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 공유 -->
+    <div class="section share-section">
+      <button class="btn btn-outline btn-block" id="shareBtn" type="button">
+        <span class="share-ico">↗</span> 내 사주 결과 공유하기
+      </button>
+      <p class="note center">친구가 열면 친구 사주로 새로 계산됩니다. 내 생년월일은 링크에 담기지 않습니다.</p>
+    </div>
+
+  </section>
+
+  <!-- ================= HOW ================= -->
+  <section class="how" id="how">
+    <h3 class="section-title">왜 이 리포트가 정확한가</h3>
+    <div class="how-grid">
+      <div class="how-item">
+        <p class="how-no">01</p>
+        <h4>절입 시각을 분 단위로</h4>
+        <p>사주의 한 해는 1월 1일이 아니라 <strong>입춘(立春)</strong>에 시작하고, 한 달도 달력이 아니라 <strong>절기(節氣)</strong>에 바뀝니다. 태양의 황경을 계산해 1920~2040년 절입 시각을 초 단위로 산출해 내장했습니다.</p>
+      </div>
+      <div class="how-item">
+        <p class="how-no">02</p>
+        <h4>일주는 60갑자 순환</h4>
+        <p>일주는 율리우스일(Julian Day)로 계산해 60갑자 순환을 어긋남 없이 셉니다. 시주는 일간에서 시지를 끌어내는 오자둔법(五鼠遁)을 그대로 적용합니다.</p>
+      </div>
+      <div class="how-item">
+        <p class="how-no">03</p>
+        <h4>같은 입력, 같은 결과</h4>
+        <p>무작위도, 매번 달라지는 해석도 없습니다. 같은 생년월일·시각이면 언제 열어도 같은 원국이 나오고, 해석은 그 원국에서 규칙으로 계산됩니다.</p>
+      </div>
+    </div>
+    <p class="disclaimer">
+      * 월령의 리포트는 전통 명리학의 계산 규칙을 프로그램으로 옮긴 <strong>참고·오락용 콘텐츠</strong>입니다.
+      의료·법률·투자 판단의 근거로 사용할 수 없으며, 어떤 결과도 미래를 보장하지 않습니다.
+    </p>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="faq" id="faq">
+    <h3 class="section-title">자주 묻는 것</h3>
+    <details>
+      <summary>출생 시각을 모르면 어떻게 되나요?</summary>
+      <p>시주(時柱)를 빼고 6글자로 계산합니다. 성격·오행·재물운의 큰 틀은 그대로 나오고, 시주에서 나오는 자녀·말년운만 빠집니다. 시각을 알면 8글자로 더 정확해집니다.</p>
+    </details>
+    <details>
+      <summary>음력 생일인데 어떻게 넣나요?</summary>
+      <p>양력 생일로 넣어야 합니다. 주민등록상 생년월일이 보통 양력이라 그대로 넣으면 되고, 음력만 아는 경우엔 음력→양력 변환 후 넣어주세요.</p>
+    </details>
+    <details>
+      <summary>결제는 어떻게 하나요?</summary>
+      <p>리포트 열기 버튼을 누르면 토스 또는 카카오페이 송금 링크가 나옵니다. 송금 후 안내된 코드를 입력하면 이 기기에서 계속 열람됩니다.</p>
+    </details>
+    <details>
+      <summary>내 생년월일이 저장되나요?</summary>
+      <p>아니요. 계산은 전부 브라우저 안에서 이뤄지고 서버로 보내지 않습니다. 다만 편의를 위해 이 기기(브라우저)에만 마지막 입력과 열람 여부를 저장합니다.</p>
+    </details>
+    <details>
+      <summary>환불이 되나요?</summary>
+      <p>결제 후 리포트를 열지 않았다면 7일 내 전액 환불합니다. 열람한 뒤에는 디지털 콘텐츠 특성상 환불이 어렵습니다. <a href="terms.html">이용약관·환불정책</a></p>
+    </details>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-brand">
+    <span class="brand-mark small">月</span>
+    <div>
+      <p class="footer-name">월령 <span>月令</span></p>
+      <p class="footer-tag">절기로 읽는 사주 리포트</p>
+    </div>
+  </div>
+  <p class="footer-links">
+    <a href="terms.html">이용약관·환불정책</a>
+    <a href="#how">계산 방식</a>
+    <a href="#faq">자주 묻는 것</a>
+  </p>
+  <p class="footer-info" id="footerInfo"></p>
+  <p class="footer-copy">© 2026 월령. 본 서비스는 참고·오락 목적의 콘텐츠입니다.</p>
+</footer>
+
+<!-- 결제 모달 -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" type="button" data-close aria-label="닫기">✕</button>
+    <p class="eyebrow">프리미엄 리포트</p>
+    <h3 id="modalTitle">2027 정미년 전체 리포트</h3>
+    <ul class="modal-list">
+      <li>2027 재물운 · 투자 타이밍</li>
+      <li>1~12월 월별 상세 운세</li>
+      <li>피해야 할 달 · 귀인 방위</li>
+      <li>십성 구조 분석</li>
+    </ul>
+    <p class="modal-price"><strong id="modalPrice">9,900원</strong> <span id="modalAnchor">커피 두 잔 값</span></p>
+
+    <div class="pay-buttons">
+      <a class="btn btn-toss" id="tossBtn" href="#" target="_blank" rel="noopener">토스로 송금</a>
+      <a class="btn btn-kakao" id="kakaoBtn" href="#" target="_blank" rel="noopener">카카오페이로 송금</a>
+    </div>
+    <p class="modal-note" id="payNote"></p>
+
+    <div class="code-box">
+      <label class="field-label" for="codeInput">받은 코드 입력</label>
+      <div class="code-row">
+        <input id="codeInput" type="text" inputmode="text" autocomplete="off" placeholder="예) TEST2027" maxlength="32">
+        <button class="btn btn-primary" id="codeBtn" type="button">확인</button>
+      </div>
+      <p class="code-msg" id="codeMsg"></p>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script src="assets/js/solar-terms.js"></script>
+<script src="assets/js/saju-core.js"></script>
+<script src="assets/js/content.js"></script>
+<script src="assets/js/report.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
