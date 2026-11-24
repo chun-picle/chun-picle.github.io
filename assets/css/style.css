@@ -1294,3 +1294,6 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 
 /* 결제 전에는 하단 면책 문구가 비어 있으므로 상자도 남기지 않는다 */
 #ghDisclaimer:empty { display: none; }
+
+/* 어두운 강조 카드 위의 본문은 밝게 — 궁합 마무리 카드(Gate C 위) 가독성 */
+.accent-card .body-text { color: rgba(243, 237, 226, .8); }
