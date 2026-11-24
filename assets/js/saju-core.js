@@ -328,9 +328,20 @@
 
     var total = hour ? 8 : 6;
     var ratio = {};
-    ELEMENTS.forEach(function (el) {
-      ratio[el] = Math.round((counts[el] / total) * 1000) / 10;
-    });
+    /* 백분율은 합이 정확히 100이 되도록 최대잔여법으로 배분 */
+    (function () {
+      var raw = [], floorSum = 0;
+      ELEMENTS.forEach(function (el) {
+        var v = counts[el] / total * 100;
+        var f = Math.floor(v);
+        raw.push({ el: el, v: v, f: f });
+        floorSum += f;
+      });
+      var rest = 100 - floorSum;
+      raw.slice().sort(function (a, b) { return (b.v - b.f) - (a.v - a.f); })
+        .forEach(function (x, i) { if (i < rest) x.f += 1; });
+      raw.forEach(function (x) { ratio[x.el] = x.f; });
+    })();
 
     return {
       input: {

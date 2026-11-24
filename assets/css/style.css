@@ -234,6 +234,12 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .section-title::after {
   content: ""; flex: 1; height: 1px; background: var(--line);
 }
+.section-title .tag {
+  font-size: 9.5px; font-weight: 600; letter-spacing: .08em;
+  color: var(--gold); border: 1px solid rgba(176, 138, 79, .45);
+  border-radius: 100px; padding: 1px 6px; margin-left: 2px;
+  flex: 0 0 auto;
+}
 
 /* 원국 표 */
 .pillars {
@@ -272,8 +278,8 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .elements { display: grid; gap: 11px; }
 .el-row { display: grid; grid-template-columns: 30px 1fr 54px; align-items: center; gap: 10px; }
 .el-name { font-size: 13px; color: var(--ink-2); letter-spacing: .02em; }
-.el-track { height: 7px; background: rgba(20, 18, 15, .06); border-radius: 100px; overflow: hidden; }
-.el-fill { height: 100%; border-radius: 100px; width: 0; transition: width .9s cubic-bezier(.2, .8, .2, 1); }
+.el-track { height: 7px; background: rgba(20, 18, 15, .06); border-radius: 100px; overflow: hidden; display: block; }
+.el-fill { height: 100%; border-radius: 100px; width: 0; display: block; transition: width .9s cubic-bezier(.2, .8, .2, 1); }
 .el-val { font-size: 12px; color: var(--ink-3); text-align: right; font-variant-numeric: tabular-nums; }
 .balance { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
 .balance-title { font-family: var(--serif); font-size: 16px; margin-bottom: 7px; letter-spacing: -.02em; }
@@ -376,7 +382,8 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .month-row:first-child { padding-top: 4px; }
 .month-row:last-child { border-bottom: 0; padding-bottom: 2px; }
 .month-no { font-size: 12px; color: var(--ink); font-weight: 700; letter-spacing: .02em; }
-.month-ganji { font-family: var(--serif); font-size: 11.5px; color: var(--muted); margin-top: 2px; letter-spacing: .04em; }
+.month-ganji { font-family: var(--serif); font-size: 12px; color: var(--ink-3); margin-top: 3px; letter-spacing: .04em; }
+.month-range { font-size: 10.5px; color: var(--muted); margin-top: 1px; font-variant-numeric: tabular-nums; }
 .month-main p:first-child { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 3px; letter-spacing: -.01em; }
 .month-main p:last-child { font-size: 12.8px; color: var(--ink-3); line-height: 1.65; }
 .grade { display: flex; gap: 2px; padding-top: 5px; }
@@ -402,8 +409,8 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 }
 .ss-bars { display: grid; gap: 7px; }
 .ss-row { display: grid; grid-template-columns: 42px 1fr 18px; gap: 9px; align-items: center; font-size: 12px; color: var(--ink-3); }
-.ss-track { height: 5px; background: rgba(20, 18, 15, .06); border-radius: 100px; overflow: hidden; }
-.ss-fill { height: 100%; background: var(--ink-3); border-radius: 100px; opacity: .55; }
+.ss-track { height: 5px; background: rgba(20, 18, 15, .06); border-radius: 100px; overflow: hidden; display: block; }
+.ss-fill { height: 100%; background: var(--ink-3); border-radius: 100px; opacity: .55; display: block; }
 
 /* 공유 */
 .share-section { padding-bottom: 10px; }

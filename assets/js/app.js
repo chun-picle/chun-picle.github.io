@@ -99,7 +99,7 @@
   function renderElements(rep) {
     var max = Math.max.apply(null, rep.elements.map(function (e) { return e.count; }));
     var html = rep.elements.map(function (e) {
-      var pct = rep.core.total ? Math.round(e.count / rep.core.total * 100) : 0;
+      var pct = e.pct;
       var w = max ? Math.round(e.count / max * 100) : 0;
       return '<div class="el-row">' +
         '<span class="el-name">' + e.el + '</span>' +
@@ -161,7 +161,7 @@
       for (var i = 1; i <= 5; i++) bars += '<i class="' + (i <= m.grade ? 'on' : '') + '"></i>';
       var desc = m.body + (m.relNote ? ' ' + m.relNote : '');
       return '<div class="month-row">' +
-        '<div><p class="month-no">' + m.no + '월</p><p class="month-ganji">' + m.label + ' · ' + m.range + '</p></div>' +
+        '<div><p class="month-no">' + m.no + '월</p><p class="month-ganji">' + m.label + '월</p><p class="month-range">' + m.range + '</p></div>' +
         '<div class="month-main"><p>' + m.title + '</p><p>' + desc + '</p></div>' +
         '<div class="grade">' + bars + '</div>' +
         '</div>';
@@ -180,9 +180,9 @@
     }).join('');
     var nb = '중요한 자리·계약·면담은 이 방향의 자리에서 잡으면 흐름이 덜 막힙니다. ';
     if (rep.avoid.dir) {
-      nb += '다만 2027년 미(未)의 방향인 ' + rep.avoid.dir + '은 올해 일지와 부딪히는 방향이라, 큰 결정을 그 자리에서 즉석으로 내리지는 마세요.';
+      nb += '다만 2027년 미(未)의 방향인 ' + rep.avoid.dir + ' 방향은 올해 내 일지와 부딪히니, 큰 결정을 그 자리에서 즉석으로 내리지는 마세요.';
     } else {
-      nb += '올해 세운과 일지가 부딪히지 않아 방위로 인한 큰 마찰은 적은 편입니다.';
+      nb += '올해 세운과 내 일지가 부딪히지 않아 방위로 인한 큰 마찰은 적은 편입니다.';
     }
     $('nobleBody').textContent = nb;
 
@@ -280,7 +280,10 @@
     $('modalPrice').textContent = window.CONFIG.priceLabel;
     $('modalAnchor').textContent = window.CONFIG.anchorLabel;
     $('unlockBtnPrice').textContent = window.CONFIG.priceLabel;
-    $('payNote').textContent = window.CONFIG.payNote;
+    var noPay = !window.CONFIG.tossUrl && !window.CONFIG.kakaoUrl;
+    $('payNote').textContent = noPay
+      ? '결제 링크를 준비 중입니다. 지금은 데모 코드(' + window.CONFIG.demoCode + ')로 전체 리포트를 먼저 확인해 보세요.'
+      : window.CONFIG.payNote;
 
     var toss = $('tossBtn'), kakao = $('kakaoBtn');
     if (window.CONFIG.tossUrl) { toss.href = window.CONFIG.tossUrl; toss.classList.remove('is-off'); }
