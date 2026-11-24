@@ -200,9 +200,12 @@
     if (!box) return;
     box.innerHTML = '';
     res.axes.forEach(function (ax) {
-      var row = el('div', 'sk-row sk-axis');
-      row.appendChild(el('b', null, ax.name));
-      row.appendChild(el('span', null, '·····점'));
+      var row = el('div', 'sk-row');
+      var head = el('div', 'sk-axis');
+      head.appendChild(el('b', null, ax.name));
+      head.appendChild(el('span', null, '·····점'));
+      row.appendChild(head);
+      row.appendChild(el('i'));
       box.appendChild(row);
     });
     box.appendChild(el('p', 'note', '2027 월별 시너지 캘린더 · 조합 해석 · 갈등 대처법은 전체 리포트에서 열립니다.'));
