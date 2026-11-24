@@ -511,8 +511,9 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .wk-table {
   display: grid; gap: 1px; background: var(--line);
   border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
-  min-width: 430px;
+  grid-template-columns: 50px repeat(4, minmax(82px, 1fr));
 }
+.wk-table.three { grid-template-columns: 50px repeat(3, minmax(90px, 1fr)); }
 .wk-cell {
   padding: 8px 5px 9px; text-align: center;
   background: #FCFBF8; min-height: 30px;
@@ -531,10 +532,10 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .wk-ko { font-size: 9px; color: var(--muted); margin-top: 1px; }
 .wk-ss { font-size: 9.5px; color: var(--ink-3); margin-top: 2px; letter-spacing: -.02em; }
 .wk-hidden { display: grid; gap: 2px; }
-.wk-hidden p { display: flex; align-items: baseline; justify-content: center; gap: 2px; line-height: 1.3; }
-.wk-hidden b { font-family: var(--serif); font-size: 11.5px; font-weight: 500; color: var(--ink); }
-.wkh-role { font-size: 8px; color: var(--muted); }
-.wkh-ss { font-size: 8.5px; color: var(--ink-3); letter-spacing: -.03em; }
+.wk-hidden p { display: flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.35; }
+.wk-hidden b { font-family: var(--serif); font-size: 12.5px; font-weight: 500; color: var(--ink); }
+.wkh-role { font-size: 8.5px; color: var(--muted); }
+.wkh-ss { font-size: 9.5px; color: var(--ink-3); letter-spacing: -.03em; }
 .wk-us { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
 .wk-han { font-family: var(--serif); font-size: 9.5px; color: var(--gold); margin-top: 1px; }
 .wk-gm {
@@ -824,6 +825,27 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
   box-shadow: 0 12px 30px -8px rgba(20, 18, 15, .5);
 }
 @keyframes toastIn { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+@media (max-width: 560px) {
+  .wk-table { grid-template-columns: 44px repeat(4, minmax(58px, 1fr)); }
+  .wk-table.three { grid-template-columns: 44px repeat(3, minmax(70px, 1fr)); }
+  .wk-cell { padding: 6px 2px 7px; }
+  .wk-head { padding: 7px 2px; }
+  .wk-head b { font-size: 11px; }
+  .wk-head span { font-size: 7.5px; }
+  .wk-corner, .wk-rowhead { font-size: 8.5px; }
+  .wk-char { font-size: 19px; }
+  .wk-ko { font-size: 8px; }
+  .wk-ss { font-size: 8.5px; }
+  .wk-hidden { gap: 1px; }
+  .wk-hidden p { gap: 2px; }
+  .wk-hidden b { font-size: 10.5px; }
+  .wkh-role { font-size: 7.5px; }
+  .wkh-ss { font-size: 8px; }
+  .wk-us { font-size: 11px; }
+  .wk-han { font-size: 8.5px; }
+  .wk-gm { font-size: 7.5px; padding: 1px 4px; }
+}
 
 /* ---------- desktop ---------- */
 @media (min-width: 720px) {

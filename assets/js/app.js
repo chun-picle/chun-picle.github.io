@@ -300,7 +300,7 @@
       '지지는 겉글자보다 안쪽을 더 많이 담기 때문에, 실제 성격과 운의 바탕은 지장간에서 드러납니다.';
 
     var table = $('wongukTable');
-    table.style.gridTemplateColumns = '52px repeat(' + rows.length + ', minmax(86px, 1fr))';
+    table.className = 'wk-table' + (rows.length === 3 ? ' three' : '');
 
     var html = '<div class="wk-cell wk-head wk-corner">구분</div>' + rows.map(function (r) {
       return '<div class="wk-cell wk-head' + (r.key === 'day' ? ' is-day' : '') + '">' +

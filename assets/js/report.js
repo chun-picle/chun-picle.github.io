@@ -769,15 +769,32 @@
       }
     });
 
-    /* 신살 */
+    /* 신살 — 같은 신살이 여러 기준에서 잡히면 한 장으로 합친다 */
     var rawSinsal = S.scanSinsal(core);
+    var merged = [];
+    rawSinsal.forEach(function (s) {
+      var hit = null;
+      for (var i = 0; i < merged.length; i++) {
+        if (merged[i].key === s.key) { hit = merged[i]; break; }
+      }
+      if (hit) {
+        if (hit.bases.indexOf(s.base) < 0) hit.bases.push(s.base);
+        s.pillars.forEach(function (p) { if (hit.pillars.indexOf(p) < 0) hit.pillars.push(p); });
+      } else {
+        merged.push({
+          key: s.key, name: s.name, han: s.han, kind: s.kind,
+          bases: [s.base], pillars: s.pillars.slice()
+        });
+      }
+    });
+
     var kindOrder = { good: 0, neutral: 1, caution: 2 };
-    var sinsal = rawSinsal.slice().sort(function (a, b) {
+    var sinsal = merged.slice().sort(function (a, b) {
       return (kindOrder[a.kind] || 1) - (kindOrder[b.kind] || 1);
     }).map(function (s) {
       var t = C.SINSAL_TEXT[s.key] || { head: s.name, body: '' };
       return {
-        key: s.key, name: s.name, han: s.han, base: s.base, pillars: s.pillars,
+        key: s.key, name: s.name, han: s.han, base: s.bases.join(' · '), pillars: s.pillars,
         kind: s.kind, head: t.head, body: t.body
       };
     });
