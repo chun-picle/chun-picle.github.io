@@ -26,6 +26,33 @@
     toastTimer = setTimeout(function () { t.hidden = true; }, 2600);
   }
 
+  /* ---------- 가격 · 할인 표시 ---------- */
+  /* config.js의 priceLabel(판매가)·originalPriceLabel(정가)·discountLabel(할인율)을
+     잠금 영역과 결제 모달에 함께 반영한다. */
+  function setPriceText(id, value, hideWhenEmpty) {
+    var el = $(id);
+    if (!el) return;
+    el.textContent = value || '';
+    if (hideWhenEmpty) el.style.display = value ? '' : 'none';
+  }
+  function applyPrice() {
+    var c = window.CONFIG || {};
+    var now = c.priceLabel || '';
+    var was = c.originalPriceLabel || '';
+    var off = c.discountLabel || '';
+
+    setPriceText('modalPrice', now);
+    setPriceText('unlockBtnPrice', now);
+    setPriceText('modalAnchor', c.anchorLabel || '');
+    setPriceText('modalPriceWas', was, true);
+    setPriceText('lockPriceWas', was, true);
+    setPriceText('modalPriceOff', off, true);
+    setPriceText('lockPriceOff', off, true);
+
+    var gm = $('gumroadBtnPrice');
+    if (gm) gm.textContent = now ? '(' + now + ')' : '';
+  }
+
   /* ---------- 성별 토글 ---------- */
   Array.prototype.forEach.call(document.querySelectorAll('.seg'), function (b) {
     b.addEventListener('click', function () {
@@ -277,13 +304,10 @@
 
   /* ---------- 잠금 해제 ---------- */
   function openModal() {
-    $('modalPrice').textContent = window.CONFIG.priceLabel;
-    $('modalAnchor').textContent = window.CONFIG.anchorLabel;
-    $('unlockBtnPrice').textContent = window.CONFIG.priceLabel;
+    applyPrice();
 
     var gm = $('gumroadBtn');
     if (gm) {
-      if ($('gumroadBtnPrice')) $('gumroadBtnPrice').textContent = '(' + window.CONFIG.priceLabel + ')';
       if (window.CONFIG.gumroadUrl) {
         gm.href = window.CONFIG.gumroadUrl;
         gm.classList.remove('is-off');
@@ -494,8 +518,7 @@
     } else {
       $('footerInfo').textContent = window.CONFIG.businessInfo || '';
     }
-    $('modalPrice').textContent = window.CONFIG.priceLabel;
-    $('unlockBtnPrice').textContent = window.CONFIG.priceLabel;
+    applyPrice();
 
     if (saved.input) {
       var i = saved.input;

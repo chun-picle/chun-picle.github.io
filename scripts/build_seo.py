@@ -48,7 +48,7 @@ YEAR_LABEL = "2027 정미년"
 YEAR_SHORT = "丁未 · 2027"
 PUBLISH_DATE = "2026-11-24"          # 최초 발행일 (JSON-LD datePublished)
 BUILD_DATE = datetime.date.today().isoformat()   # 생성일 (sitemap lastmod, dateModified)
-CSS_VERSION = "20261124g"
+CSS_VERSION = "20261124h"
 
 ROOT = Path(__file__).resolve().parent.parent
 ILJU_DIR = ROOT / "ilju"

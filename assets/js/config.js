@@ -22,10 +22,14 @@ var CONFIG = {
   gumroadVerifyUrl: 'https://api.gumroad.com/v2/licenses/verify',
   gumroadTimeoutMs: 15000,
 
-  /* 가격 */
-  price: 9900,
-  priceLabel: '9,900원',
-  anchorLabel: '커피 두 잔 값',
+  /* 가격 (2026-11-24부터 정가 9,900원 → 50% 할인 4,900원) */
+  price: 4900,
+  priceLabel: '4,900원',
+  originalPrice: 9900,          // 정가 (취소선으로 함께 표시)
+  originalPriceLabel: '9,900원',
+  discountPercent: 50,
+  discountLabel: '50% 할인',
+  anchorLabel: '커피 한 잔 값',
 
   /* ---- 잠금 해제 코드 ---- */
   /* 데모 코드: TEST2027 (누구나 전체 리포트를 체험) */

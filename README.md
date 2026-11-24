@@ -39,13 +39,18 @@ tests/run_tests.py        테스트 러너 (quickjs 또는 node)
 ```js
 gumroadUrl: 'https://chuniverse61.gumroad.com/l/wolryeong-2027',   // 결제 페이지
 gumroadProductId: '3eMAYhr_WKGgAd4-fUXXvA==',                     // Gumroad 상품 ID (라이선스 검증용)
-priceLabel: '9,900원',
+priceLabel: '4,900원',                          // 판매가 (실제 결제 금액과 같게 유지)
+originalPriceLabel: '9,900원',                   // 정가 (잠금 영역·결제 모달에 취소선으로 병기)
+discountLabel: '50% 할인',                        // 정가 대비 할인 표시
+discountPercent: 50,
 accessCodes: ['TEST2027', 'A7F2K9'],           // 수동 판매한 열람 코드 (쉼표로 추가)
 ```
 
 - 결제는 Gumroad(`gumroadUrl`)에서 카드·애플페이로 이루어지고, 구매자에게 라이선스 키가 발급됩니다.
   사이트는 입력된 코드를 `https://api.gumroad.com/v2/licenses/verify`에 POST해 검증한 뒤 열어 줍니다
   (`success === true` 이고 환불·차지백이 아닐 때).
+- 가격 표시는 `priceLabel`(판매가)과 `originalPriceLabel`(정가)·`discountLabel`(할인율)로 그려집니다.
+  가격을 바꿀 때는 이 세 값과 Gumroad 상품 금액을 함께 맞춰 주세요.
 - `accessCodes`·데모 코드는 네트워크 없이 즉시 열립니다(수동 발급·테스트용).
 - 링크가 비어 있으면 모달의 버튼이 "준비 중" 상태로 표시됩니다(결제는 일어나지 않음).
 - 해제 상태는 이 브라우저에 저장되어 다시 들어와도 잠금이 풀린 상태로 열립니다.
@@ -95,8 +100,8 @@ python3 tests/run_tests.py         # 25개 케이스, ALL PASS 확인
 |---|---|
 | 무료 | 사주팔자 8글자, 오행 밸런스, 일주 성격, 일간 기질, 2027 정미년 한 줄 총운 |
 | 유료 (프리미엄) | 2027 재물운·투자 타이밍(공격/방어 구간), 1~12월 상세 운세(5단계 등급), 피해야 할 달, 귀인 방위, 십성 구조 |
-| 가격 | config.js `price: 9900` |
-| 결제 | Gumroad (`wolryeong-2027`, 9,900원) — 카드·애플페이, 구매 시 라이선스 키 발급 (1회성 디지털 콘텐츠) |
+| 가격 | config.js `price: 4900` / `priceLabel: '4,900원'` (정가 9,900원에서 50% 할인, 정가는 취소선으로 병기) |
+| 결제 | Gumroad (`wolryeong-2027`, 4,900원) — 카드·애플페이, 구매 시 라이선스 키 발급 (1회성 디지털 콘텐츠) |
 | 바이럴 | Web Share API 공유 버튼 (iOS 공유 시트) + 클립보드 폴백 |
 
 공유 링크에는 생년월일이 담기지 않습니다. 링크를 연 사람은 자기 사주로 새로 계산됩니다.

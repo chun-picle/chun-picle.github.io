@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261124g">
+<link rel="stylesheet" href="assets/css/style.css?v=20261124h">
 </head>
 <body>
 
@@ -199,8 +199,12 @@
             2027 재물운과 투자 타이밍, 12개월 상세 운세,<br>
             피해야 할 달과 귀인 방위까지 — 전부 열립니다.
           </p>
+          <p class="lock-price">
+            <s class="price-was" id="lockPriceWas">9,900원</s>
+            <span class="price-off" id="lockPriceOff">50% 할인</span>
+          </p>
           <button class="btn btn-primary btn-block" id="unlockBtn" type="button">
-            <span id="unlockBtnLabel">리포트 열기</span> · <span id="unlockBtnPrice">9,900원</span>
+            <span id="unlockBtnLabel">리포트 열기</span> · <span id="unlockBtnPrice">4,900원</span>
           </button>
           <p class="lock-sub">사주팔자·오행·일주 성격은 계속 무료입니다</p>
         </div>
@@ -256,7 +260,7 @@
     </details>
     <details>
       <summary>결제는 어떻게 하나요?</summary>
-      <p>리포트 열기 버튼을 누르면 Gumroad 결제 페이지가 새 창으로 열립니다. 카드·애플페이로 9,900원을 결제하면 코드가 발급되고, 그 코드를 넣으면 이 기기에서 계속 열람됩니다.</p>
+      <p>리포트 열기 버튼을 누르면 Gumroad 결제 페이지가 새 창으로 열립니다. 카드·애플페이로 4,900원(정가 9,900원에서 50% 할인)을 결제하면 코드가 발급되고, 그 코드를 넣으면 이 기기에서 계속 열람됩니다.</p>
     </details>
     <details>
       <summary>내 생년월일이 저장되나요?</summary>
@@ -313,10 +317,10 @@
       <li>피해야 할 달 · 귀인 방위</li>
       <li>십성 구조 분석</li>
     </ul>
-    <p class="modal-price"><strong id="modalPrice">9,900원</strong> <span id="modalAnchor">커피 두 잔 값</span></p>
+    <p class="modal-price"><strong id="modalPrice">4,900원</strong> <s class="price-was" id="modalPriceWas">9,900원</s> <span class="price-off" id="modalPriceOff">50% 할인</span> <span id="modalAnchor">커피 한 잔 값</span></p>
 
     <div class="pay-buttons">
-      <a class="btn btn-gumroad" id="gumroadBtn" href="#" target="_blank" rel="noopener">카드 · 애플페이로 결제하고 코드 받기 <span id="gumroadBtnPrice">(9,900원)</span></a>
+      <a class="btn btn-gumroad" id="gumroadBtn" href="#" target="_blank" rel="noopener">카드 · 애플페이로 결제하고 코드 받기 <span id="gumroadBtnPrice">(4,900원)</span></a>
       <a class="btn btn-toss" id="tossBtn" href="#" target="_blank" rel="noopener" hidden>토스로 송금</a>
       <a class="btn btn-kakao" id="kakaoBtn" href="#" target="_blank" rel="noopener" hidden>카카오페이로 송금</a>
     </div>
@@ -339,7 +343,7 @@
 <script src="assets/js/saju-core.js?v=20261124d"></script>
 <script src="assets/js/content.js?v=20261124d"></script>
 <script src="assets/js/report.js?v=20261124d"></script>
-<script src="assets/js/config.js?v=20261124d"></script>
-<script src="assets/js/app.js?v=20261124d"></script>
+<script src="assets/js/config.js?v=20261124e"></script>
+<script src="assets/js/app.js?v=20261124e"></script>
 </body>
 </html>
