@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261125g">
+<link rel="stylesheet" href="assets/css/style.css?v=20261125h">
 </head>
 <body>
 
@@ -30,7 +30,8 @@
   </a>
   <nav class="topbar-nav">
     <a class="topbar-link" href="ilju/">일주별 운세</a>
-    <a class="topbar-link" href="#form">내 사주 보기</a>
+    <a class="topbar-link" href="#birthForm" data-view="solo">내 사주 보기</a>
+    <a class="topbar-link" href="#ghForm" data-view="gunghap">2인 궁합</a>
   </nav>
 </header>
 
@@ -38,6 +39,12 @@
 
   <!-- ================= HERO ================= -->
   <section class="hero" id="top">
+    <div class="modetabs" role="tablist" aria-label="리포트 선택">
+      <button type="button" class="modetab is-on" role="tab" aria-selected="true" data-view="solo">2027 내 리포트</button>
+      <button type="button" class="modetab" role="tab" aria-selected="false" data-view="gunghap">2인 궁합</button>
+    </div>
+
+    <div id="soloView">
     <p class="eyebrow">2027 정미년 · 정밀 만세력</p>
     <h1>내 사주로 읽는<br><em>2027년의 돈</em></h1>
     <p class="lede">
@@ -80,6 +87,64 @@
       <li><span>私</span><div><strong>서버 저장 없음</strong>생년월일이 어디에도 남지 않습니다</div></li>
       <li><span>無</span><div><strong>사주팔자 무료</strong>원국·오행 균형은 결제 없이 공개</div></li>
     </ul>
+    </div><!-- /soloView -->
+
+    <!-- ================= 2인 궁합 입력 ================= -->
+    <div id="ghView" hidden>
+      <p class="eyebrow">2인 궁합 · 두 사람의 2027년</p>
+      <p class="gh-h1">두 사람의 사주로 보는<br><em>2027년의 궁합</em></p>
+      <p class="lede">
+        두 사람의 생년월일시를 넣으면 천간·지지의 합과 충, 오행·십성으로<br>
+        궁합 총점과 다섯 축, 2027년 월별 시너지를 계산합니다.
+      </p>
+
+      <form id="ghForm" class="card form" novalidate>
+        <div class="field">
+          <span class="field-label">관계 모드</span>
+          <div class="segmented" role="radiogroup" aria-label="관계 모드">
+            <button type="button" class="seg mode-seg is-on" data-mode="lover" role="radio" aria-checked="true">연인</button>
+            <button type="button" class="seg mode-seg" data-mode="business" role="radio" aria-checked="false">동업자</button>
+          </div>
+          <p class="field-help" id="ghModeHelp">연인 모드 — 끌림과 마찰, 2027년 두 사람의 흐름을 봅니다.</p>
+        </div>
+
+        <div class="gh-pair">
+          <div class="gh-person">
+            <p class="gh-person-label"><span>A</span> 나</p>
+            <div class="field">
+              <label class="field-label" for="ghDateA">양력 생년월일</label>
+              <input id="ghDateA" name="ghDateA" type="date" min="1920-01-01" max="2040-12-31" autocomplete="bday">
+              <label class="field-label gh-label-gap" for="ghTimeA">출생 시각</label>
+              <input id="ghTimeA" name="ghTimeA" type="time" value="12:00" autocomplete="off">
+              <label class="checkline"><input id="ghUnknownA" type="checkbox"><span>시각을 몰라요</span></label>
+            </div>
+          </div>
+          <div class="gh-person">
+            <p class="gh-person-label"><span>B</span> 상대방</p>
+            <div class="field">
+              <label class="field-label" for="ghDateB">양력 생년월일</label>
+              <input id="ghDateB" name="ghDateB" type="date" min="1920-01-01" max="2040-12-31" autocomplete="off">
+              <label class="field-label gh-label-gap" for="ghTimeB">출생 시각</label>
+              <input id="ghTimeB" name="ghTimeB" type="time" value="12:00" autocomplete="off">
+              <label class="checkline"><input id="ghUnknownB" type="checkbox"><span>시각을 몰라요</span></label>
+            </div>
+          </div>
+        </div>
+
+        <p class="field-help">음력이 아니라 <strong>양력</strong> 생일로 넣어 주세요. 음력만 아는 경우 변환 후 입력하면 됩니다.</p>
+
+        <button class="btn btn-primary btn-block" type="submit" style="margin-top:18px">
+          궁합 보기 <span class="btn-arrow">→</span>
+        </button>
+        <p class="privacy-line">두 사람의 생년월일은 서버로 전송되지 않고, 이 브라우저 안에서만 계산됩니다.</p>
+      </form>
+
+      <ul class="trust">
+        <li><span>合</span><div><strong>합·충 계산</strong>천간합·육합·삼합과 충·형·파·해를 규칙으로</div></li>
+        <li><span>私</span><div><strong>서버 저장 없음</strong>두 사람의 생년월일이 어디에도 남지 않습니다</div></li>
+        <li><span>無</span><div><strong>총점 무료</strong>총점·끌림·좋은 달 1개는 결제 없이 공개</div></li>
+      </ul>
+    </div><!-- /ghView -->
   </section>
 
   <!-- ================= RESULT ================= -->
@@ -332,6 +397,121 @@
 
   </section>
 
+  <!-- ================= 2인 궁합 결과 ================= -->
+  <section id="ghResult" class="result" hidden aria-live="polite">
+
+    <div class="result-head">
+      <div>
+        <p class="eyebrow" id="ghEyebrow">2인 궁합 · 연인</p>
+        <h2 class="result-title" id="ghTitle">두 사람의 2027년</h2>
+        <p class="result-sub" id="ghSub">생년월일은 결과에 표시하지 않습니다</p>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="ghRecalc" type="button">다시 넣기</button>
+    </div>
+
+    <!-- 무료: 총점 · 구간 · 끝림 · 좋은 달 -->
+    <div class="accent-card gh-hero">
+      <p class="year-label">궁합 총점</p>
+      <p class="gh-score"><b id="ghScore">0</b><span>점</span></p>
+      <p class="gh-band" id="ghBand"></p>
+      <div class="gh-free-axis">
+        <p class="mini-label" id="ghAttractionName">끌림</p>
+        <p class="body-text dim" id="ghAttraction"></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3 class="section-title">2027년 함께 좋은 달</h3>
+      <div class="card plain" id="ghGoodMonthCard"></div>
+    </div>
+
+    <!-- ===== 유료 ===== -->
+    <div class="premium" id="ghPremium">
+      <div class="premium-inner" id="ghPremiumInner">
+
+        <div class="section">
+          <h3 class="section-title">총점 해석 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <p class="gh-band-title" id="ghBandTitle"></p>
+            <p class="body-text" id="ghBandSummary"></p>
+            <p class="body-text dim" id="ghBandAdvice"></p>
+            <div class="divider"></div>
+            <p class="mini-label">오행으로 본 두 사람</p>
+            <p class="body-text dim" id="ghYongsin"></p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">다섯 축 <span class="tag">유료</span></h3>
+          <div class="gh-axes" id="ghAxes"></div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">우리를 이어주는 코드 <span class="tag">유료</span></h3>
+          <div class="card plain" id="ghLinks"></div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">부딪히는 지점 <span class="tag">유료</span></h3>
+          <div class="card plain" id="ghClashes"></div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">십성으로 본 사이 <span class="tag">유료</span></h3>
+          <div class="card plain" id="ghTenGod"></div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">2027 월별 시너지 캘린더 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <div class="gh-cal" id="ghMonths"></div>
+            <p class="note">월 구분은 달력이 아니라 절입일(節入日) 기준입니다.</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">갈등 대처법 <span class="tag">유료</span></h3>
+          <div class="card plain" id="ghAdvice"></div>
+        </div>
+
+        <div class="section">
+          <div class="card accent-card">
+            <p class="year-label" id="ghClosingLabel">2027년, 두 사람에게</p>
+            <p class="body-text" id="ghClosing"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 잠금 오버레이 -->
+      <div class="lock" id="ghLock">
+        <div class="lock-box">
+          <p class="lock-icon">◈</p>
+          <p class="lock-title">궁합 전체 리포트</p>
+          <p class="lock-desc" id="ghLockDesc"></p>
+          <p class="lock-price">
+            <s class="price-was" id="ghLockPriceWas">9,900원</s>
+            <span class="price-off" id="ghLockPriceOff">50% 할인</span>
+          </p>
+          <button class="btn btn-primary btn-block" id="ghUnlockBtn" type="button">
+            <span id="ghUnlockBtnLabel">전체 리포트 보기</span> · <span id="ghUnlockBtnPrice">4,900원</span>
+          </button>
+          <p class="lock-sub">총점·끌림·좋은 달 1개는 계속 무료입니다</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section share-section">
+      <button class="btn btn-outline btn-block" id="ghShareBtn" type="button">
+        <span class="share-ico">↗</span> 결과 공유하기
+      </button>
+      <p class="note center">총점과 구간만 공유됩니다. 두 사람의 생년월일은 어디에도 담기지 않습니다.</p>
+    </div>
+
+    <p class="disclaimer" id="ghDisclaimer"></p>
+
+  </section>
+
   <!-- ================= HOW ================= -->
   <section class="how" id="how">
     <h3 class="section-title">왜 이 리포트가 정확한가</h3>
@@ -422,7 +602,7 @@
     <button class="modal-close" type="button" data-close aria-label="닫기">✕</button>
     <p class="eyebrow">프리미엄 리포트</p>
     <h3 id="modalTitle">2027 정미년 전체 리포트</h3>
-    <ul class="modal-list">
+    <ul class="modal-list" id="modalList">
       <li>원국 지장간·12운성·공망·격국·신살 정밀 해부</li>
       <li>신강·신약 판정과 용신·희신·기신 처방</li>
       <li>10년 대운표와 현재 대운 × 2027 세운</li>
@@ -453,11 +633,14 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/solar-terms.js?v=20261125g"></script>
-<script src="assets/js/saju-core.js?v=20261125g"></script>
-<script src="assets/js/content.js?v=20261125g"></script>
-<script src="assets/js/report.js?v=20261125g"></script>
-<script src="assets/js/config.js?v=20261125g"></script>
-<script src="assets/js/app.js?v=20261125g"></script>
+<script src="assets/js/solar-terms.js?v=20261125h"></script>
+<script src="assets/js/saju-core.js?v=20261125h"></script>
+<script src="assets/js/content.js?v=20261125h"></script>
+<script src="assets/js/report.js?v=20261125h"></script>
+<script src="assets/js/config.js?v=20261125h"></script>
+<script src="assets/js/app.js?v=20261125h"></script>
+<script src="assets/js/gunghap-content.js?v=20261125h"></script>
+<script src="assets/js/gunghap.js?v=20261125h"></script>
+<script src="assets/js/gunghap-ui.js?v=20261125h"></script>
 </body>
 </html>

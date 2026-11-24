@@ -54,9 +54,9 @@
   }
 
   /* ---------- 성별 토글 ---------- */
-  Array.prototype.forEach.call(document.querySelectorAll('.seg'), function (b) {
+  Array.prototype.forEach.call(document.querySelectorAll('.seg[data-gender]'), function (b) {
     b.addEventListener('click', function () {
-      Array.prototype.forEach.call(document.querySelectorAll('.seg'), function (x) {
+      Array.prototype.forEach.call(document.querySelectorAll('.seg[data-gender]'), function (x) {
         x.classList.remove('is-on'); x.setAttribute('aria-checked', 'false');
       });
       b.classList.add('is-on');
@@ -565,13 +565,34 @@
   });
 
   $('recalcBtn').addEventListener('click', function () {
-    var top = $('form').getBoundingClientRect().top + window.pageYOffset - 80;
+    var top = $('birthForm').getBoundingClientRect().top + window.pageYOffset - 80;
     window.scrollTo({ top: top, behavior: 'smooth' });
     $('birthDate').focus({ preventScroll: true });
   });
 
-  /* ---------- 잠금 해제 ---------- */
-  function openModal() {
+  /* ---------- 결제 모달 ---------- */
+  /* 궁합 화면에서 열면 상품명·설명만 바꾸고, 닫거나 다시 열면 원래 문구로 돌아간다. */
+  var modalCopy = null;
+  function applyModalScene(scene) {
+    var titleEl = $('modalTitle'), listEl = $('modalList');
+    if (!titleEl || !listEl) return;
+    if (!modalCopy) {
+      modalCopy = { title: titleEl.textContent, items: listEl.innerHTML };
+    }
+    var custom = (scene === 'gunghap' && typeof window.__ghModalScene === 'function') ? window.__ghModalScene() : null;
+    if (custom) {
+      titleEl.textContent = custom.title || modalCopy.title;
+      listEl.innerHTML = (custom.items || []).map(function (t) {
+        return '<li>' + String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</li>';
+      }).join('');
+    } else {
+      titleEl.textContent = modalCopy.title;
+      listEl.innerHTML = modalCopy.items;
+    }
+  }
+
+  function openModal(scene) {
+    applyModalScene(scene || 'solo');
     applyPrice();
 
     var gm = $('gumroadBtn');
@@ -611,7 +632,7 @@
     document.body.style.overflow = '';
   }
 
-  $('unlockBtn').addEventListener('click', openModal);
+  $('unlockBtn').addEventListener('click', function () { openModal('solo'); });
   Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function (x) {
     x.addEventListener('click', closeModal);
   });
@@ -652,8 +673,10 @@
       timeUnknown: state.core.input.timeUnknown, gender: state.core.input.gender
     } : null });
     setMsg(msg || '확인됐습니다. 전체 리포트를 열었습니다.', true);
+    document.dispatchEvent(new CustomEvent('wolryeong:unlocked'));
     setTimeout(function () {
       closeModal();
+      if (typeof window.__wolryeongAfterUnlock === 'function' && window.__wolryeongAfterUnlock()) return;
       var y = $('premium').getBoundingClientRect().top + window.pageYOffset - 70;
       window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
     }, 700);
@@ -813,7 +836,7 @@
       }
       if (i.gender) {
         state.gender = i.gender;
-        Array.prototype.forEach.call(document.querySelectorAll('.seg'), function (x) {
+        Array.prototype.forEach.call(document.querySelectorAll('.seg[data-gender]'), function (x) {
           var on = x.getAttribute('data-gender') === i.gender;
           x.classList.toggle('is-on', on);
           x.setAttribute('aria-checked', on ? 'true' : 'false');
@@ -826,5 +849,10 @@
     }
   })();
 
-  window.__app = { run: run, state: state };
+  window.__app = {
+    run: run,
+    state: state,
+    openUnlockModal: function (scene) { openModal(scene); },
+    isUnlocked: function () { return !!state.unlocked; }
+  };
 })();

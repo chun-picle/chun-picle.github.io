@@ -25,8 +25,14 @@ assets/js/content.js      해석 콘텐츠 (60갑자 일주, 일간, 오행, 십
 assets/js/report.js       원국 → 화면용 리포트 (원국 심층 해부·재물 구간·월별 등급·귀인 방위 계산)
 assets/js/config.js       ★ 결제 링크·가격·잠금 코드 (여기만 고치면 됨)
 assets/js/app.js          화면 로직 (폼·렌더·잠금·공유)
+assets/data/gunghap-content.json   ★ 2인 궁합 해석 문안 원본 (수지 확정본)
+assets/js/gunghap-content.js      위 JSON의 자동 생성 번들 (fetch 없이 로드)
+assets/js/gunghap.js      2인 궁합 계산 엔진 (천간합·지지합·충형파해·오행·십성·용신·2027 흐름)
+assets/js/gunghap-ui.js   2인 궁합 화면 (탭·입력·무료 미리보기·잠금·12개월 캘린더·공유)
+scripts/build_gunghap_content.py  ★ JSON → gunghap-content.js 번들 생성기
 scripts/build_seo.py      ★ 일주 60개 페이지 · sitemap · robots 생성기 (도메인 한 줄로 전체 치환)
 tests/test_saju.js        계산 검증 테스트 (116개)
+tests/test_gunghap.js     궁합 검증 테스트 (명세서 QA 체크리스트)
 tests/run_tests.py        테스트 러너 (quickjs 또는 node)
 ```
 
@@ -105,6 +111,30 @@ python3 tests/run_tests.py         # 116개 케이스, ALL PASS 확인
 | 바이럴 | Web Share API 공유 버튼 (iOS 공유 시트) + 클립보드 폴백 |
 
 공유 링크에는 생년월일이 담기지 않습니다. 링크를 연 사람은 자기 사주로 새로 계산됩니다.
+
+### 4-1. 2인 궁합 (같은 페이지의 두 번째 탭, 4,900원)
+
+상단 탭 `2인 궁합`에서 두 사람의 생년월일시와 관계 모드(연인·동업자)를 넣으면 궁합 리포트가 나옵니다.
+계산 규칙은 명세서(`wolryeong-gunghap-spec.md`) 2.3·2.4 그대로입니다.
+
+| 축 | 배점 | 가점·감점 (gunghap.js `POINTS`) |
+|---|---|---|
+| 끌림 | 30 | 기본 15 · 일간 천간합 +10 · 지지 일지 육합 +9 / 삼합 +6 · 그 밖의 지지합 +1(최대 +3) · 천간충 +2 |
+| 소통 | 20 | 기본 10 · 오행 상생 +8 / 같은 오행 +5 / 상극 +2 · 십성 식상 +5 · 비견·겁재 +4 |
+| 재물 시너지 | 25 | 기본 14 · 정재·편재 +7 (동업 모드 +5) · 상대 강한 오행이 내 용신을 채우면 +4(양방향) |
+| 안정 | 15 | 기본 15에서 차감 — 일지 충 −5 · 일지 형 −3 · 일지 파/해 −2 · 그 밖의 기둥 −1(최대 −5) · 0점 하한 |
+| 2027년 흐름 | 10 | 기본 5 · 2027 정미년과 일간·일지의 합(+3)·삼합(+2)·충(−3)·형·파(−2)·해(−2)를 두 사람에 각각 적용 |
+
+총점은 다 쓴 축 점수의 합(0~100, 정수 내림)으로 `scoreBands` 구간에 넣습니다.
+무료는 **총점·구간 타이틀·끌림 축 요약·2027년 좋은 달 1개**이고, 나머지 4개 축·모든 조합 해석·12개월 캘린더·갈등 대처법은 4,900원 라이선스 키로 열립니다(1인 리포트와 같은 키·같은 결제 흐름).
+결과·공유 문구에는 두 사람의 생년월일이 들어가지 않으며, 궁합 입력값은 localStorage에도 저장하지 않습니다.
+
+문안을 고칠 때는 `assets/data/gunghap-content.json`을 고치고 번들을 다시 만듭니다.
+
+```bash
+python3 scripts/build_gunghap_content.py   # JSON → assets/js/gunghap-content.js
+python3 tests/run_tests.py                 # 궁합 QA 체크리스트 포함 전체 테스트
+```
 
 ---
 
