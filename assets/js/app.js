@@ -590,7 +590,7 @@
           if (!isNaN(uses) && uses > maxUses) {
             var contactAddr = window.CONFIG.contactEmail;
             setMsg('이 코드는 최대 사용 횟수(' + maxUses + '회)를 초과해 사용할 수 없습니다.' +
-              (contactAddr ? ' 본인이 구매한 코드가 맞다면 ' + contactAddr + '로 연락해 주세요.' : ' 본인이 구매한 코드가 맞다면 문의 메일로 연락해 주세요.'), false);
+              (contactAddr ? ' 본인이 구매한 코드가 맞다면 문의 메일(' + contactAddr + ')로 연락해 주세요.' : ' 본인이 구매한 코드가 맞다면 문의 메일로 연락해 주세요.'), false);
             return;
           }
           finishUnlock('확인됐습니다. 전체 리포트를 열었습니다.');
@@ -606,7 +606,7 @@
     }).catch(function () {
       done(function () {
         setMsg('Gumroad에 연결하지 못했습니다. 네트워크 확인 후 다시 시도해 주세요.' +
-          (window.CONFIG.contactEmail ? ' 계속되면 ' + window.CONFIG.contactEmail + '로 연락해 주세요.' : ' 계속되면 결제하신 메일로 문의해 주세요.'), false);
+          (window.CONFIG.contactEmail ? ' 계속되면 문의 메일(' + window.CONFIG.contactEmail + ')로 연락해 주세요.' : ' 계속되면 결제하신 메일로 문의해 주세요.'), false);
       });
     });
   }
