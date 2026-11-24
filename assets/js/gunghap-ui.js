@@ -151,11 +151,28 @@
 
   function gradeClass(g) { return g === '좋음' ? 'good' : (g === '조심' ? 'care' : 'mid'); }
 
+  function F() {
+    var K = window.GUNGHAP_CONTENT || {};
+    return K.funnel || {};
+  }
+
+  /* ---------- 렌더 ----------
+     결제 전(S3)에는 무료 범위만 DOM에 올린다. 유료 문구·점수는 인증 후에만 그린다. */
   function render(res) {
     state.result = res;
     var pv = window.Gunghap.freePreview(res);
 
-    /* 무료 미리보기 */
+    renderFree(pv, res);
+    if (state.unlocked) renderPaid(res);
+    else renderSkeleton(res);
+
+    if ($('ghGateTop')) $('ghGateTop').hidden = !!state.unlocked;
+    if ($('ghCrossSell')) $('ghCrossSell').hidden = !state.unlocked;
+    applyLock();
+  }
+
+  /* 무료 미리보기 — 총점·구간·끌림·좋은 달 1개 */
+  function renderFree(pv, res) {
     $('ghEyebrow').textContent = '2인 궁합 · ' + res.modeLabel;
     $('ghTitle').textContent = '두 사람의 2027년';
     $('ghScore').textContent = pv.score;
@@ -174,7 +191,26 @@
     card.appendChild(el('p', 'gh-month-comment', pv.goodMonth.comment));
     card.appendChild(el('p', 'note', '12개월 전체 캘린더는 전체 리포트에서 열립니다.'));
 
-    /* 유료: 구간 해석 */
+    if ($('ghDisclaimerTop')) $('ghDisclaimerTop').textContent = '* ' + (window.GUNGHAP_CONTENT.meta || {}).disclaimer;
+  }
+
+  /* 결제 전 자리표시자 — 축 이름만 보이고 점수·해석은 없다 */
+  function renderSkeleton(res) {
+    var box = $('ghSkeleton');
+    if (!box) return;
+    box.innerHTML = '';
+    res.axes.forEach(function (ax) {
+      var row = el('div', 'sk-row sk-axis');
+      row.appendChild(el('b', null, ax.name));
+      row.appendChild(el('span', null, '·····점'));
+      box.appendChild(row);
+    });
+    box.appendChild(el('p', 'note', '2027 월별 시너지 캘린더 · 조합 해석 · 갈등 대처법은 전체 리포트에서 열립니다.'));
+  }
+
+  /* 유료 전체 리포트 (S5) */
+  function renderPaid(res) {
+    /* 구간 해석 */
     $('ghBandTitle').textContent = res.score + '점 · ' + res.band.title;
     $('ghBandSummary').textContent = res.band.summary;
     $('ghBandAdvice').textContent = res.band.advice;
@@ -289,13 +325,6 @@
     $('ghClosingLabel').textContent = res.mode === 'business' ? '2027년, 두 사람의 돈' : '2027년, 두 사람에게';
     $('ghClosing').textContent = res.closing;
     $('ghDisclaimer').textContent = '* ' + res.disclaimer;
-
-    /* 잠금 박스 문구 */
-    var K = window.GUNGHAP_CONTENT;
-    if (K) {
-      $('ghLockDesc').textContent = K.paywall.ctaSub;
-      if ($('ghUnlockBtnLabel')) $('ghUnlockBtnLabel').textContent = '전체 리포트 보기';
-    }
   }
 
   function linkItem(title, text, where) {
@@ -318,11 +347,91 @@
     applyLock();
   }
 
-  document.addEventListener('wolryeong:unlocked', function () { setUnlocked(true); });
+  /* 잠금이 풀리면 그때 유료 리포트를 그린다 */
+  document.addEventListener('wolryeong:unlocked', function () {
+    setUnlocked(true);
+    if (state.result) render(state.result);
+    if ($('ghGateTop')) $('ghGateTop').hidden = true;
+    if ($('ghCrossSell')) $('ghCrossSell').hidden = false;
+  });
+
+  function openPay(scene) {
+    if (window.__app && window.__app.openUnlockModal) window.__app.openUnlockModal(scene || 'gunghap');
+  }
 
   if ($('ghUnlockBtn')) {
-    $('ghUnlockBtn').addEventListener('click', function () {
-      if (window.__app && window.__app.openUnlockModal) window.__app.openUnlockModal('gunghap');
+    $('ghUnlockBtn').addEventListener('click', function () { openPay('gunghap'); });
+  }
+  if ($('ghGateTopBtn')) {
+    $('ghGateTopBtn').addEventListener('click', function () { openPay('gunghap'); });
+  }
+
+  /* ---------- 문구·게이트 (v2 5절) ---------- 공구는 GUNGHAP_CONTENT.funnel에서만 가져온다 */
+  (function gates() {
+    var Fn = F();
+    var top = Fn.previewTop || {};
+    var bottom = Fn.previewBottom || {};
+    var cross = Fn.crossSell || {};
+    if ($('ghGateTopText')) $('ghGateTopText').textContent = top.text || '';
+    if ($('ghGateTopCta')) $('ghGateTopCta').textContent = top.cta || '';
+    if ($('ghGateTopSub')) $('ghGateTopSub').textContent = top.sub || '';
+    if ($('ghGateBottomText')) $('ghGateBottomText').textContent = bottom.text || '';
+    if ($('ghUnlockBtnLabel')) $('ghUnlockBtnLabel').textContent = top.cta || '';
+    if ($('ghCrossSellText')) $('ghCrossSellText').textContent = cross.text || '';
+    if ($('ghCrossSellLabel')) $('ghCrossSellLabel').textContent = cross.cta || '';
+    var K = window.GUNGHAP_CONTENT;
+    if (K && $('ghLockDesc')) $('ghLockDesc').textContent = K.paywall.ctaSub;
+  })();
+
+  /* Gate C — 궁합을 결제한 사람에게 1인 리포트로 이어진다.
+     상품 구조상 라이선스 키 하나로 두 리포트가 함께 열리므로 추가 결제는 없다. */
+  if ($('ghCrossSellBtn')) {
+    $('ghCrossSellBtn').addEventListener('click', function () {
+      var A = state.result && state.result.cores ? state.result.cores.a : null;
+      if (A && window.__app && window.__app.run) {
+        var i = A.input;
+        window.__app.run({
+          year: i.year, month: i.month, day: i.day,
+          hour: i.hour, minute: i.minute, timeUnknown: i.timeUnknown
+        });
+      }
+      setView('solo');
+      setTimeout(function () {
+        var target = $('result') && !$('result').hidden ? $('result') : $('birthForm');
+        if (!target) return;
+        var y = target.getBoundingClientRect().top + window.pageYOffset - 64;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      }, 80);
+    });
+  }
+
+  /* Gate A — 무료 1인 진단(S1)의 A 입력을 그대로 궁합 입력으로 넘긴다 */
+  function prefillA(input) {
+    if (!input || !$('ghDateA')) return;
+    $('ghDateA').value = input.year + '-' + pad(input.month) + '-' + pad(input.day);
+    var cb = $('ghUnknownA'), ti = $('ghTimeA');
+    if (input.timeUnknown || input.hour == null) {
+      if (cb) cb.checked = true;
+      if (ti) { ti.disabled = true; ti.style.opacity = '.4'; }
+    } else {
+      if (cb) cb.checked = false;
+      if (ti) {
+        ti.disabled = false;
+        ti.style.opacity = '1';
+        ti.value = pad(input.hour) + ':' + pad(input.minute || 0);
+      }
+    }
+  }
+
+  if ($('gateABtn')) {
+    $('gateABtn').addEventListener('click', function () {
+      var core = window.__app && window.__app.state ? window.__app.state.core : null;
+      if (core && core.input) prefillA(core.input);
+      setView('gunghap');
+      var target = $('ghForm');
+      if (!target) return;
+      var y = target.getBoundingClientRect().top + window.pageYOffset - 76;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
     });
   }
 
@@ -350,8 +459,8 @@
       e.preventDefault();
       var res = compute();
       if (!res) return;
-      render(res);
       setUnlocked(state.unlocked || savedUnlocked());
+      render(res);
       if ($('ghResult')) $('ghResult').hidden = false;
       setTimeout(function () {
         var y = $('ghResult').getBoundingClientRect().top + window.pageYOffset - 64;
@@ -396,7 +505,6 @@
     var c = window.CONFIG || {};
     if ($('ghLockPriceWas')) $('ghLockPriceWas').textContent = c.originalPriceLabel || '';
     if ($('ghLockPriceOff')) $('ghLockPriceOff').textContent = c.discountLabel || '';
-    if ($('ghUnlockBtnPrice')) $('ghUnlockBtnPrice').textContent = c.priceLabel || '';
   })();
 
   /* ---------- 초기화 ---------- */
@@ -408,6 +516,7 @@
     state: state,
     setView: setView,
     render: render,
+    prefillA: prefillA,
     isActive: function () { return state.view === 'gunghap'; }
   };
 })();

@@ -1227,3 +1227,60 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
   .gh-month { grid-template-columns: 52px 1fr; }
   .gh-score b { font-size: clamp(52px, 16vw, 72px); }
 }
+
+/* ============================================================
+ * v2 전환 흐름 — 무료 1인 진단 · Gate A/B/C · 잠금 자리표시자
+ * ============================================================ */
+
+/* S0 랜딩의 궁합 바로가기 */
+.gh-jump-line { text-align: center; margin-top: 12px; }
+.gh-jump { font-size: 12.5px; color: var(--ink-3); border-bottom: 1px solid var(--line-strong); }
+
+/* S1 무료 1인 진단 카드 */
+.free-reading .fr-card { padding: 22px 20px 20px; }
+.fr-ilju {
+  font-family: var(--serif); font-size: 21px; letter-spacing: -.03em;
+  margin-bottom: 8px;
+}
+.fr-line { font-size: 13.2px; line-height: 1.7; color: var(--ink-3); margin-bottom: 4px; }
+.fr-today { font-size: 13.5px; line-height: 1.7; color: var(--ink-2); }
+.fr-keyword {
+  font-family: var(--serif); font-size: 27px; letter-spacing: -.03em;
+  color: var(--accent); line-height: 1.2;
+}
+
+/* Gate A / B / C 카드 */
+.gate-card { text-align: center; padding: 24px 20px 20px; }
+.gate-text {
+  font-family: var(--serif); font-size: 17px; line-height: 1.6;
+  letter-spacing: -.02em; margin-bottom: 16px;
+}
+.gate-text-sm { font-size: 14.5px; margin-bottom: 10px; }
+.gate-sub { font-size: 12px; line-height: 1.65; color: var(--muted); margin-top: 12px; }
+.gate-sub .linklike {
+  font: inherit; color: var(--ink-3); background: none; border: 0; padding: 0;
+  border-bottom: 1px solid var(--line-strong); cursor: pointer;
+}
+.gate-card .btn + .gate-sub { margin-top: 12px; }
+
+/* 결제 전 자리표시자 — 유료 문구·점수는 DOM에 없다 */
+.lock-skeleton { display: none; }
+.premium.is-locked .lock-skeleton { display: grid; gap: 12px; }
+.premium.is-locked .premium-inner > .section { display: none; }
+.sk-row {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 18px 18px 20px;
+}
+.sk-title { font-size: 13px; color: var(--ink-3); letter-spacing: -.01em; margin-bottom: 4px; }
+.sk-row i { display: block; height: 9px; border-radius: 100px; background: rgba(20, 18, 15, .07); margin-top: 9px; }
+.sk-axis { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding: 3px 0; }
+.sk-axis b { font-family: var(--serif); font-size: 15px; font-weight: 500; color: var(--ink-3); }
+.sk-axis span { font-size: 12px; color: var(--muted); letter-spacing: .16em; }
+
+@media (max-width: 400px) {
+  .fr-ilju { font-size: 19px; }
+  .fr-keyword { font-size: 24px; }
+  .gate-text { font-size: 16px; }
+  .gate-text-sm { font-size: 14px; }
+}

@@ -149,7 +149,6 @@
     $('resultEyebrow').textContent = '사주 원국 · 2027 정미년';
     $('resultTitle').textContent = p.day.name + '일주 · ' + rep.dayMaster.name;
     $('resultSub').textContent = fmtBirth(core);
-
     $('iljuKey').innerHTML = rep.ilju.key.map(function (k) { return '<span>' + k + '</span>'; }).join('');
     $('iljuTitle').textContent = p.day.name + '일주 — ' + rep.ilju.title;
     $('iljuBody').textContent = rep.ilju.body;
@@ -160,6 +159,41 @@
     $('yearLine').textContent = rep.y2027.title;
     $('yearLead').textContent = rep.y2027.body.split('. ')[0] + '.';
   }
+
+  /* ---------- 무료 1인 진단 (v2 S1) ---------- */
+  /* 일주·오행·용신 요약, 오늘의 운세 1줄, 2027 키워드 1개만 화면에 올린다.
+     월별·대운·재물 상세는 무료 범위 밖이므로 여기서 건드리지 않는다. */
+  function renderFreeReading(core) {
+    if (!$('frIlju') || !window.Gunghap) return;
+    var fr = window.Gunghap.freeReading(core);
+    $('frIlju').textContent = fr.ilju;
+    $('frBalance').textContent = fr.balanceText;
+    $('frYongsin').textContent = fr.yongsinText;
+    $('frToday').textContent = fr.todayText;
+    $('frKeyword').textContent = fr.keyword2027;
+  }
+
+  /* 문구는 전부 GUNGHAP_CONTENT.funnel에서 가져온다 (코드에 하드코딩하지 않는다). */
+  function funnelCopy() {
+    var K = window.GUNGHAP_CONTENT || {};
+    return K.funnel || {};
+  }
+
+  function applyFunnelCopy() {
+    var FR = funnelCopy().freeReading || {};
+    var labels = FR.labels || {};
+    if ($('frTitle')) $('frTitle').textContent = FR.title || '';
+    if ($('frTodayLabel')) $('frTodayLabel').textContent = labels.today || '';
+    if ($('frKeywordLabel')) $('frKeywordLabel').textContent = labels.keyword || '';
+    if ($('gateAText')) $('gateAText').textContent = FR.gateAText || '';
+    if ($('gateABtn')) $('gateABtn').textContent = FR.gateABtn || '';
+    if ($('soloReportLink')) $('soloReportLink').textContent = FR.soloLink || '';
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    applyFunnelCopy();
+    /* 저장된 입력으로 이미 결과를 그린 경우(스크립트 순서상 GUNGHAP_CONTENT가 늦게 온다) 다시 채운다 */
+    if (state.core) renderFreeReading(state.core);
+  });
 
   function monthLabel(m) {
     return m.no + '월(' + m.label + ')';
@@ -514,9 +548,11 @@
     renderPillars(core);
     renderElements(rep);
     renderFree(rep, core);
-    renderPremium(rep);
+    renderFreeReading(core);
 
     state.unlocked = !!load().unlocked;
+    /* 유료 데이터는 잠금이 풀린 뒤에만 DOM에 올린다 (v2 5절 무료/유료 경계) */
+    if (state.unlocked) renderPremium(rep);
     applyLock();
 
     $('result').hidden = false;
@@ -535,6 +571,25 @@
     var prem = $('premium');
     if (state.unlocked) prem.classList.remove('is-locked');
     else prem.classList.add('is-locked');
+  }
+
+  /* 라이선스 키 인증이 끝나면 그때 유료 리포트를 그린다 */
+  document.addEventListener('wolryeong:unlocked', function () {
+    state.unlocked = true;
+    applyLock();
+    if (state.report) renderPremium(state.report);
+  });
+
+  /* S1 하단 링크 — 이미 열려 있으면 리포트로, 아니면 결제 모달로 */
+  if ($('soloReportLink')) {
+    $('soloReportLink').addEventListener('click', function () {
+      if (state.unlocked && state.report) {
+        var y = $('premium').getBoundingClientRect().top + window.pageYOffset - 70;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      } else {
+        openModal('solo');
+      }
+    });
   }
 
   /* ---------- 폼 ---------- */

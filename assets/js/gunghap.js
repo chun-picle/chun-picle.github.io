@@ -16,12 +16,22 @@
 
   var MAX = { attraction: 30, communication: 20, wealth: 25, stability: 15, flow2027: 10 };
 
+  /* v2 스펙 4.2 — 재물 시너지 25점의 내부 배분.
+     재물 25점 = ① 정재·편재 관계 점수 + ② 용신 보완 점수.
+     연인 15 + 10 / 동업 20 + 5 (동업은 용신 보완에서 5점을 정재·편재로 옮긴다).
+     축 만점 25와 총점 100은 모드와 관계없이 그대로다. */
+  var WEALTH_SPLIT = {
+    lover: { jae: 15, yongsin: 10 },
+    business: { jae: 20, yongsin: 5 }
+  };
+  /* 관계가 하나도 걸리지 않은 짝도 축의 중간에 닿도록 두고, 관계가 성립하면 만점까지 올린다. */
+  var WEALTH_CURVE = { jaeBase: 0.8, jaeHas: 0.2, yongBase: 0.4, yongFill: 0.3 };
+
   var POINTS = {
     /* 합·충이 하나도 없는 짝이 각 축의 중간 문구에 닿도록 기본점을 두고,
        천간합·지지합은 크게 올리고 충·형·파·해는 일지 기준으로만 크게 깎는다. */
     attraction: { base: 15, stemHap: 10, stemChung: 2, dayYukhap: 9, daySamhap: 6, extraHap: 1, extraCap: 3 },
     communication: { base: 10, saeng: 8, same: 5, geuk: 2, sikSang: 5, biGyeop: 4 },
-    wealth: { base: 14, jae: 7, businessBonus: 5, yongsinFill: 4 },
     stability: { base: 15, dayChung: 5, dayHyeong: 3, dayPa: 2, dayHae: 2, other: 1, otherCap: 5 },
     flow2027: { base: 5, stemHap: 3, stemChung: -3, yukhap: 3, chung: -3, samhap: 2, hyeongPa: -2, hae: -2 }
   };
@@ -210,21 +220,35 @@
 
   function isJae(name) { return name === '정재' || name === '편재'; }
 
-  function scoreWealth(a, b, col, mode) {
-    var P = POINTS.wealth, s = P.base, SC = S();
+  /* 재물 시너지의 두 구성 요소를 나눠서 돌려준다 (테스트·검수용).
+     ① 정재·편재 관계 — 두 일간 중 한쪽이라도 상대를 재성으로 보면 성립(0.8 → 1.0).
+     ② 용신 보완 — 서로의 강한 오행이 상대의 부족한 자리를 채운 방향마다 가점(0.4 · 0.7 · 1.0). */
+  function wealthParts(a, b, col, mode) {
+    var sp = WEALTH_SPLIT[normMode(mode)], SC = S(), CUV = WEALTH_CURVE;
     var ab = SC.sipsung(col.dayGanA, col.dayGanB);
     var ba = SC.sipsung(col.dayGanB, col.dayGanA);
+    var hasJae = isJae(ab) || isJae(ba);
+    var fills = 0;
+    if (strongestElement(b) === weakestElement(a)) fills++;
+    if (strongestElement(a) === weakestElement(b)) fills++;
 
-    if (isJae(ab) || isJae(ba)) {
-      s += P.jae;
-      if (normMode(mode) === 'business') s += P.businessBonus;
-    }
-
-    if (strongestElement(b) === weakestElement(a)) s += P.yongsinFill;
-    if (strongestElement(a) === weakestElement(b)) s += P.yongsinFill;
-
-    return clamp(s, 0, MAX.wealth);
+    return {
+      max: { jae: sp.jae, yongsin: sp.yongsin },
+      jae: sp.jae * (CUV.jaeBase + (hasJae ? CUV.jaeHas : 0)),
+      yongsin: sp.yongsin * (CUV.yongBase + CUV.yongFill * fills),
+      hasJae: hasJae,
+      fills: fills
+    };
   }
+
+  /* 축 점수는 소수점 이하를 버리는 내림(floor)으로 정수화한다. 반올림하지 않는다. */
+  function scoreWealth(a, b, col, mode) {
+    var w = wealthParts(a, b, col, mode);
+    return Math.floor(clamp(w.jae + w.yongsin, 0, MAX.wealth));
+  }
+
+  /* 검수용: 두 원국만으로 재물 구성 요소를 본다. */
+  function wealthOf(a, b, mode) { return wealthParts(a, b, collect(a, b), mode); }
 
   /* 안정 — 충·형·파·해. 일지(배우자궁)에 걸린 것은 크게, 다른 기둥끼리는 가볍게 깎는다. */
   function scoreStability(col) {
@@ -316,13 +340,15 @@
     });
   }
 
+  /* v2 스펙 4.3 — 12개월 중 등급 '좋음'이 있으면 그중 가장 이른 달,
+     '좋음'이 없으면 '보통' 중 가장 이른 달 1개를 미리보기에 공개한다. */
   function bestGoodMonth(months) {
-    var goods = months.filter(function (m) { return m.grade === '좋음'; });
-    var pool = goods.length ? goods : months.slice();
-    return pool.slice().sort(function (x, y) {
-      if (y.personal.score !== x.personal.score) return y.personal.score - x.personal.score;
-      return x.no - y.no;
-    })[0];
+    function earliest(grade) {
+      var list = months.filter(function (m) { return m.grade === grade; });
+      return list.length ? list.slice().sort(function (x, y) { return x.no - y.no; })[0] : null;
+    }
+    return earliest('좋음') || earliest('보통') ||
+      months.slice().sort(function (x, y) { return x.no - y.no; })[0];
   }
 
   /* ---------- 조합 해석 ---------- */
@@ -414,10 +440,11 @@
     };
 
     var axes = K.axes.map(function (ax) {
-      var s = raw[ax.id], lv = axisLevel(ax.id, s);
+      /* v2 4.2 — 모든 축 점수는 내림(floor) 정수. 반올림하지 않는다. */
+      var s = Math.floor(Math.min(raw[ax.id], ax.maxScore)), lv = axisLevel(ax.id, s);
       return {
         id: ax.id, name: ax.name, score: s, max: ax.maxScore,
-        percent: Math.round(s / ax.maxScore * 100),
+        percent: Math.floor(s / ax.maxScore * 100),
         text: lv.text
       };
     });
@@ -481,6 +508,86 @@
   var PAID_AXES = ['communication', 'wealth', 'stability', 'flow2027'];
   function isPaidAxis(id) { return PAID_AXES.indexOf(id) >= 0; }
 
+  /* ---------- 무료 1인 진단 (S1, v2 스펙 4.1) ----------
+     일주·오행 균형·용신 한 줄, 오늘의 운세 한 줄, 2027 키워드 1개만 돌려준다.
+     월별·대운·재물 상세는 계산하지 않는다(무료 범위를 넘는 계산은 하지 않음). */
+
+  var JEONG_2027 = 3;  /* 정미년의 정화(丁) */
+
+  function hanOf(el) {
+    var H = S().ELEMENT_HAN || {};
+    return H[el] || '';
+  }
+
+  /* 십성 → 2027 키워드 묶음 */
+  function keywordKeyOf(dayGan) {
+    var ss = S().sipsung(dayGan, JEONG_2027);
+    if (isJae(ss)) return 'jae';
+    if (ss === '정관' || ss === '편관') return 'gwan';
+    if (ss === '정인' || ss === '편인') return 'in';
+    if (ss === '식신' || ss === '상관') return 'sik';
+    return 'bi';
+  }
+
+  function fillLine(tpl, map) {
+    return String(tpl).replace(/\{(\w+)\}/g, function (m, k) {
+      return map[k] != null ? String(map[k]) : m;
+    });
+  }
+
+  /* 오늘의 일진 — 날짜(Date·{y,m,d}·'YYYY-MM-DD')가 바뀌면 결과도 바뀐다. */
+  function dayCore(today) {
+    var y, mo, d;
+    if (!today) {
+      var now = new Date();
+      y = now.getFullYear(); mo = now.getMonth() + 1; d = now.getDate();
+    } else if (typeof today === 'string') {
+      var p = today.split('-').map(Number);
+      y = p[0]; mo = p[1]; d = p[2];
+    } else {
+      y = today.year; mo = today.month; d = today.day;
+    }
+    return S().compute({ year: y, month: mo, day: d, timeUnknown: true });
+  }
+
+  /* 당일 일진과 내 일간·일지의 합·충으로 3등급 */
+  function todayGrade(core, todayCore) {
+    if (isStemHap(todayCore.dayGan, core.dayGan)) return 'good';
+    if (isStemChung(todayCore.dayGan, core.dayGan)) return 'care';
+    var f = branchFacts(todayCore.dayJi, core.dayJi);
+    if (f.yukhap || f.samhap) return 'good';
+    if (f.chung || f.hyeong || f.pa || f.hae) return 'care';
+    return 'mid';
+  }
+
+  function freeReading(core, today) {
+    var K = C(), F = (K && K.funnel) || {};
+    var FR = F.freeReading || {};
+    var day = core.pillarName.day;
+    var most = strongestElement(core), least = weakestElement(core);
+    var grade = todayGrade(core, dayCore(today));
+    var fortune = (F.todayFortune || []).filter(function (x) { return x.level === grade; })[0];
+    var key = keywordKeyOf(core.dayGan);
+    var kw = (F.keyword2027 || []).filter(function (x) { return x.key === key; })[0];
+    var map = {
+      most: most, mostHan: hanOf(most), mostCount: core.counts[most],
+      least: least, leastHan: hanOf(least), leastCount: core.counts[least],
+      ilju: day.name, iljuHan: day.han
+    };
+
+    return {
+      ilju: day.name + '일주',
+      iljuHan: day.han,
+      balanceText: fillLine(FR.balanceLine || '', map),
+      yongsinElement: least,
+      yongsinText: fillLine(FR.yongsinLine || '', map),
+      todayGrade: grade,
+      todayText: fortune ? fortune.text : '',
+      keywordKey: key,
+      keyword2027: kw ? kw.keyword : ''
+    };
+  }
+
   function coreOf(opt) {
     return S().compute({
       year: opt.year, month: opt.month, day: opt.day,
@@ -501,9 +608,16 @@
 
   var API = {
     MAX: MAX, POINTS: POINTS, MODES: MODES, MODE_LABEL: MODE_LABEL, MONTH_JI: MONTH_JI,
+    WEALTH_SPLIT: WEALTH_SPLIT, WEALTH_CURVE: WEALTH_CURVE,
     analyze: buildReport,
     fromBirth: fromBirth,
     freePreview: freePreview,
+    freeReading: freeReading,
+    wealthParts: wealthParts,
+    wealthOf: wealthOf,
+    bestGoodMonth: bestGoodMonth,
+    todayGrade: todayGrade,
+    keywordKeyOf: keywordKeyOf,
     isPaidAxis: isPaidAxis,
     PAID_AXES: PAID_AXES,
     bandOf: bandOf,

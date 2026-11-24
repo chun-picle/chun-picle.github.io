@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261125h">
+<link rel="stylesheet" href="assets/css/style.css?v=20261125i">
 </head>
 <body>
 
@@ -48,6 +48,7 @@
     <p class="eyebrow">2027 정미년 · 정밀 만세력</p>
     <h1>내 사주로 읽는<br><em>2027년의 돈</em></h1>
     <p class="lede">
+      두 사람의 2027년, 먼저 무료로 확인하세요.<br>
       절기(節氣)의 시각까지 계산한 만세력으로 사주팔자를 세웁니다.<br>
       태어난 날과 시각만 넣으면, 2027년 어느 달에 돈이 움직이는지 나옵니다.
     </p>
@@ -77,8 +78,9 @@
       </div>
 
       <button class="btn btn-primary btn-block" type="submit">
-        내 사주 보기 <span class="btn-arrow">→</span>
+        무료로 내 운세 보기 <span class="btn-arrow">→</span>
       </button>
+      <p class="gh-jump-line"><a class="gh-jump" href="#ghForm" data-view="gunghap">두 사람 궁합 바로 보기 →</a></p>
       <p class="privacy-line">입력한 정보는 서버로 전송되지 않고, 이 브라우저 안에서만 계산됩니다.</p>
     </form>
 
@@ -159,6 +161,23 @@
       <button class="btn btn-ghost btn-sm" id="recalcBtn" type="button">다시 계산</button>
     </div>
 
+    <!-- ================= 무료 1인 진단 (S1) ================= -->
+    <div class="section free-reading" id="freeReading">
+      <h3 class="section-title" id="frTitle"></h3>
+      <div class="card plain fr-card">
+        <p class="fr-ilju" id="frIlju"></p>
+        <p class="fr-line" id="frBalance"></p>
+        <p class="fr-line" id="frYongsin"></p>
+        <div class="divider"></div>
+        <p class="mini-label" id="frTodayLabel"></p>
+        <p class="fr-today" id="frToday"></p>
+        <div class="divider"></div>
+        <p class="mini-label" id="frKeywordLabel"></p>
+        <p class="fr-keyword" id="frKeyword"></p>
+      </div>
+      <p class="note">참고·오락용 콘텐츠입니다. 의료·법률·투자 판단의 근거로 사용할 수 없으며, 어떤 결과도 미래를 보장하지 않습니다.</p>
+    </div>
+
     <!-- 원국 -->
     <div class="card plain">
       <div class="pillars" id="pillars"></div>
@@ -200,8 +219,27 @@
       </div>
     </div>
 
+    <!-- Gate A — 무료 진단 → 2인 궁합 (결제 없음) -->
+    <div class="section gate-a" id="gateA">
+      <div class="card gate-card">
+        <p class="gate-text" id="gateAText"></p>
+        <button class="btn btn-primary btn-block" id="gateABtn" type="button"></button>
+        <p class="gate-sub">
+          <button class="linklike" id="soloReportLink" type="button"></button>
+        </p>
+      </div>
+    </div>
+
     <!-- ===== 프리미엄 ===== -->
     <div class="premium" id="premium">
+      <!-- 잠금 상태의 자리표시자 — 유료 문구·점수는 결제 전 DOM에 넣지 않는다 -->
+      <div class="lock-skeleton" id="premiumSkeleton" aria-hidden="true">
+        <div class="sk-row"><p class="sk-title">신강·신약 정밀 판정과 용신</p><i style="width:94%"></i><i style="width:81%"></i><i style="width:52%"></i></div>
+        <div class="sk-row"><p class="sk-title">내 사주 원국 정밀 해부</p><i style="width:88%"></i><i style="width:96%"></i><i style="width:44%"></i></div>
+        <div class="sk-row"><p class="sk-title">타고난 격국·기질과 4대 궁</p><i style="width:91%"></i><i style="width:72%"></i><i style="width:38%"></i></div>
+        <div class="sk-row"><p class="sk-title">10년 대운과 지금</p><i style="width:86%"></i><i style="width:93%"></i><i style="width:47%"></i></div>
+        <div class="sk-row"><p class="sk-title">2027 정미년 4대 영역 · 12개월 심화 운세</p><i style="width:90%"></i><i style="width:78%"></i><i style="width:41%"></i></div>
+      </div>
       <div class="premium-inner" id="premiumInner">
 
         <!-- 1. 신강·신약 · 용신 -->
@@ -420,13 +458,26 @@
       </div>
     </div>
 
+    <!-- Gate B (상단) — 블러 영역 바로 위 -->
+    <div class="section gate-b" id="ghGateTop">
+      <div class="card gate-card">
+        <p class="gate-text" id="ghGateTopText"></p>
+        <button class="btn btn-primary btn-block" id="ghGateTopBtn" type="button"><span id="ghGateTopCta"></span></button>
+        <p class="gate-sub" id="ghGateTopSub"></p>
+      </div>
+    </div>
+
     <div class="section">
       <h3 class="section-title">2027년 함께 좋은 달</h3>
       <div class="card plain" id="ghGoodMonthCard"></div>
     </div>
 
+    <p class="disclaimer" id="ghDisclaimerTop"></p>
+
     <!-- ===== 유료 ===== -->
     <div class="premium" id="ghPremium">
+      <!-- 잠금 상태의 자리표시자 — 축 이름만 보이고 점수·문구는 DOM에 넣지 않는다 -->
+      <div class="lock-skeleton" id="ghSkeleton" aria-hidden="true"></div>
       <div class="premium-inner" id="ghPremiumInner">
 
         <div class="section">
@@ -481,20 +532,28 @@
           </div>
         </div>
 
+        <div class="section" id="ghCrossSell" hidden>
+          <div class="card gate-card">
+            <p class="gate-text" id="ghCrossSellText"></p>
+            <button class="btn btn-primary btn-block" id="ghCrossSellBtn" type="button"><span id="ghCrossSellLabel"></span></button>
+          </div>
+        </div>
+
       </div>
 
-      <!-- 잠금 오버레이 -->
+      <!-- 잠금 오버레이 (Gate B 하단) -->
       <div class="lock" id="ghLock">
         <div class="lock-box">
           <p class="lock-icon">◈</p>
           <p class="lock-title">궁합 전체 리포트</p>
+          <p class="gate-text gate-text-sm" id="ghGateBottomText"></p>
           <p class="lock-desc" id="ghLockDesc"></p>
           <p class="lock-price">
             <s class="price-was" id="ghLockPriceWas">9,900원</s>
             <span class="price-off" id="ghLockPriceOff">50% 할인</span>
           </p>
           <button class="btn btn-primary btn-block" id="ghUnlockBtn" type="button">
-            <span id="ghUnlockBtnLabel">전체 리포트 보기</span> · <span id="ghUnlockBtnPrice">4,900원</span>
+            <span id="ghUnlockBtnLabel">전체 리포트 보기 — 4,900원</span>
           </button>
           <p class="lock-sub">총점·끌림·좋은 달 1개는 계속 무료입니다</p>
         </div>
@@ -633,14 +692,14 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/solar-terms.js?v=20261125h"></script>
-<script src="assets/js/saju-core.js?v=20261125h"></script>
-<script src="assets/js/content.js?v=20261125h"></script>
-<script src="assets/js/report.js?v=20261125h"></script>
-<script src="assets/js/config.js?v=20261125h"></script>
-<script src="assets/js/app.js?v=20261125h"></script>
-<script src="assets/js/gunghap-content.js?v=20261125h"></script>
-<script src="assets/js/gunghap.js?v=20261125h"></script>
-<script src="assets/js/gunghap-ui.js?v=20261125h"></script>
+<script src="assets/js/solar-terms.js?v=20261125i"></script>
+<script src="assets/js/saju-core.js?v=20261125i"></script>
+<script src="assets/js/content.js?v=20261125i"></script>
+<script src="assets/js/report.js?v=20261125i"></script>
+<script src="assets/js/config.js?v=20261125i"></script>
+<script src="assets/js/app.js?v=20261125i"></script>
+<script src="assets/js/gunghap-content.js?v=20261125i"></script>
+<script src="assets/js/gunghap.js?v=20261125i"></script>
+<script src="assets/js/gunghap-ui.js?v=20261125i"></script>
 </body>
 </html>

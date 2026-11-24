@@ -224,7 +224,9 @@
   var sample = [
     [{ year: 1988, month: 1, day: 12, hour: 7, minute: 0 }, { year: 1991, month: 6, day: 3, hour: 22, minute: 0 }],
     [{ year: 1975, month: 9, day: 19, hour: 3, minute: 0 }, { year: 1982, month: 12, day: 25, hour: 13, minute: 0 }],
-    [{ year: 2000, month: 2, day: 2, hour: 18, minute: 0 }, { year: 1999, month: 4, day: 30, hour: 5, minute: 0 }]
+    [{ year: 2000, month: 2, day: 2, hour: 18, minute: 0 }, { year: 1999, month: 4, day: 30, hour: 5, minute: 0 }],
+    [{ year: 1985, month: 8, day: 15, hour: 6, minute: 0 }, { year: 1993, month: 11, day: 20, hour: 20, minute: 0 }],
+    [{ year: 1979, month: 7, day: 28, hour: 2, minute: 0 }, { year: 1996, month: 2, day: 9, hour: 14, minute: 0 }]
   ];
   var inRange = true;
   sample.forEach(function (p) {
@@ -233,6 +235,131 @@
     r.axes.forEach(function (ax) { if (ax.score < 0 || ax.score > ax.max) inRange = false; });
   });
   check('표본 3쌍 모두 축·총점 범위 안', inRange, true);
+
+  /* ---- 13. v2 전환 흐름 — funnel 문구(기획서 5절 그대로) ---- */
+  var FN = K.funnel;
+  check('funnel 키 6개', Object.keys(FN).sort().join(','),
+    'crossSell,freeReading,keyword2027,previewBottom,previewTop,todayFortune');
+  check('무료 진단 타이틀', FN.freeReading.title, '당신의 2027년, 첫 장을 열어봤어요');
+  check('Gate A 문구', FN.freeReading.gateAText,
+    '나 혼자만 아는 걸로는 부족해요. 상대방과 함께 보면, 2027년이 달라져요.');
+  check('Gate A 버튼', FN.freeReading.gateABtn, '두 사람의 궁합 보기 (무료 미리보기)');
+  check('S1 하단 링크', FN.freeReading.soloLink, '나의 2027년 리포트 전체 보기 — 4,900원');
+  check('Gate B 상단 문구', FN.previewTop.text, "총점은 봤어요. 이제 '왜'인지 볼 차례예요.");
+  check('Gate B 버튼에 가격 명시', FN.previewTop.cta, '전체 리포트 보기 — 4,900원');
+  check('Gate B 보조 문구', FN.previewTop.sub,
+    '나머지 4개 축 · 모든 조합 해석 · 12개월 시너지 캘린더 · 갈등 대처법을 모두 열어드립니다.');
+  check('Gate B 하단 문구', FN.previewBottom.text,
+    '가장 좋은 달 1개만 봤어요. 나머지 11개월, 조심할 달까지 알고 가세요.');
+  check('Gate C 문구', FN.crossSell.text, "두 사람의 2027년은 봤어요. 이제 '나'의 2027년을 볼 차례예요.");
+  check('Gate C 버튼', FN.crossSell.cta, '나의 2027년 리포트 보기 — 4,900원');
+  check('오늘의 운세 3등급', FN.todayFortune.map(function (x) { return x.level; }).join(','), 'good,mid,care');
+  check('2027 키워드 5종', FN.keyword2027.length, 5);
+
+  /* ---- 14. 무료 1인 진단(S1) — 무료 범위만 ---- */
+  var coreA = r1.cores.a;
+  var fr = G.freeReading(coreA, '2026-11-25');
+  check('무료 진단 필드 = 무료 범위만', Object.keys(fr).sort().join(','),
+    'balanceText,ilju,iljuHan,keyword2027,keywordKey,todayGrade,todayText,yongsinElement,yongsinText');
+  check('일주 표기', fr.ilju, '기축일주');
+  ok('오행 균형 1줄', fr.balanceText.indexOf('가장 많고') >= 0 && fr.balanceText.indexOf('가장 적습니다') >= 0);
+  ok('용신 1줄', fr.yongsinText.indexOf(fr.yongsinElement + '(') >= 0);
+  check('용신 = 가장 부족한 오행', fr.yongsinElement, G.weakestElement(coreA));
+  check('2027 키워드 = JSON 값', fr.keyword2027,
+    FN.keyword2027.filter(function (k) { return k.key === fr.keywordKey; })[0].keyword);
+  check('오늘 운세 문구 = JSON', fr.todayText,
+    FN.todayFortune.filter(function (x) { return x.level === fr.todayGrade; })[0].text);
+  check('같은 날 → 같은 진단', G.freeReading(coreA, '2026-11-25').todayText, fr.todayText);
+  var grades = {};
+  for (var gd = 1; gd <= 28; gd++) {
+    var ds = '2027-02-' + (gd < 10 ? '0' + gd : gd);
+    grades[G.freeReading(coreA, ds).todayGrade] = 1;
+  }
+  check('날짜가 바뀌면 오늘의 운세도 갈린다(3등급 등장)', Object.keys(grades).sort().join(','), 'care,good,mid');
+  var kwSet = {};
+  [['1990', '3', '25'], ['1988', '5', '5'], ['1992', '8', '14'],
+    ['1985', '8', '15'], ['1994', '3', '5'], ['1979', '7', '28']].forEach(function (p) {
+    var c = SajuCore.compute({ year: +p[0], month: +p[1], day: +p[2], timeUnknown: true });
+    kwSet[G.freeReading(c, '2026-11-25').keywordKey] = 1;
+  });
+  ok('일간에 따라 2027 키워드가 갈린다', Object.keys(kwSet).length >= 3);
+  ok('무료 진단에 월별·대운·재물 상세 없음',
+    !('months' in fr) && !('daeun' in fr) && !('wealth' in fr) && !('axes' in fr) && !('tenGod' in fr));
+
+  /* ---- 15. 소수점 처리 — 내림(floor) 확정 ---- */
+  var allInt = true, pctOk = true, sumOk = true;
+  sample.forEach(function (p) {
+    var r = G.fromBirth(p[0], p[1], 'lover');
+    r.axes.forEach(function (ax) {
+      if (ax.score !== Math.floor(ax.score)) allInt = false;
+      if (ax.percent !== Math.floor(ax.score / ax.max * 100)) pctOk = false;
+    });
+    if (r.axes.reduce(function (s, x) { return s + x.score; }, 0) !== r.score) sumOk = false;
+  });
+  check('모든 축 점수는 정수(내림)', allInt, true);
+  check('축 퍼센트도 내림', pctOk, true);
+  check('총점 = 축 점수의 합', sumOk, true);
+
+  var fracCases = 0, floorBad = 0;
+  sample.forEach(function (p) {
+    var bi = G.fromBirth(p[0], p[1], 'business');
+    var wp = G.wealthOf(bi.cores.a, bi.cores.b, 'business');
+    var raw = wp.jae + wp.yongsin;
+    var wScore = bi.axes.filter(function (x) { return x.id === 'wealth'; })[0].score;
+    if (raw % 1 !== 0) {
+      fracCases++;
+      if (wScore !== Math.floor(raw)) floorBad++;
+      if (wScore === Math.round(raw)) floorBad++;
+    }
+  });
+  ok('소수점이 생기는 동업 케이스 존재', fracCases > 0);
+  check('소수점 축 점수는 내림(반올림 아님)', floorBad, 0);
+
+  /* ---- 16. 동업 모드 재물 25점 내부 배분 ---- */
+  check('연인 재물 내부 배분 = 15 + 10', JSON.stringify(G.WEALTH_SPLIT.lover), '{"jae":15,"yongsin":10}');
+  check('동업 재물 내부 배분 = 20 + 5', JSON.stringify(G.WEALTH_SPLIT.business), '{"jae":20,"yongsin":5}');
+  ok('두 모드 모두 합 25(축 만점 유지)',
+    G.WEALTH_SPLIT.lover.jae + G.WEALTH_SPLIT.lover.yongsin === 25 &&
+    G.WEALTH_SPLIT.business.jae + G.WEALTH_SPLIT.business.yongsin === 25);
+  ok('동업은 정재·편재 +5, 용신 보완 −5',
+    G.WEALTH_SPLIT.business.jae - G.WEALTH_SPLIT.lover.jae === 5 &&
+    G.WEALTH_SPLIT.lover.yongsin - G.WEALTH_SPLIT.business.yongsin === 5);
+
+  var jaePair = null;
+  sample.forEach(function (p) {
+    if (jaePair) return;
+    var c = G.fromBirth(p[0], p[1], 'lover');
+    if (G.wealthOf(c.cores.a, c.cores.b, 'lover').hasJae) jaePair = p;
+  });
+  ok('재성 관계가 있는 표본 존재', !!jaePair);
+  if (jaePair) {
+    var cJ = G.fromBirth(jaePair[0], jaePair[1], 'lover');
+    var lw = G.wealthOf(cJ.cores.a, cJ.cores.b, 'lover');
+    var bw = G.wealthOf(cJ.cores.a, cJ.cores.b, 'business');
+    check('연인: 정재·편재 요소 만점 15', lw.jae, 15);
+    check('동업: 정재·편재 요소 만점 20', bw.jae, 20);
+    check('연인: 용신 보완 상한 10', lw.yongsin <= 10, true);
+    check('동업: 용신 보완 상한 5', bw.yongsin <= 5, true);
+    check('재물 축 합 상한 25', lw.jae + lw.yongsin <= 25 && bw.jae + bw.yongsin <= 25, true);
+    check('용신 보완 2방향 = 만점', lw.fills === 2 ? lw.yongsin === 10 : true, true);
+    check('동업 용신 보완 2방향 = 만점 5', bw.fills === 2 ? bw.yongsin === 5 : true, true);
+  }
+
+  /* ---- 17. 좋은 달 1개 선택 규칙(4.3) ---- */
+  var firstGood = r1.months.filter(function (m) { return m.grade === '좋음'; })
+    .sort(function (a, b) { return a.no - b.no; })[0];
+  check('좋은 달 = 좋음 중 가장 이른 달', r1.goodMonth.no, firstGood.no);
+  check('미리보기 좋은 달 = 본편 좋은 달', pv.goodMonth.no, r1.goodMonth.no);
+  check('좋은 달 코멘트 = 본편 해당 월 코멘트', r1.goodMonth.comment,
+    K.monthlySynergy2027[r1.goodMonth.no - 1].comment);
+  check('좋음 있음 → 가장 이른 좋음',
+    G.bestGoodMonth([{ no: 8, grade: '좋음' }, { no: 3, grade: '좋음' }, { no: 1, grade: '보통' }]).no, 3);
+  check('좋음 없음 → 보통 중 가장 이른 달',
+    G.bestGoodMonth([{ no: 4, grade: '조심' }, { no: 2, grade: '보통' }, { no: 9, grade: '보통' }]).no, 2);
+  ok('미리보기 좋은 달 필드 = 무료 범위',
+    Object.keys(pv.goodMonth).sort().join(',') === 'comment,grade,label,no,range');
+  ok('미리보기 응답에 유료 축 id 없음',
+    pvStr.indexOf('communication') < 0 && pvStr.indexOf('stability') < 0 && pvStr.indexOf('flow2027') < 0);
 
   out.push('');
   out.push('== 궁합 결과 요약 ==');

@@ -115,6 +115,28 @@ check_file("gunghap-content.js 문구 번들", "assets/js/gunghap-content.js",
            ["GUNGHAP_CONTENT", "천생연분", "monthlySynergy2027", "conflictAdvice"])
 check_file("궁합 스타일", "assets/css/style.css",
            [".modetabs", ".gh-axes", ".gh-month", ".pill.good", ".gh-score"])
+
+# v2 전환 흐름: 무료 1인 진단 → Gate A → 무료 미리보기 → Gate B → Gate C
+check_file("index.html v2 전환 흐름 배선", "index.html",
+           ["freeReading", "frIlju", "frBalance", "frYongsin", "frToday", "frKeyword",
+            "gateA", "gateABtn", "soloReportLink", "ghGateTop", "ghGateTopBtn",
+            "ghGateBottomText", "ghCrossSellBtn", "premiumSkeleton", "ghSkeleton",
+            "무료로 내 운세 보기"])
+check_file("app.js 무료 진단·유료 지연 렌더", "assets/js/app.js",
+           ["renderFreeReading", "applyFunnelCopy", "soloReportLink",
+            "wolryeong:unlocked", "if (state.unlocked) renderPremium(rep)"])
+check_file("gunghap.js v2 산식·무료 진단", "assets/js/gunghap.js",
+           ["WEALTH_SPLIT", "lover: { jae: 15, yongsin: 10 }",
+            "business: { jae: 20, yongsin: 5 }", "freeReading", "bestGoodMonth",
+            "todayFortune", "keyword2027", "Math.floor(clamp"])
+check_file("gunghap-ui.js 게이트·유료 지연 렌더", "assets/js/gunghap-ui.js",
+           ["prefillA", "ghGateTopBtn", "ghCrossSellBtn", "renderSkeleton", "renderPaid",
+            "ghGateBottomText"])
+check_file("gunghap-content.js funnel 번들", "assets/js/gunghap-content.js",
+           ["funnel", "첫 장을 열어봤어요", "총점은 봤어요", "가장 좋은 달 1개만 봤어요",
+            "나의 2027년 리포트 보기"])
+check_file("v2 스타일", "assets/css/style.css",
+           [".fr-keyword", ".gate-card", ".lock-skeleton", ".premium.is-locked .lock-skeleton"])
 check_file("콘텐츠 빌드 스크립트", "scripts/build_gunghap_content.py",
            ["assets/data/gunghap-content.json", "gunghap-content.js"])
 
