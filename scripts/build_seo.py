@@ -885,7 +885,7 @@ def render_index(ctx):
             for x in lst
         )
         groups += f"""<section class="ilju-group" id="gan-{GAN_SLUG[g]}">
-  <h3 class="ilju-group-h"><span class="ig-mark">{esc(gan)}</span>{esc(dm['name'])} <span class="ig-sub">{esc(dm['sub'])} · {esc(ctx.el(lst[0]['ganEl'])['key'])}</span></h3>
+  <h3 class="ilju-group-h"><span class="ig-mark">{esc(lst[0]['ganHan'])}</span>{esc(dm['name'])} <span class="ig-sub">{esc(dm['sub'])} · {esc(ctx.el(lst[0]['ganEl'])['key'])}</span></h3>
   <div class="link-grid">{cards}</div>
 </section>
 """

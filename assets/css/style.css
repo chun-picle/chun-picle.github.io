@@ -759,3 +759,8 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .ilju-teaser-txt strong { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.5; }
 .ilju-teaser-txt span { font-size: 12.3px; color: var(--ink-3); line-height: 1.6; }
 .ilju-teaser-arrow { color: var(--accent); font-size: 18px; flex: 0 0 auto; }
+
+/* 일주 페이지 안에서는 .faq 외곽 여백을 쓰지 않는다 (.how/.faq 공통 규칙 무력화) */
+.ilju-page .ilju-body .faq {
+  padding: 0; margin: 0; max-width: none;
+}
