@@ -504,7 +504,7 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .modal-price span { font-size: 12px; color: var(--muted); }
 .pay-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 10px; }
 .btn[hidden] { display: none !important; }
-.btn-gumroad { grid-column: 1 / -1; background: #FF90E8; color: #16130F; font-weight: 700; }
+.btn-gumroad { grid-column: 1 / -1; background: #FF90E8; color: #16130F; font-weight: 700; line-height: 1.35; text-align: center; padding: 14px 16px; }
 .btn-toss { background: #1B64DA; color: #fff; }
 .btn-kakao { background: #F7E600; color: #201C00; }
 .btn-gumroad.is-off { opacity: .45; }
