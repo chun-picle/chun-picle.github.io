@@ -227,6 +227,10 @@
     };
   }
 
-  root.Report = { build: build, DIR_NAME: DIR_NAME, gradeOf: gradeOf };
+  /* BASE_SCORE·REL_ADJ는 SEO 일주 페이지 생성기(scripts/build_seo.py)도 같은 규칙을 쓰도록 함께 공개한다. */
+  root.Report = {
+    build: build, DIR_NAME: DIR_NAME, gradeOf: gradeOf,
+    BASE_SCORE: BASE_SCORE, REL_ADJ: REL_ADJ
+  };
   if (typeof module !== 'undefined' && module.exports) module.exports = root.Report;
 })(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));

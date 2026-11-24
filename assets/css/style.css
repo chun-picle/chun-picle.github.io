@@ -558,3 +558,204 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
+
+/* ============================================================
+ * 일주(日柱) SEO 페이지 — ilju/*.html
+ * 메인과 같은 팔레트·타이포를 그대로 쓰고, 읽기용 블록만 추가한다.
+ * ============================================================ */
+
+.topbar-nav { display: flex; align-items: center; gap: 14px; }
+.topbar-nav .topbar-link { font-size: 12.5px; }
+
+.crumbs {
+  max-width: 780px; margin: 0 auto;
+  padding: 12px 20px 0;
+  font-size: 11.5px; color: var(--muted);
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+.crumbs a { border-bottom: 1px solid transparent; }
+.crumbs a:hover { border-bottom-color: var(--line-strong); }
+.crumbs .sep { opacity: .45; }
+
+.ilju-wrap { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+
+.ilju-hero { padding: 30px 0 4px; }
+.ilju-marks { display: flex; align-items: flex-end; gap: 10px; margin: 6px 0 16px; }
+.ilju-char {
+  font-family: var(--serif); font-size: clamp(46px, 13vw, 64px);
+  line-height: 1; color: var(--ink); letter-spacing: .04em;
+}
+.ilju-han {
+  font-family: var(--serif); font-size: 13px; color: var(--gold);
+  letter-spacing: .18em; padding-bottom: 8px;
+}
+.ilju-hero h1 {
+  font-size: clamp(25px, 7.2vw, 36px);
+  line-height: 1.34; font-weight: 400; letter-spacing: -.04em;
+}
+.ilju-hero h1 em {
+  font-style: normal;
+  background: linear-gradient(transparent 62%, rgba(176, 138, 79, .34) 62%);
+  padding: 0 2px;
+}
+.ilju-desc { font-size: 14.5px; line-height: 1.78; color: var(--ink-3); margin-top: 16px; }
+.ilju-desc strong { color: var(--ink-2); }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.chip {
+  font-size: 11px; letter-spacing: .04em; color: var(--accent);
+  background: rgba(176, 138, 79, .13);
+  border-radius: 100px; padding: 4px 11px;
+}
+
+.cta-block { margin: 26px 0 4px; }
+.cta-block .btn { font-size: 15px; line-height: 1.4; text-align: center; }
+.cta-note {
+  font-size: 11.5px; line-height: 1.7; color: var(--muted);
+  margin-top: 11px; text-align: center;
+}
+
+.ilju-body { margin-top: 40px; }
+.ilju-h2 {
+  font-size: 21px; line-height: 1.4; letter-spacing: -.03em;
+  margin-bottom: 14px; font-weight: 500;
+}
+.ilju-h2.mt-lg { margin-top: 34px; }
+.ilju-lead {
+  font-family: var(--serif); font-size: 18px; letter-spacing: -.02em;
+  margin-bottom: 10px;
+}
+.ilju-p { font-size: 14.5px; line-height: 1.8; color: var(--ink-2); margin-top: 14px; }
+.ilju-p a { border-bottom: 1px solid var(--line-strong); }
+
+/* 일주 두 글자 */
+.day-pillar {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.dp-cell {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 16px 14px; text-align: center;
+}
+.dp-head { font-size: 10.5px; letter-spacing: .14em; color: var(--muted); margin-bottom: 8px; }
+.dp-char { font-family: var(--serif); font-size: 34px; line-height: 1.1; }
+.dp-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 6px; letter-spacing: .02em; }
+.dp-desc { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+
+/* 스펙 표 */
+.spec { margin-top: 16px; border-top: 1px solid var(--line); }
+.spec-row {
+  display: grid; grid-template-columns: 74px 1fr; gap: 12px;
+  padding: 14px 0; border-bottom: 1px solid var(--line);
+}
+.spec-k {
+  font-size: 11px; letter-spacing: .08em; color: var(--muted);
+  font-weight: 600; padding-top: 3px;
+}
+.spec-v { font-size: 13.8px; color: var(--ink-2); line-height: 1.65; }
+.spec-v b { font-weight: 600; color: var(--ink); }
+.spec-sub { display: block; font-size: 12.3px; color: var(--ink-3); line-height: 1.65; margin-top: 3px; }
+
+.ilju-year-more { margin-top: 12px; }
+.ilju-year-more .body-text + .body-text { margin-top: 14px; }
+
+/* 재물운 등급 */
+.grade-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.grade-meter { display: inline-flex; gap: 4px; }
+.grade-meter i {
+  width: 20px; height: 6px; border-radius: 3px;
+  background: rgba(20, 18, 15, .1); display: block;
+}
+.grade-meter i.on { background: var(--accent-2); }
+.grade-label { font-family: var(--serif); font-size: 15.5px; }
+.grade-sub { font-size: 12px; color: var(--muted); }
+
+.month-chips { display: grid; gap: 8px; }
+.month-chip {
+  display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+  border: 1px solid var(--line); border-radius: 13px;
+  padding: 10px 13px; font-size: 12.8px; color: var(--ink-3);
+  background: #FCFBF8;
+}
+.month-chip b { font-family: var(--serif); font-weight: 500; font-size: 14px; color: var(--ink); }
+.month-chip span { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+/* 내부 링크 카드 */
+.link-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.link-card {
+  display: block; background: var(--card);
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 13px;
+  transition: border-color .18s, transform .12s;
+}
+.link-card:hover { border-color: var(--line-strong); }
+.link-card:active { transform: scale(.99); }
+.lc-name { display: block; font-family: var(--serif); font-size: 15px; color: var(--ink); }
+.lc-han { font-size: 11px; color: var(--gold); margin-left: 5px; letter-spacing: .04em; }
+.lc-sub { display: block; font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+
+/* 이전 / 다음 */
+.pn-nav {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  margin-top: 34px;
+}
+.pn-link {
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 13px; background: rgba(255, 255, 255, .6);
+}
+.pn-next { text-align: right; }
+.pn-k { display: block; font-size: 10.5px; letter-spacing: .08em; color: var(--muted); margin-bottom: 4px; }
+.pn-v { display: block; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+
+/* 목록 페이지 */
+.ilju-group { margin-top: 26px; }
+.ilju-group-h {
+  font-size: 16px; display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; font-weight: 500;
+}
+.ig-mark {
+  width: 26px; height: 26px; border-radius: 8px; flex: 0 0 auto;
+  background: var(--bg-2); color: var(--accent);
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 14px;
+}
+.ig-sub { font-size: 11px; color: var(--muted); margin-left: 2px; font-family: var(--sans); }
+
+.ji-list { border-top: 1px solid var(--line); }
+.ji-row {
+  display: grid; grid-template-columns: 54px 1fr; gap: 10px;
+  padding: 11px 0; border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.ji-k { font-family: var(--serif); color: var(--ink); }
+.ji-k span { font-size: 10.5px; color: var(--gold); margin-left: 4px; }
+.ji-v { color: var(--ink-3); line-height: 1.8; }
+.ji-v a { border-bottom: 1px solid transparent; }
+.ji-v a:hover { border-bottom-color: var(--line-strong); }
+
+.ilju-page .disclaimer a { border-bottom: 1px solid var(--line-strong); }
+
+@media (min-width: 720px) {
+  .ilju-hero { padding-top: 46px; }
+  .link-grid { grid-template-columns: repeat(3, 1fr); }
+  .spec-row { grid-template-columns: 92px 1fr; }
+  .ilju-desc { font-size: 15px; }
+}
+
+@media (max-width: 380px) {
+  .topbar-nav { gap: 10px; }
+  .link-grid { grid-template-columns: 1fr; }
+}
+
+/* 메인 → 일주 목록 유입 카드 */
+.ilju-teaser {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--card); padding: 16px 18px;
+  transition: border-color .18s, transform .12s;
+}
+.ilju-teaser:hover { border-color: var(--line-strong); }
+.ilju-teaser:active { transform: scale(.995); }
+.ilju-teaser-txt { display: grid; gap: 4px; }
+.ilju-teaser-txt strong { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.5; }
+.ilju-teaser-txt span { font-size: 12.3px; color: var(--ink-3); line-height: 1.6; }
+.ilju-teaser-arrow { color: var(--accent); font-size: 18px; flex: 0 0 auto; }

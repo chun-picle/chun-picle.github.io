@@ -15,6 +15,9 @@ GitHub Pages에서 바로 동작하며 서버·DB·결제 PG 가입 없이도 �
 index.html                서비스 화면 (입력 → 원국 → 무료 결과 → 프리미엄 잠금)
 terms.html                이용약관 · 환불정책 · 개인정보 처리
 404.html                  없는 페이지
+ilju/                     60갑자 일주별 2027 운세 (index.html + 60개 일주 페이지) — 검색 유입용
+sitemap.xml               사이트맵 (메인·약관·일주 목록·60개 일주)
+robots.txt                크롤러 허용 + 사이트맵 위치
 assets/css/style.css      스타일 (모바일 퍼스트, 720px 이상 데스크톱 확장)
 assets/js/solar-terms.js  절입 시각 테이블 (KST, 1910~2050, 천문 계산)
 assets/js/saju-core.js    만세력 계산 엔진 (년주·월주·일주·시주·오행·십성·지지관계)
@@ -22,6 +25,7 @@ assets/js/content.js      해석 콘텐츠 (60갑자 일주, 일간, 오행, 십
 assets/js/report.js       원국 → 화면용 리포트 (재물 구간·월별 등급·귀인 방위 계산)
 assets/js/config.js       ★ 결제 링크·가격·잠금 코드 (여기만 고치면 됨)
 assets/js/app.js          화면 로직 (폼·렌더·잠금·공유)
+scripts/build_seo.py      ★ 일주 60개 페이지 · sitemap · robots 생성기 (도메인 한 줄로 전체 치환)
 tests/test_saju.js        계산 검증 테스트 (25개)
 tests/run_tests.py        테스트 러너 (quickjs 또는 node)
 ```
@@ -99,7 +103,30 @@ python3 tests/run_tests.py         # 25개 케이스, ALL PASS 확인
 
 ---
 
-## 5. 배포
+## 5. 일주 60개 SEO 페이지 (`ilju/`)
+
+검색 유입용 정적 페이지입니다. 60갑자 일주마다 한 편씩, 2027 정미년과의 관계까지 계산해 넣었습니다.
+
+- `ilju/index.html` — 60갑자 목록 (일간 10그룹 + 지지 12그룹)
+- `ilju/{slug}.html` — 갑자(`gapja`) ~ 계해(`gyehae`) 60개
+- 각 페이지: 고유 title/description·canonical·OG·JSON-LD(Article·BreadcrumbList·FAQPage), 상·하단 CTA(→ `/`),
+  같은 일간 5편·같은 지지 4편 내부 링크, 이전/다음 일주
+
+생성은 사이트 엔진을 그대로 불러서 합니다(quickjs로 `saju-core.js`·`content.js`·`report.js` 실행).
+그래서 화면의 만세력·십성·지지관계·재물 점수와 항상 같은 규칙입니다.
+
+```bash
+python3 scripts/build_seo.py          # 60개 + 목록 + sitemap + robots 생성 후 자체 검증
+python3 scripts/build_seo.py --check  # 생성 없이 검증만 (HTML 구조·내부 링크·메타 중복·sitemap 정합성)
+```
+
+> 📌 도메인 확정 시 `scripts/build_seo.py`의 `BASE_URL` 한 줄만 실제 도메인으로 바꾸고 다시 실행하면
+> 60개 페이지의 canonical·og:url·JSON-LD와 `sitemap.xml`·`robots.txt`가 한 번에 치환됩니다.
+> (현재 기본값: `https://wolryeong.vercel.app`)
+
+---
+
+## 6. 배포
 
 정적 파일만 있으므로 `main` 브랜치에 푸시하면 GitHub Pages가 그대로 서빙합니다.
 
@@ -112,7 +139,7 @@ gh api repos/chun-picle/chun-picle.github.io/pages   # 상태 확인
 
 ---
 
-## 6. 알아둘 점
+## 7. 알아둘 점
 
 - 입력값은 서버로 전송되지 않습니다. 마지막 입력과 열람 여부만 브라우저 localStorage에 저장됩니다.
 - 프리미엄 잠금은 화면상 블러 처리입니다. 정적으로 계산되는 콘텐츠라 소스를 보면 값이 보입니다(위 2번 참고).
