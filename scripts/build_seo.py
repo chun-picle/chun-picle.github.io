@@ -46,7 +46,7 @@ SERVICE_YEAR = 2027
 YEAR_LABEL = "2027 정미년"
 YEAR_SHORT = "丁未 · 2027"
 BUILD_DATE = "2026-11-24"
-CSS_VERSION = "20261124e"
+CSS_VERSION = "20261124f"
 
 ROOT = Path(__file__).resolve().parent.parent
 ILJU_DIR = ROOT / "ilju"
@@ -640,7 +640,7 @@ def render_ilju(ctx, it):
     </div>
     <div class="spec-row">
       <div class="spec-k">지지 未</div>
-      <div class="spec-v">{ss_cell(y['jiSS'])}<span class="spec-sub">미토의 정기 기(己)는 이 일간에게 <b>{esc(y['jjSS'])}({esc(SIPSUNG_HAN[y['jjSS']])})</b>로 들어옵니다.</span></div>
+      <div class="spec-v">{ss_cell(y['jiSS'])}<span class="spec-sub">미토의 정기 기(己)는 이 일간에게 <b>{esc(y['jjSS'])}({esc(SIPSUNG_HAN[y['jjSS']])})</b>{esc(particle(y['jjSS'], '으로', '로'))} 들어옵니다.</span></div>
     </div>
     <div class="spec-row">
       <div class="spec-k">지지 관계</div>
