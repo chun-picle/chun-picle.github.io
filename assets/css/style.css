@@ -521,23 +521,23 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .wk-cell.is-day { background: #FBF6EC; }
 .wk-head { background: #F3EEE4; padding: 8px 4px; }
 .wk-head.is-day { background: #F6EEDC; }
-.wk-head b { display: block; font-family: var(--serif); font-size: 13px; font-weight: 500; }
-.wk-head span { display: block; font-size: 9px; color: var(--muted); margin-top: 1px; line-height: 1.3; }
+.wk-head b { display: block; font-family: var(--serif); font-size: 14px; font-weight: 500; }
+.wk-head span { display: block; font-size: 9.5px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
 .wk-corner { font-size: 9.5px; letter-spacing: .06em; color: var(--muted); display: flex; align-items: center; justify-content: center; }
 .wk-rowhead {
   background: #F7F3EA; font-size: 10px; font-weight: 600; letter-spacing: .02em;
   color: var(--ink-3); display: flex; align-items: center; justify-content: center;
 }
-.wk-char { font-family: var(--serif); font-size: 23px; line-height: 1.2; color: var(--ink); }
-.wk-ko { font-size: 9px; color: var(--muted); margin-top: 1px; }
-.wk-ss { font-size: 9.5px; color: var(--ink-3); margin-top: 2px; letter-spacing: -.02em; }
-.wk-hidden { display: grid; gap: 2px; }
-.wk-hidden p { display: flex; align-items: center; justify-content: center; gap: 3px; line-height: 1.35; }
-.wk-hidden b { font-family: var(--serif); font-size: 12.5px; font-weight: 500; color: var(--ink); }
-.wkh-role { font-size: 8.5px; color: var(--muted); }
-.wkh-ss { font-size: 9.5px; color: var(--ink-3); letter-spacing: -.03em; }
-.wk-us { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.3; }
-.wk-han { font-family: var(--serif); font-size: 9.5px; color: var(--gold); margin-top: 1px; }
+.wk-char { font-family: var(--serif); font-size: 24px; line-height: 1.2; color: var(--ink); }
+.wk-ko { font-size: 10px; color: var(--muted); margin-top: 2px; }
+.wk-ss { font-size: 10.5px; color: var(--ink-3); margin-top: 3px; letter-spacing: -.02em; }
+.wk-hidden { display: grid; gap: 3px; }
+.wk-hidden p { display: flex; align-items: center; justify-content: center; gap: 4px; line-height: 1.4; }
+.wk-hidden b { font-family: var(--serif); font-size: 14px; font-weight: 500; color: var(--ink); }
+.wkh-role { font-size: 9.5px; color: var(--muted); }
+.wkh-ss { font-size: 10.5px; color: var(--ink-3); letter-spacing: -.03em; }
+.wk-us { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+.wk-han { font-family: var(--serif); font-size: 10.5px; color: var(--gold); margin-top: 2px; }
 .wk-gm {
   display: inline-block; font-size: 8.5px; font-weight: 700;
   color: var(--red); background: rgba(168, 68, 44, .1);
