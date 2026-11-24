@@ -840,7 +840,7 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
   .wk-hidden { gap: 1px; }
   .wk-hidden p { gap: 2px; }
   .wk-hidden b { font-size: 10.5px; }
-  .wkh-role { font-size: 7.5px; }
+  .wkh-role { display: none; }
   .wkh-ss { font-size: 8px; }
   .wk-us { font-size: 11px; }
   .wk-han { font-size: 8.5px; }
