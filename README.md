@@ -195,6 +195,28 @@ gh api repos/chun-picle/chun-picle.github.io/pages   # 상태 확인
 
 ---
 
+## 6-1. 유입 분석 (Vercel Web Analytics)
+
+Vercel 프로젝트 `wolryeong`(`prj_I83sMtmDhXrqdzfbgj29JnMLy1QH`)의 **Web Analytics**를 켜 두었고,
+모든 HTML(`index.html`·`terms.html`·`404.html` + `ilju/` 61개)의 `<head>`에 같은 스니펫이 들어 있습니다.
+`ilju/` 쪽은 `scripts/build_seo.py`의 `ANALYTICS` 상수로 생성되므로, 손으로 고치지 말고 생성기를 고친 뒤 재생성하세요.
+
+```html
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+```
+
+- **자동 집계(무료)**: 페이지뷰·방문자, 유입경로(referrer), 국가, 기기, 페이지 경로.
+- **전환 이벤트(커스텀)**: `free_diagnosis`(무료 1인 진단 실행), `gate_a_to_gunghap`(Gate A 궁합 이동),
+  `gunghap_free_preview`(궁합 무료 미리보기), `checkout_open`(결제 모달 열기), `checkout_click`(Gumroad 결제 클릭),
+  `license_unlocked`(라이선스 키 인증 성공). 호출은 `window.wolryeongTrack(name, data)` 한 줄이며 실패해도 조용히 무시됩니다.
+- **Hobby 플랜의 한계**: 커스텀 이벤트는 Pro/Enterprise에서만 수집·조회됩니다(`/v1/query/web-analytics/events/*` → `payment_required`).
+  UTM 차원은 Enterprise 또는 Web Analytics Plus 전용입니다.
+- **GitHub Pages**(`chun-picle.github.io`)에서는 `/_vercel/insights/script.js`가 404입니다. 콘솔에 리소스 오류만 남고 기능에는 지장이 없습니다.
+- 대시보드: https://vercel.com/chun8129-1514/wolryeong/analytics
+
+---
+
 ## 7. 알아둘 점
 
 - 입력값은 서버로 전송되지 않습니다. 마지막 입력과 열람 여부만 브라우저 localStorage에 저장됩니다.
