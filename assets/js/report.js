@@ -633,6 +633,14 @@
 
   var LABEL_KEY = { '년주': 'year', '월주': 'month', '일주': 'day', '시주': 'hour' };
 
+  /* 받침에 맞춰 조사만 붙인다: josaS('을','이','가') → '이' */
+  function josaS(word, withB, withoutB) {
+    var ch = String(word).charAt(String(word).length - 1);
+    var c = ch.charCodeAt(0);
+    if (c < 0xAC00 || c > 0xD7A3) return withoutB;
+    return ((c - 0xAC00) % 28 !== 0) ? withB : withoutB;
+  }
+
   function pairArea(a, b) {
     var ka = LABEL_KEY[a], kb = LABEL_KEY[b];
     if (!ka || !kb) return '';
@@ -679,13 +687,15 @@
     var gk = S.gyeokguk(core);
     var gt = C.GYEOK_TEXT[gk.name] || { head: gk.name, body: '' };
     var gyeokBody = '월지 ' + gk.monthJiH + '(' + gk.monthJiHan + ')의 정기 ' +
-      gk.jeonggiH + '(' + gk.jeonggiHan + ')' + josa(gk.jeonggiH, '이', '가') + ' 일간에게 ' + gk.ss + '으로 작동해 ' + gk.name + '이 섭니다. ';
+      gk.jeonggiH + '(' + gk.jeonggiHan + ')' + josaS(gk.jeonggiH, '이', '가') + ' 일간에게 ' +
+      gk.ss + josaS(gk.ss, '으로', '로') + ' 작동해 ' + gk.name + '이 섭니다. ';
     gyeokBody += gk.tugan
       ? '이 정기 ' + gk.jeonggiH + '이 ' + gk.tuganPillars.join('·') + ' 천간에 그대로 드러나(透出) 격이 겉으로도 뚜렷합니다. '
       : '정기가 천간으로 올라오지 않아, 격이 밖으로 드러나기보다 안쪽에서 조용히 작동합니다. ';
     if (gk.junggi) {
+      var jt = C.SS_TRAIT[gk.junggi.ss] || '';
       gyeokBody += '월지 중기 ' + gk.junggi.h + '(' + gk.junggi.ss + ')도 함께 깔려 ' +
-        (C.SS_TRAIT[gk.junggi.ss] || '') + '이 격의 결을 더합니다. ';
+        jt + josaS(jt, '이', '가') + ' 격의 결을 더합니다. ';
     }
     gyeokBody += gt.body
       .replace(/^월지 정기가 [^.]+입니다\. /, '')
@@ -796,7 +806,7 @@
     var outer = {
       head: '겉으로 보이는 나 — 천간 ' + ganList,
       body: '천간은 바깥에서 먼저 읽히는 자리입니다. ' + ganList + '이 드러나 ' +
-        (C.SS_TRAIT[ganTop] || '') + '이 사람을 만날 때의 첫인상이 됩니다. ' +
+        (C.SS_TRAIT[ganTop] || '') + josaS(C.SS_TRAIT[ganTop] || '', '이', '가') + ' 사람을 만날 때의 첫인상이 됩니다. ' +
         (ganCount[ganTop] >= 2
           ? '같은 십성이 ' + ganCount[ganTop] + '개 겹쳐 그 성질이 처음 보는 사람에게도 강하게 각인됩니다.'
           : '한 글자씩 다른 결로 서 있어, 상대에 따라 다른 얼굴이 나옵니다.') +
@@ -804,12 +814,14 @@
     };
     var inner = {
       head: '속에 깔린 나 — 지장간 ' + mainHiddenAll.join('·'),
-      body: '지지는 겉글자보다 안쪽을 더 많이 담습니다. 지장간에서 가장 무거운 것은 ' + hidTop + '으로, ' +
-        (C.SS_TRAIT[hidTop] || '') + '이 실제 판단과 행동의 바닥에 깔려 있습니다. ' +
+      body: '지지는 겉글자보다 안쪽을 더 많이 담습니다. 지장간에서 가장 무거운 것은 ' + hidTop +
+        josaS(hidTop, '으로', '로') + ', ' + (C.SS_TRAIT[hidTop] || '') +
+        josaS(C.SS_TRAIT[hidTop] || '', '이', '가') + ' 실제 판단과 행동의 바닥에 깔려 있습니다. ' +
         (hidTop === ganTop
           ? '겉과 속이 같은 결이라, 보이는 모습과 실제가 크게 어긋나지 않습니다. 일관성이 이 사주의 무기입니다.'
-          : '겉은 ' + ganTop + ', 속은 ' + hidTop + '으로 결이 다릅니다. 처음에는 ' + (C.SS_TRAIT[ganTop] || '') +
-            ' 쪽으로 보이지만, 가까워질수록 ' + (C.SS_TRAIT[hidTop] || '') + ' 쪽이 드러납니다. 이 간극을 아는 사람이 이 사주를 가장 정확히 읽습니다.') +
+          : '겉은 ' + ganTop + ', 속은 ' + hidTop + josaS(hidTop, '으로', '로') + ' 결이 다릅니다. 처음에는 ' +
+            (C.SS_TRAIT[ganTop] || '') + ' 쪽으로 보이지만, 가까워질수록 ' + (C.SS_TRAIT[hidTop] || '') +
+            ' 쪽이 드러납니다. 이 간극을 아는 사람이 이 사주를 가장 정확히 읽습니다.') +
         (st.label === '신약' ? ' 일간의 힘이 약한 편이라, 속의 기운이 겉으로 올라오기까지 시간이 걸립니다.' : '')
     };
 
@@ -818,20 +830,25 @@
       var t = C.PALACE_TEXT[r.key];
       var lead = t ? t.lead : '';
       var mainHidden = r.hidden[r.hidden.length - 1];
+      var trait = C.SS_TRAIT[r.ganSS] || '';
       var ganLine = r.key === 'day'
-        ? '천간 ' + r.ganH + '(' + r.ganHan + ')' + josa(r.ganH, '은', '는') + ' 일간 자신입니다. 이 자리가 곧 ‘나’이고, 지지 ' + r.jiH + josa(r.jiH, '이', '가') + ' 내가 앉는 자리입니다.'
-        : '천간 ' + r.ganH + '(' + r.ganHan + ')' + josa(r.ganH, '이', '가') + ' ' + r.ganSS + '으로 서서 ' + (C.SS_TRAIT[r.ganSS] || '') + '으로 이 자리를 씁니다.';
-      var unsLine = '지지 ' + r.jiH + '(' + r.jiHan + ')' + josa(r.jiH, '은', '는') + ' ' + r.unsung.name + '(' + r.unsung.han + ') — ' +
+        ? '천간 ' + r.ganH + '(' + r.ganHan + ')' + josaS(r.ganH, '은', '는') + ' 일간 자신입니다. 이 자리가 곧 ‘나’이고, 지지 ' + r.jiH + '(' + r.jiHan + ')' + josaS(r.jiH, '이', '가') + ' 내가 앉는 자리입니다.'
+        : '천간 ' + r.ganH + '(' + r.ganHan + ')' + josaS(r.ganH, '이', '가') + ' ' + r.ganSS + josaS(r.ganSS, '으로', '로') + ' 서서 ' + trait + josaS(trait, '으로', '로') + ' 이 자리를 씁니다.';
+      var unsLine = '지지 ' + r.jiH + '(' + r.jiHan + ')' + josaS(r.jiH, '은', '는') + ' ' + r.unsung.name + '(' + r.unsung.han + ') — ' +
         ((C.UNSUNG_TEXT[r.unsung.name] || {}).short || '') + '.';
+      var hidTrait = mainHidden ? (C.SS_TRAIT[mainHidden.ss] || '') : '';
       var hidLine = '속으로는 ' + r.hidden.map(function (h) {
         return h.role + ' ' + h.h + '(' + h.ss + ')';
-      }).join(' · ') + josa(mainHidden ? mainHidden.h : '기', '이', '가') + ' 깔려 ' + (mainHidden ? (C.SS_TRAIT[mainHidden.ss] || '') + '이 이 자리의 실제 동력입니다.' : '있습니다.');
+      }).join(' · ') + josaS(mainHidden ? mainHidden.h : '기', '이', '가') + ' 깔려 ' +
+        (hidTrait ? hidTrait + josaS(hidTrait, '이', '가') + ' 이 자리의 실제 동력입니다.' : '있습니다.');
       var gmLine = r.gongmang
         ? '일주 기준 공망에 든 자리입니다. 채워지지 않는 궁이라 여기서 얻으려 하기보다 다른 궁에서 채우는 편이 낫습니다.'
         : (r.gongmangYear ? '년주 기준 공망에 걸려 있습니다. 집안·초년의 몫이 비어 있어 스스로 만들어야 하는 자리입니다.' : '');
       var relLine = '';
       if (touch[r.label] && touch[r.label].length) {
-        relLine = '다른 주와는 ' + touch[r.label].join(', ') + '으로 얽혀 있어, 이 자리의 일이 그 관계를 통해 실제 사건으로 나타납니다.';
+        var lastRel = touch[r.label][touch[r.label].length - 1];
+        relLine = '다른 주와는 ' + touch[r.label].join(', ') + josaS(lastRel, '으로', '로') +
+          ' 얽혀 있어, 이 자리의 일이 그 관계를 통해 실제 사건으로 나타납니다.';
       }
       return {
         key: r.key, title: t ? t.title : r.label, label: r.label,
