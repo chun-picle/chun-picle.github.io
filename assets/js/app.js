@@ -280,19 +280,37 @@
     $('modalPrice').textContent = window.CONFIG.priceLabel;
     $('modalAnchor').textContent = window.CONFIG.anchorLabel;
     $('unlockBtnPrice').textContent = window.CONFIG.priceLabel;
-    var noPay = !window.CONFIG.tossUrl && !window.CONFIG.kakaoUrl;
+
+    var gm = $('gumroadBtn');
+    if (gm) {
+      if ($('gumroadBtnPrice')) $('gumroadBtnPrice').textContent = '(' + window.CONFIG.priceLabel + ')';
+      if (window.CONFIG.gumroadUrl) {
+        gm.href = window.CONFIG.gumroadUrl;
+        gm.classList.remove('is-off');
+        gm.removeAttribute('aria-disabled');
+      } else {
+        gm.removeAttribute('href');
+        gm.classList.add('is-off');
+        gm.setAttribute('aria-disabled', 'true');
+      }
+    }
+
+    var toss = $('tossBtn'), kakao = $('kakaoBtn');
+    if (toss) {
+      if (window.CONFIG.tossUrl) { toss.href = window.CONFIG.tossUrl; toss.hidden = false; toss.classList.remove('is-off'); }
+      else { toss.removeAttribute('href'); toss.hidden = true; toss.classList.add('is-off'); }
+    }
+    if (kakao) {
+      if (window.CONFIG.kakaoUrl) { kakao.href = window.CONFIG.kakaoUrl; kakao.hidden = false; kakao.classList.remove('is-off'); }
+      else { kakao.removeAttribute('href'); kakao.hidden = true; kakao.classList.add('is-off'); }
+    }
+
+    var noPay = !window.CONFIG.gumroadUrl && !window.CONFIG.tossUrl && !window.CONFIG.kakaoUrl;
     $('payNote').textContent = noPay
       ? '결제 링크를 준비 중입니다. 지금은 데모 코드(' + window.CONFIG.demoCode + ')로 전체 리포트를 먼저 확인해 보세요.'
       : window.CONFIG.payNote;
 
-    var toss = $('tossBtn'), kakao = $('kakaoBtn');
-    if (window.CONFIG.tossUrl) { toss.href = window.CONFIG.tossUrl; toss.classList.remove('is-off'); }
-    else { toss.removeAttribute('href'); toss.classList.add('is-off'); }
-    if (window.CONFIG.kakaoUrl) { kakao.href = window.CONFIG.kakaoUrl; kakao.classList.remove('is-off'); }
-    else { kakao.removeAttribute('href'); kakao.classList.add('is-off'); }
-
-    $('codeMsg').textContent = '';
-    $('codeMsg').className = 'code-msg';
+    setMsg('', false);
     $('modal').hidden = false;
     document.body.style.overflow = 'hidden';
   }
@@ -306,40 +324,135 @@
     x.addEventListener('click', closeModal);
   });
 
-  $('tossBtn').addEventListener('click', function (e) {
+  if ($('gumroadBtn')) $('gumroadBtn').addEventListener('click', function (e) {
+    if (!window.CONFIG.gumroadUrl) { e.preventDefault(); toast('결제 링크를 준비 중입니다. 데모 코드로 먼저 확인해 보세요.'); }
+  });
+  if ($('tossBtn')) $('tossBtn').addEventListener('click', function (e) {
     if (!window.CONFIG.tossUrl) { e.preventDefault(); toast('토스 송금 링크를 준비 중입니다. 데모 코드로 먼저 확인해 보세요.'); }
   });
-  $('kakaoBtn').addEventListener('click', function (e) {
+  if ($('kakaoBtn')) $('kakaoBtn').addEventListener('click', function (e) {
     if (!window.CONFIG.kakaoUrl) { e.preventDefault(); toast('카카오페이 송금 링크를 준비 중입니다. 데모 코드로 먼저 확인해 보세요.'); }
   });
 
-  function tryUnlock(code) {
-    var c = (code || '').trim().toUpperCase();
-    var list = (window.CONFIG.accessCodes || []).map(function (x) { return String(x).toUpperCase(); });
-    if (!c) { setMsg('코드를 입력해 주세요.', false); return; }
-    if (list.indexOf(c) >= 0) {
-      state.unlocked = true;
-      applyLock();
-      store({ unlocked: true, input: state.core ? {
-        year: state.core.input.year, month: state.core.input.month, day: state.core.input.day,
-        hour: state.core.input.hour, minute: state.core.input.minute,
-        timeUnknown: state.core.input.timeUnknown, gender: state.core.input.gender
-      } : null });
-      setMsg('확인됐습니다. 전체 리포트를 열었습니다.', true);
-      setTimeout(function () {
-        closeModal();
-        var y = $('premium').getBoundingClientRect().top + window.pageYOffset - 70;
-        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
-      }, 700);
-    } else {
-      setMsg('코드가 맞지 않습니다. 결제 후 받은 코드를 다시 확인해 주세요.', false);
-    }
-  }
+  /* ---------- 코드 검증 ---------- */
+  var verifying = false;
+  var verifyTimer = null;
+
   function setMsg(t, ok) {
     var m = $('codeMsg');
-    m.textContent = t;
-    m.className = 'code-msg' + (ok ? ' ok' : '');
+    if (!m) return;
+    m.textContent = t || '';
+    m.className = 'code-msg' + (ok === true ? ' ok' : ok === 'wait' ? ' is-wait' : '');
   }
+
+  function setBusy(on) {
+    var b = $('codeBtn'), i = $('codeInput');
+    if (b) { b.disabled = !!on; b.textContent = on ? '확인 중…' : '확인'; }
+    if (i) i.disabled = !!on;
+  }
+
+  function finishUnlock(msg) {
+    state.unlocked = true;
+    applyLock();
+    store({ unlocked: true, input: state.core ? {
+      year: state.core.input.year, month: state.core.input.month, day: state.core.input.day,
+      hour: state.core.input.hour, minute: state.core.input.minute,
+      timeUnknown: state.core.input.timeUnknown, gender: state.core.input.gender
+    } : null });
+    setMsg(msg || '확인됐습니다. 전체 리포트를 열었습니다.', true);
+    setTimeout(function () {
+      closeModal();
+      var y = $('premium').getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+    }, 700);
+  }
+
+  function localCodes() {
+    var list = (window.CONFIG.accessCodes || []).map(function (x) { return String(x).trim().toUpperCase(); });
+    if (window.CONFIG.demoCode) list.push(String(window.CONFIG.demoCode).trim().toUpperCase());
+    return list;
+  }
+
+  /* Gumroad /v2/licenses/verify 로 라이선스 키 검증
+     성공: success === true && !purchase.refunded && !purchase.chargebacked */
+  function verifyGumroad(key) {
+    var pid = String(window.CONFIG.gumroadProductId || '').trim();
+    var url = window.CONFIG.gumroadVerifyUrl || 'https://api.gumroad.com/v2/licenses/verify';
+
+    if (!pid) { setMsg('코드가 맞지 않습니다. 결제 후 받은 코드를 다시 확인해 주세요.', false); return; }
+    if (typeof fetch !== 'function') {
+      setMsg('이 브라우저에서는 코드 확인이 어렵습니다. 최신 크롬·사파리에서 다시 시도해 주세요.', false);
+      return;
+    }
+
+    verifying = true;
+    setBusy(true);
+    setMsg('코드를 확인하는 중입니다…', 'wait');
+
+    var body = 'product_id=' + encodeURIComponent(pid) +
+      '&license_key=' + encodeURIComponent(key) +
+      '&increment_uses_count=false';
+    var settled = false;
+
+    function done(fn) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(verifyTimer);
+      verifying = false;
+      setBusy(false);
+      fn();
+    }
+
+    verifyTimer = setTimeout(function () {
+      done(function () {
+        setMsg('응답이 늦어지고 있습니다. 잠시 뒤 다시 눌러 주세요.', false);
+      });
+    }, window.CONFIG.gumroadTimeoutMs || 15000);
+
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body
+    }).then(function (res) {
+      return res.json().catch(function () { return null; });
+    }).then(function (j) {
+      done(function () {
+        if (!j || typeof j !== 'object') {
+          setMsg('코드를 확인하지 못했습니다. 잠시 뒤 다시 시도해 주세요.', false);
+          return;
+        }
+        if (j.success === true) {
+          var p = j.purchase || {};
+          if (p.refunded) { setMsg('환불 처리된 구매입니다. 결제 내역을 확인해 주세요.', false); return; }
+          if (p.chargebacked) { setMsg('지급 거부(차지백) 처리된 구매입니다. 결제 내역을 확인해 주세요.', false); return; }
+          finishUnlock('확인됐습니다. 전체 리포트를 열었습니다.');
+          return;
+        }
+        var m = String(j.message || '');
+        if (/does not exist|invalid/i.test(m)) {
+          setMsg('코드가 맞지 않습니다. 결제 후 메일로 받은 코드를 그대로 붙여넣어 주세요.', false);
+        } else {
+          setMsg('코드를 확인하지 못했습니다' + (m ? ' (' + m + ')' : '') + '. 잠시 뒤 다시 시도해 주세요.', false);
+        }
+      });
+    }).catch(function () {
+      done(function () {
+        setMsg('Gumroad에 연결하지 못했습니다. 네트워크 확인 후 다시 시도해 주세요. 계속되면 결제하신 메일로 문의해 주세요.', false);
+      });
+    });
+  }
+
+  function tryUnlock(code) {
+    var raw = String(code || '').trim();
+    if (!raw) { setMsg('코드를 입력해 주세요.', false); return; }
+    if (verifying) return;
+    if (localCodes().indexOf(raw.toUpperCase()) >= 0) {
+      finishUnlock('확인됐습니다. 전체 리포트를 열었습니다.');
+      return;
+    }
+    verifyGumroad(raw);
+  }
+
   $('codeBtn').addEventListener('click', function () { tryUnlock($('codeInput').value); });
   $('codeInput').addEventListener('keydown', function (e) {
     if (e.key === 'Enter') { e.preventDefault(); tryUnlock($('codeInput').value); }

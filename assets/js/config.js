@@ -8,11 +8,19 @@ var CONFIG = {
   tagline: '절기로 읽는 사주 리포트',
 
   /* ---- 수금 창구 (여기에 링크를 붙여넣으면 바로 활성화) ---- */
-  /* 예) 토스 송금 링크: https://toss.me/아이디
-     예) 카카오페이 송금 링크: https://qr.kakaopay.com/XXXXXXXX    */
-  tossUrl: '',        // ← 토스 송금 링크
-  kakaoUrl: '',       // ← 카카오페이 송금 링크
-  payNote: '결제 후 받은 코드를 입력하면 이 기기에서 계속 열람할 수 있습니다.',
+  /* 기본 창구: Gumroad (카드·애플페이). 구매 즉시 라이선스 키를 발급하고,
+     사이트는 그 키를 Gumroad에 검증해 리포트를 엽니다. */
+  gumroadUrl: 'https://chuniverse61.gumroad.com/l/wolryeong-2027',
+  gumroadProductId: '3eMAYhr_WKGgAd4-fUXXvA==',
+
+  /* 보조 창구 (비워두면 화면에서 숨김) */
+  tossUrl: '',        // ← 토스 송금 링크 (예: https://toss.me/아이디)
+  kakaoUrl: '',       // ← 카카오페이 송금 링크 (예: https://qr.kakaopay.com/XXXXXXXX)
+  payNote: '결제 후 메일로 받은 코드를 입력하면 이 기기에서 계속 열람할 수 있습니다.',
+
+  /* Gumroad 라이선스 검증 */
+  gumroadVerifyUrl: 'https://api.gumroad.com/v2/licenses/verify',
+  gumroadTimeoutMs: 15000,
 
   /* 가격 */
   price: 9900,

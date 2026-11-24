@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261124c">
+<link rel="stylesheet" href="assets/css/style.css?v=20261124d">
 </head>
 <body>
 
@@ -298,15 +298,16 @@
     <p class="modal-price"><strong id="modalPrice">9,900원</strong> <span id="modalAnchor">커피 두 잔 값</span></p>
 
     <div class="pay-buttons">
-      <a class="btn btn-toss" id="tossBtn" href="#" target="_blank" rel="noopener">토스로 송금</a>
-      <a class="btn btn-kakao" id="kakaoBtn" href="#" target="_blank" rel="noopener">카카오페이로 송금</a>
+      <a class="btn btn-gumroad" id="gumroadBtn" href="#" target="_blank" rel="noopener">카드 · 애플페이로 결제하고 코드 받기 <span id="gumroadBtnPrice">(9,900원)</span></a>
+      <a class="btn btn-toss" id="tossBtn" href="#" target="_blank" rel="noopener" hidden>토스로 송금</a>
+      <a class="btn btn-kakao" id="kakaoBtn" href="#" target="_blank" rel="noopener" hidden>카카오페이로 송금</a>
     </div>
     <p class="modal-note" id="payNote"></p>
 
     <div class="code-box">
       <label class="field-label" for="codeInput">받은 코드 입력</label>
       <div class="code-row">
-        <input id="codeInput" type="text" inputmode="text" autocomplete="off" placeholder="예) TEST2027" maxlength="32">
+        <input id="codeInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="예) TEST2027" maxlength="64">
         <button class="btn btn-primary" id="codeBtn" type="button">확인</button>
       </div>
       <p class="code-msg" id="codeMsg"></p>
@@ -316,11 +317,11 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/solar-terms.js?v=20261124c"></script>
-<script src="assets/js/saju-core.js?v=20261124c"></script>
-<script src="assets/js/content.js?v=20261124c"></script>
-<script src="assets/js/report.js?v=20261124c"></script>
-<script src="assets/js/config.js?v=20261124c"></script>
-<script src="assets/js/app.js?v=20261124c"></script>
+<script src="assets/js/solar-terms.js?v=20261124d"></script>
+<script src="assets/js/saju-core.js?v=20261124d"></script>
+<script src="assets/js/content.js?v=20261124d"></script>
+<script src="assets/js/report.js?v=20261124d"></script>
+<script src="assets/js/config.js?v=20261124d"></script>
+<script src="assets/js/app.js?v=20261124d"></script>
 </body>
 </html>

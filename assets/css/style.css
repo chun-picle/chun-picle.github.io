@@ -503,8 +503,11 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .modal-price strong { font-family: var(--serif); font-size: 24px; letter-spacing: -.02em; }
 .modal-price span { font-size: 12px; color: var(--muted); }
 .pay-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 10px; }
+.btn[hidden] { display: none !important; }
+.btn-gumroad { grid-column: 1 / -1; background: #FF90E8; color: #16130F; font-weight: 700; }
 .btn-toss { background: #1B64DA; color: #fff; }
 .btn-kakao { background: #F7E600; color: #201C00; }
+.btn-gumroad.is-off { opacity: .45; }
 .btn-toss.is-off, .btn-kakao.is-off { opacity: .45; pointer-events: auto; }
 .modal-note { font-size: 11.5px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; }
 .code-box { border-top: 1px solid var(--line); padding-top: 18px; }
@@ -512,6 +515,7 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .code-row input { letter-spacing: .08em; }
 .code-msg { font-size: 12px; margin-top: 9px; min-height: 16px; color: var(--red); }
 .code-msg.ok { color: var(--jade); }
+.code-msg.is-wait { color: var(--muted); }
 
 /* ---------- toast ---------- */
 .toast {
