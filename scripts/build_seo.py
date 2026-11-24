@@ -21,6 +21,7 @@ content.js, report.js)을 quickjs로 그대로 불러와서 하므로, 화면의
 canonical·og:url·JSON-LD·sitemap·robots가 한 번에 치환됩니다.
 """
 
+import datetime
 import html
 import html.parser
 import json
@@ -45,8 +46,9 @@ BRAND_HAN = "月令"
 SERVICE_YEAR = 2027
 YEAR_LABEL = "2027 정미년"
 YEAR_SHORT = "丁未 · 2027"
-BUILD_DATE = "2026-11-24"
-CSS_VERSION = "20261124f"
+PUBLISH_DATE = "2026-11-24"          # 최초 발행일 (JSON-LD datePublished)
+BUILD_DATE = datetime.date.today().isoformat()   # 생성일 (sitemap lastmod, dateModified)
+CSS_VERSION = "20261124g"
 
 ROOT = Path(__file__).resolve().parent.parent
 ILJU_DIR = ROOT / "ilju"
@@ -789,7 +791,7 @@ def render_ilju(ctx, it):
             "url": url,
             "author": {"@type": "Organization", "name": BRAND, "url": BASE_URL + "/"},
             "publisher": {"@type": "Organization", "name": BRAND, "url": BASE_URL + "/"},
-            "datePublished": BUILD_DATE,
+            "datePublished": PUBLISH_DATE,
             "dateModified": BUILD_DATE,
             "about": [
                 {"@type": "Thing", "name": f"{name}일주"},
