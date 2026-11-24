@@ -165,7 +165,136 @@
     return m.no + '월(' + m.label + ')';
   }
 
+  var KIND_NAME = { bi: '비겁', in: '인성', sik: '식상', jae: '재성', gwan: '관성' };
+
+  /* ---------- 신강/신약 · 용신 ---------- */
+  function renderStrength(rep) {
+    if (!$('strengthLabel')) return;
+    var st = rep.strength, ys = rep.yongsin;
+
+    $('strengthLabel').textContent = st.label;
+    $('strengthSub').textContent = st.levelText;
+    $('strengthPct').textContent = '지원 세력 ' + st.ratio + '%';
+    $('strengthDrain').textContent = '소모 세력 ' + (100 - st.ratio) + '%';
+    $('strengthFill').style.width = st.ratio + '%';
+
+    var flags = [
+      { on: st.deukryeong, k: '월령', v: st.deukryeong ? '득령' : '실령' },
+      { on: st.deukji, k: '일지', v: st.deukji ? '득지' : '실지' },
+      { on: st.deukse, k: '세력', v: st.deukse ? '득세' : '약함' }
+    ];
+    $('strengthFlags').innerHTML = flags.map(function (f) {
+      return '<span class="flag ' + (f.on ? 'is-on' : '') + '"><b>' + f.k + '</b>' + f.v + '</span>';
+    }).join('');
+
+    $('strengthBody').textContent = st.body;
+
+    $('strengthTable').innerHTML = st.detail.map(function (d) {
+      var on = d.kind === 'bi' || d.kind === 'in';
+      return '<div class="st-row ' + (on ? 'is-support' : '') + '">' +
+        '<span>' + d.name + '</span><span>' + d.el + '</span>' +
+        '<span>' + KIND_NAME[d.kind] + '</span><span>' + d.points + '점</span></div>';
+    }).join('') +
+      '<p class="note">가중치 — 월지 30 · 일지 15 · 월간 15 · 시간 11 · 년지 10 · 시지 10 · 년간 9 (합 100). 비겁 1.0 · 인성 0.95 · 식상 0.9 · 재성 1.0 · 관성 1.15로 계산합니다.</p>';
+
+    var ysList = [
+      { k: '용신', el: ys.yongEl, han: ys.yongHan, cls: 'is-yong' },
+      { k: '희신', el: ys.huiEl, han: ys.huiHan, cls: 'is-hui' },
+      { k: '기신', el: ys.giEl, han: ys.giHan, cls: 'is-gi' }
+    ];
+    $('yongsinGrid').innerHTML = ysList.map(function (x) {
+      var info = window.CONTENT.ELEMENT_INFO[x.el];
+      return '<div class="ys-card ' + x.cls + '">' +
+        '<p class="ys-k">' + x.k + '</p>' +
+        '<p class="ys-el"><i style="background:' + info.color + '"></i>' + x.el + ' <span>' + x.han + '</span></p>' +
+        '<p class="ys-n">' + info.key + '</p></div>';
+    }).join('');
+    $('yongsinBody').textContent = ys.reason;
+
+    var rx = ys.rx;
+    $('rxTitle').textContent = '개운 처방 — ' + ys.yongEl + '(' + ys.yongHan + ') 기운을 채우는 법';
+    var rows = [
+      { k: '색', v: rx.color },
+      { k: '방위', v: rx.dir },
+      { k: '업종·일', v: rx.industry },
+      { k: '생활 루틴', v: rx.routine },
+      { k: '피할 패턴', v: rx.avoid }
+    ];
+    $('rxGrid').innerHTML = rows.map(function (r) {
+      return '<div class="rx-row"><span class="rx-k">' + r.k + '</span><span class="rx-v">' + r.v + '</span></div>';
+    }).join('');
+    $('rxNote').textContent = '기신인 ' + ys.giEl + '(' + ys.giHan + ') 기운은 줄일수록 좋습니다. ' +
+      ys.giRx.nature + ' 쪽으로 흐르는 습관 — ' + ys.giRx.avoid + ' — 을 먼저 정리하세요.';
+  }
+
+  /* ---------- 대운 ---------- */
+  function renderDaeun(rep) {
+    if (!$('daeunStrip')) return;
+    var d = rep.daeun;
+    $('daeunMeta').textContent = d.whoText + ' · ' + d.directionText +
+      ' — ' + d.dayGap + '일 ÷ 3 = 대운수 ' + d.startAge + '세 · 지금 만 ' + d.age + '세';
+    $('daeunStrip').innerHTML = d.list.map(function (x, i) {
+      var now = i === d.currentIndex;
+      return '<div class="daeun-cell tone-' + x.tone + (now ? ' is-now' : '') + '">' +
+        '<p class="dc-age">' + x.startAge + '–' + x.endAge + '세</p>' +
+        '<p class="dc-char">' + x.label + '</p>' +
+        '<p class="dc-ss">' + x.ganSS + '·' + x.jiSS + '</p>' +
+        '<p class="dc-year">' + x.startYear + '년~</p>' +
+        (now ? '<span class="dc-now">지금</span>' : '') +
+        '</div>';
+    }).join('');
+    $('daeunNote').textContent = d.directionReason + ' 나이는 만 나이 기준이고, 시작 연도는 태어난 해에 대운수를 더해 표시합니다.';
+    $('daeunHead').textContent = d.head;
+    $('daeunBody').textContent = d.body;
+    $('daeun2027').textContent = d.with2027;
+  }
+
+  /* ---------- 4대 영역 ---------- */
+  function renderDomains(rep) {
+    if (!$('domainGrid')) return;
+    $('domainGrid').innerHTML = rep.domains.list.map(function (dm) {
+      var bullets = dm.bullets.map(function (b) {
+        return '<div class="dm-row"><span class="dm-k">' + b.k + '</span><span class="dm-v">' + b.v + '</span></div>';
+      }).join('');
+      var extra = '';
+      if (dm.seasons) {
+        extra = '<div class="divider"></div><p class="mini-label">계절별 주의 루틴</p><div class="season-list">' +
+          dm.seasons.map(function (s) {
+            return '<div class="season-row"><b>' + s.q + '</b><span>' + s.v + '</span></div>';
+          }).join('') + '</div>';
+      }
+      return '<div class="card plain domain-card">' +
+        '<div class="dm-head"><span class="dm-mark">' + dm.mark + '</span>' +
+        '<div><p class="dm-title">' + dm.title + '</p><p class="dm-lead">' + dm.head + '</p></div></div>' +
+        '<p class="body-text">' + dm.body + '</p>' +
+        '<div class="divider"></div>' + bullets + extra + '</div>';
+    }).join('');
+  }
+
+  /* ---------- 분기 로드맵 ---------- */
+  function renderQuarters(rep) {
+    if (!$('quarterGrid')) return;
+    $('quarterGrid').innerHTML = rep.quarters.map(function (q) {
+      var first = q.months[0].no, last = q.months[q.months.length - 1].no;
+      var pct = Math.max(8, Math.min(100, (q.avg + 2) / 6 * 100));
+      var qcls = { '공격': 'attack', '수확': 'harvest', '정비': 'tidy', '방어': 'defend' }[q.label] || 'tidy';
+      return '<div class="quarter-card q-' + qcls + '">' +
+        '<p class="q-key">' + q.key + ' · ' + first + '~' + last + '월</p>' +
+        '<p class="q-label">' + q.label + '</p>' +
+        '<p class="q-head">' + q.head + '</p>' +
+        '<div class="q-bar"><i style="width:' + pct + '%"></i></div>' +
+        '<p class="q-avg">평균 ' + q.avg + '점</p>' +
+        '<p class="q-body">' + q.body + '</p>' +
+        '</div>';
+    }).join('');
+  }
+
   function renderPremium(rep) {
+    renderStrength(rep);
+    renderDaeun(rep);
+    renderDomains(rep);
+    renderQuarters(rep);
+
     $('wealthHead').textContent = rep.wealth.head;
     $('wealthBody').textContent = rep.wealth.body;
 
@@ -179,17 +308,25 @@
     if (rep.wealth.best) {
       var b = rep.wealth.best;
       $('bestMonthNote').textContent = '가장 힘이 실리는 달은 ' + b.no + '월(' + b.label + ', ' + b.range + ')입니다. ' +
-        '계약·단가 협상·영업처럼 결과가 남는 일은 이 달에 몰아넣는 편이 좋습니다.';
+        '계약·단가 협상·영업처럼 결과가 남는 일은 이 달에 몰아넣는 편이 좋습니다. 반대로 ' +
+        (rep.wealth.defend.length ? rep.wealth.defend[0].no + '월처럼 눌리는 달에는 새 결제와 새 약속을 만들지 마세요.' : '눌리는 달에는 큰 결정을 미루세요.');
     }
 
     $('months').innerHTML = rep.months.map(function (m) {
       /* 월 구분은 절입일 기준 */
       var bars = '';
       for (var i = 1; i <= 5; i++) bars += '<i class="' + (i <= m.grade ? 'on' : '') + '"></i>';
-      var desc = m.body + (m.relNote ? ' ' + m.relNote : '');
+      var favTag = m.fav === 'mid' ? ''
+        : '<p class="month-fav is-' + m.fav + '">' + (m.fav === 'yong' ? '용신' : m.fav === 'hui' ? '희신' : '기신') + '</p>';
       return '<div class="month-row">' +
-        '<div><p class="month-no">' + m.no + '월</p><p class="month-ganji">' + m.label + '월</p><p class="month-range">' + m.range + '</p></div>' +
-        '<div class="month-main"><p>' + m.title + '</p><p>' + desc + '</p></div>' +
+        '<div><p class="month-no">' + m.no + '월</p><p class="month-ganji">' + m.label + '월</p>' +
+        '<p class="month-range">' + m.range + '</p>' + favTag + '</div>' +
+        '<div class="month-main">' +
+        '<p class="month-title">' + m.title + '</p>' +
+        '<p class="month-body">' + m.body + '</p>' +
+        '<p class="month-act"><span>재물·일</span>' + m.actMoney + '</p>' +
+        '<p class="month-act"><span>관계·주의</span>' + m.actRelation + '</p>' +
+        '</div>' +
         '<div class="grade">' + bars + '</div>' +
         '</div>';
     }).join('');
@@ -331,7 +468,7 @@
 
     var noPay = !window.CONFIG.gumroadUrl && !window.CONFIG.tossUrl && !window.CONFIG.kakaoUrl;
     $('payNote').textContent = noPay
-      ? '결제 링크를 준비 중입니다. 지금은 데모 코드(' + window.CONFIG.demoCode + ')로 전체 리포트를 먼저 확인해 보세요.'
+      ? '결제 링크를 준비 중입니다. 잠시 뒤 다시 시도해 주세요.'
       : window.CONFIG.payNote;
 
     setMsg('', false);
@@ -349,13 +486,13 @@
   });
 
   if ($('gumroadBtn')) $('gumroadBtn').addEventListener('click', function (e) {
-    if (!window.CONFIG.gumroadUrl) { e.preventDefault(); toast('결제 링크를 준비 중입니다. 데모 코드로 먼저 확인해 보세요.'); }
+    if (!window.CONFIG.gumroadUrl) { e.preventDefault(); toast('결제 링크를 준비 중입니다.'); }
   });
   if ($('tossBtn')) $('tossBtn').addEventListener('click', function (e) {
-    if (!window.CONFIG.tossUrl) { e.preventDefault(); toast('토스 송금 링크를 준비 중입니다. 데모 코드로 먼저 확인해 보세요.'); }
+    if (!window.CONFIG.tossUrl) { e.preventDefault(); toast('토스 송금 링크를 준비 중입니다.'); }
   });
   if ($('kakaoBtn')) $('kakaoBtn').addEventListener('click', function (e) {
-    if (!window.CONFIG.kakaoUrl) { e.preventDefault(); toast('카카오페이 송금 링크를 준비 중입니다. 데모 코드로 먼저 확인해 보세요.'); }
+    if (!window.CONFIG.kakaoUrl) { e.preventDefault(); toast('카카오페이 송금 링크를 준비 중입니다.'); }
   });
 
   /* ---------- 코드 검증 ---------- */
@@ -415,7 +552,7 @@
 
     var body = 'product_id=' + encodeURIComponent(pid) +
       '&license_key=' + encodeURIComponent(key) +
-      '&increment_uses_count=false';
+      '&increment_uses_count=true';
     var settled = false;
 
     function done(fn) {
@@ -449,6 +586,14 @@
           var p = j.purchase || {};
           if (p.refunded) { setMsg('환불 처리된 구매입니다. 결제 내역을 확인해 주세요.', false); return; }
           if (p.chargebacked) { setMsg('지급 거부(차지백) 처리된 구매입니다. 결제 내역을 확인해 주세요.', false); return; }
+
+          /* 사용 횟수가 상한을 넘으면 차단 (응답의 uses는 이번 확인까지 반영된 값) */
+          var maxUses = Number(window.CONFIG.maxCodeUses) || 3;
+          var uses = Number(j.uses);
+          if (!isNaN(uses) && uses > maxUses) {
+            setMsg('이 코드는 최대 사용 횟수(' + maxUses + '회)를 초과해 사용할 수 없습니다. 본인이 구매한 코드가 맞다면 문의 메일로 연락해 주세요.', false);
+            return;
+          }
           finishUnlock('확인됐습니다. 전체 리포트를 열었습니다.');
           return;
         }

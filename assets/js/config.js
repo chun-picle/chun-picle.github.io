@@ -16,7 +16,7 @@ var CONFIG = {
   /* 보조 창구 (비워두면 화면에서 숨김) */
   tossUrl: '',        // ← 토스 송금 링크 (예: https://toss.me/아이디)
   kakaoUrl: '',       // ← 카카오페이 송금 링크 (예: https://qr.kakaopay.com/XXXXXXXX)
-  payNote: '결제 후 메일로 받은 코드를 입력하면 이 기기에서 계속 열람할 수 있습니다.',
+  payNote: '결제 후 메일로 받은 라이선스 키를 입력하면 이 기기에서 계속 열람할 수 있습니다.',
 
   /* Gumroad 라이선스 검증 */
   gumroadVerifyUrl: 'https://api.gumroad.com/v2/licenses/verify',
@@ -32,9 +32,11 @@ var CONFIG = {
   anchorLabel: '커피 한 잔 값',
 
   /* ---- 잠금 해제 코드 ---- */
-  /* 데모 코드: TEST2027 (누구나 전체 리포트를 체험) */
-  demoCode: 'TEST2027',
-  accessCodes: ['TEST2027'],   // 판매한 코드를 여기에 추가 (쉼표로 구분)
+  /* 데모 코드·사전 발급 코드는 두지 않습니다. Gumroad 라이선스 키만 인정합니다.
+     (누구나 아는 코드로 무료 열람되는 구멍을 막기 위해 비워 둡니다.) */
+  demoCode: '',
+  accessCodes: [],             // 판매한 코드를 여기에 추가할 때만 사용 (쉼표로 구분)
+  maxCodeUses: 3,              // 라이선스 키 1개당 최대 인증 횟수 (남용 방지)
 
   /* ---- 계산 옵션 ---- */
   applyKoreanDST: true,        // 1987~1988 서머타임 1시간 보정

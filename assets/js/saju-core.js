@@ -418,10 +418,181 @@
     return arr;
   }
 
+  /* ============================================================
+   * 오행 관계 · 신강/신약 · 대운(大運)
+   * ============================================================ */
+
+  var PRODUCES = { 목: '화', 화: '토', 토: '금', 금: '수', 수: '목' };
+  var CONTROLS = { 목: '토', 토: '수', 수: '화', 화: '금', 금: '목' };
+
+  function inverseOf(map, target) {
+    for (var k in map) { if (map[k] === target) return k; }
+    return null;
+  }
+  /* 일간 오행 기준 십성 오행 */
+  function inElement(el) { return inverseOf(PRODUCES, el); }   /* 인성 */
+  function outElement(el) { return PRODUCES[el]; }             /* 식상 */
+  function jaeElement(el) { return CONTROLS[el]; }             /* 재성 */
+  function gwanElement(el) { return inverseOf(CONTROLS, el); } /* 관성 */
+
+  /* 어떤 오행이 일간에게 어떤 세력인지 */
+  function kindOf(dayEl, el) {
+    if (el === dayEl) return 'bi';
+    if (saeng(el, dayEl)) return 'in';
+    if (saeng(dayEl, el)) return 'sik';
+    if (geuk(dayEl, el)) return 'jae';
+    return 'gwan';
+  }
+
+  /* 자리별 비중(총 100) — 월령을 가장 무겁게, 그다음 일지·월간 */
+  var POS_W = { yearGan: 9, yearJi: 10, monthGan: 15, monthJi: 30, dayJi: 15, hourGan: 11, hourJi: 10 };
+  /* 세력별 힘의 정도: 비겁·재성은 그대로, 인성은 약간 덜, 관성은 약간 더 */
+  var KIND_FACTOR = { bi: 1, in: 0.95, sik: 0.9, jae: 1, gwan: 1.15 };
+
+  /* 신강/신약: 득령(월지)·득지(일지)·득세(주변 세력)를 점수화 */
+  function strength(core) {
+    var p = core.pillarName;
+    var dayEl = GAN[core.dayGan].el;
+    var rows = [
+      { name: '년간', el: p.year.elGan, w: POS_W.yearGan },
+      { name: '년지', el: p.year.elJi, w: POS_W.yearJi },
+      { name: '월간', el: p.month.elGan, w: POS_W.monthGan },
+      { name: '월지', el: p.month.elJi, w: POS_W.monthJi },
+      { name: '일지', el: p.day.elJi, w: POS_W.dayJi }
+    ];
+    if (p.hour) {
+      rows.push({ name: '시간', el: p.hour.elGan, w: POS_W.hourGan });
+      rows.push({ name: '시지', el: p.hour.elJi, w: POS_W.hourJi });
+    }
+
+    var support = 0, drain = 0, detail = [];
+    rows.forEach(function (r) {
+      var kind = kindOf(dayEl, r.el);
+      var pts = r.w * KIND_FACTOR[kind];
+      if (kind === 'bi' || kind === 'in') support += pts;
+      else drain += pts;
+      detail.push({
+        name: r.name, el: r.el, kind: kind, weight: r.w,
+        points: Math.round(pts * 10) / 10
+      });
+    });
+
+    var ratio = Math.round(support / (support + drain) * 100);
+    var label, level;
+    if (ratio >= 70) { label = '신강'; level = '태강'; }
+    else if (ratio >= 58) { label = '신강'; level = '신강'; }
+    else if (ratio > 42) { label = '중화'; level = '중화'; }
+    else if (ratio > 30) { label = '신약'; level = '신약'; }
+    else { label = '신약'; level = '태약'; }
+
+    var inEl = inElement(dayEl), sikEl = outElement(dayEl);
+    var jaeEl = jaeElement(dayEl), gwanEl = gwanElement(dayEl);
+    var counts = core.counts;
+    var groups = {
+      bi: counts[dayEl] || 0,
+      in: counts[inEl] || 0,
+      sik: counts[sikEl] || 0,
+      jae: counts[jaeEl] || 0,
+      gwan: counts[gwanEl] || 0
+    };
+
+    var deukryeong = (kindOf(dayEl, p.month.elJi) === 'bi' || kindOf(dayEl, p.month.elJi) === 'in');
+    var deukji = (kindOf(dayEl, p.day.elJi) === 'bi' || kindOf(dayEl, p.day.elJi) === 'in');
+    var deukse = (groups.bi - 1 + groups.in) >= 3;
+
+    return {
+      dmEl: dayEl,
+      el: { bi: dayEl, in: inEl, sik: sikEl, jae: jaeEl, gwan: gwanEl },
+      groups: groups,
+      support: Math.round(support * 10) / 10,
+      drain: Math.round(drain * 10) / 10,
+      ratio: ratio,
+      label: label,
+      level: level,
+      deukryeong: deukryeong,
+      deukji: deukji,
+      deukse: deukse,
+      detail: detail
+    };
+  }
+
+  /* ---------- 대운 ---------- */
+
+  function pillarIndex(p) {
+    for (var i = 0; i < 60; i++) { if (i % 10 === p.gan && i % 12 === p.ji) return i; }
+    return 0;
+  }
+
+  /* 만 나이 (UTC 기준 날짜 비교) */
+  function ageOn(input, when) {
+    var y = when.getUTCFullYear(), m = when.getUTCMonth() + 1, d = when.getUTCDate();
+    var age = y - input.year;
+    if (m < input.month || (m === input.month && d < input.day)) age -= 1;
+    return age < 0 ? 0 : age;
+  }
+
+  /* 순행(陽男·陰女) / 역행(陰男·陽女) + 절입일 차이로 대운수 계산 */
+  function daeun(core, opt) {
+    opt = opt || {};
+    var gender = opt.gender || (core.input && core.input.gender) || 'f';
+    var yearYang = !!GAN[core.yearPillar.gan].yang;
+    var forward = (yearYang && gender === 'm') || (!yearYang && gender === 'f');
+    var days = forward
+      ? (core.nextTerm.ts - core.birthTs) / DAY_MS
+      : (core.birthTs - core.currentTerm.ts) / DAY_MS;
+    var yearsExact = days / 3;              /* 3일 = 1년 */
+    var startAge = Math.max(1, Math.round(yearsExact));
+    var base = pillarIndex(core.monthPillar);
+    var dir = forward ? 1 : -1;
+    var list = [];
+    for (var i = 0; i < 8; i++) {
+      var idx = ((base + dir * (i + 1)) % 60 + 60) % 60;
+      var g = idx % 10, j = idx % 12;
+      list.push({
+        no: i + 1,
+        startAge: startAge + i * 10,
+        endAge: startAge + i * 10 + 9,
+        startYear: core.input.year + startAge + i * 10,
+        gan: g, ji: j,
+        ganH: GAN[g].h, jiH: JI[j].h,
+        label: GAN[g].h + JI[j].h,
+        han: GAN[g].han + JI[j].han,
+        ganSS: sipsung(core.dayGan, g),
+        jiSS: sipsungJi(core.dayGan, j),
+        elGan: GAN[g].el, elJi: JI[j].el
+      });
+    }
+    return {
+      forward: forward,
+      gender: gender,
+      dayGap: Math.round(days * 100) / 100,
+      yearsExact: Math.round(yearsExact * 100) / 100,
+      startAge: startAge,
+      list: list
+    };
+  }
+
+  function currentDaeun(dn, age) {
+    for (var i = 0; i < dn.list.length; i++) {
+      var d = dn.list[i];
+      if (age >= d.startAge && age <= d.endAge) return { index: i, item: d };
+    }
+    return null;
+  }
+
   var API = {
     GAN: GAN, JI: JI, ELEMENTS: ELEMENTS, ELEMENT_HAN: ELEMENT_HAN,
     MONTH_ORDER_NAME: MONTH_ORDER_NAME,
     compute: compute,
+    strength: strength,
+    daeun: daeun,
+    currentDaeun: currentDaeun,
+    ageOn: ageOn,
+    kindOf: kindOf,
+    inElement: inElement,
+    outElement: outElement,
+    jaeElement: jaeElement,
+    gwanElement: gwanElement,
     yearlyMonths: yearlyMonths,
     monthRanges: monthRanges,
     sipsung: sipsung,

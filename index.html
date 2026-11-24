@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261124h">
+<link rel="stylesheet" href="assets/css/style.css?v=20261124i">
 </head>
 <body>
 
@@ -139,8 +139,61 @@
     <div class="premium" id="premium">
       <div class="premium-inner" id="premiumInner">
 
+        <!-- 1. 신강·신약 · 용신 -->
         <div class="section">
-          <h3 class="section-title">2027 재물운 · 투자 타이밍 <span class="tag">유료</span></h3>
+          <h3 class="section-title">신강·신약 정밀 판정과 용신 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <div class="strength-top">
+              <div>
+                <p class="strength-label" id="strengthLabel"></p>
+                <p class="strength-sub" id="strengthSub"></p>
+              </div>
+              <div class="strength-num">
+                <b id="strengthPct"></b>
+                <span id="strengthDrain"></span>
+              </div>
+            </div>
+            <div class="strength-track"><i class="strength-fill" id="strengthFill"></i></div>
+            <div class="flag-row" id="strengthFlags"></div>
+            <p class="body-text" id="strengthBody"></p>
+            <details class="detail-box">
+              <summary>판정 근거 보기</summary>
+              <div class="strength-table" id="strengthTable"></div>
+            </details>
+
+            <div class="divider"></div>
+            <div class="ys-grid" id="yongsinGrid"></div>
+            <p class="body-text" id="yongsinBody"></p>
+
+            <div class="divider"></div>
+            <p class="mini-label" id="rxTitle">개운 처방</p>
+            <div class="rx-grid" id="rxGrid"></div>
+            <p class="note" id="rxNote"></p>
+          </div>
+        </div>
+
+        <!-- 2. 대운 -->
+        <div class="section">
+          <h3 class="section-title">10년 대운과 지금 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <p class="mini-label" id="daeunMeta"></p>
+            <div class="daeun-strip" id="daeunStrip"></div>
+            <p class="note" id="daeunNote"></p>
+            <div class="divider"></div>
+            <p class="wealth-head" id="daeunHead"></p>
+            <p class="body-text" id="daeunBody"></p>
+            <p class="body-text" id="daeun2027"></p>
+          </div>
+        </div>
+
+        <!-- 3. 4대 영역 -->
+        <div class="section">
+          <h3 class="section-title">2027 정미년 4대 영역 <span class="tag">유료</span></h3>
+          <div class="domain-grid" id="domainGrid"></div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">돈이 움직이는 달 · 투자 타이밍 <span class="tag">유료</span></h3>
           <div class="card plain">
             <p class="wealth-head" id="wealthHead"></p>
             <p class="body-text" id="wealthBody"></p>
@@ -164,6 +217,15 @@
           <div class="card plain">
             <div class="months" id="months"></div>
             <p class="note">월 구분은 달력이 아니라 절입일(節入日) 기준입니다. 예: 1월은 소한~입춘 구간, 2월은 입춘~경칩 구간.</p>
+          </div>
+        </div>
+
+        <!-- 5. 분기 로드맵 -->
+        <div class="section">
+          <h3 class="section-title">2027 분기 로드맵 <span class="tag">유료</span></h3>
+          <div class="card plain">
+            <div class="quarter-grid" id="quarterGrid"></div>
+            <p class="note">12개월 점수를 분기별로 집계한 것입니다. 공격·수확·정비·방어는 절대 점수가 아니라 네 분기의 상대 비교로 정해집니다.</p>
           </div>
         </div>
 
@@ -196,8 +258,8 @@
           <p class="lock-icon">◈</p>
           <p class="lock-title">프리미엄 리포트</p>
           <p class="lock-desc">
-            2027 재물운과 투자 타이밍, 12개월 상세 운세,<br>
-            피해야 할 달과 귀인 방위까지 — 전부 열립니다.
+            신강·신약과 용신 처방, 10년 대운, 2027 4대 영역,<br>
+            12개월 심화 운세와 분기 로드맵까지 — 전부 열립니다.
           </p>
           <p class="lock-price">
             <s class="price-was" id="lockPriceWas">9,900원</s>
@@ -312,10 +374,11 @@
     <p class="eyebrow">프리미엄 리포트</p>
     <h3 id="modalTitle">2027 정미년 전체 리포트</h3>
     <ul class="modal-list">
-      <li>2027 재물운 · 투자 타이밍</li>
-      <li>1~12월 월별 상세 운세</li>
-      <li>피해야 할 달 · 귀인 방위</li>
-      <li>십성 구조 분석</li>
+      <li>신강·신약 판정과 용신·희신·기신 처방</li>
+      <li>10년 대운표와 현재 대운 × 2027 세운</li>
+      <li>2027 재물·직업·연애·건강 4대 영역</li>
+      <li>1~12월 월별 심화 운세와 실전 액션</li>
+      <li>분기별 로드맵 · 투자 타이밍 · 귀인 방위</li>
     </ul>
     <p class="modal-price"><strong id="modalPrice">4,900원</strong> <s class="price-was" id="modalPriceWas">9,900원</s> <span class="price-off" id="modalPriceOff">50% 할인</span> <span id="modalAnchor">커피 한 잔 값</span></p>
 
@@ -327,11 +390,12 @@
     <p class="modal-note" id="payNote"></p>
 
     <div class="code-box">
-      <label class="field-label" for="codeInput">받은 코드 입력</label>
+      <label class="field-label" for="codeInput">받은 라이선스 키 입력</label>
       <div class="code-row">
-        <input id="codeInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="예) TEST2027" maxlength="64">
+        <input id="codeInput" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="8F2A1C4E-9B7D-…" maxlength="64">
         <button class="btn btn-primary" id="codeBtn" type="button">확인</button>
       </div>
+      <p class="code-hint">결제 후 메일로 발급받은 고유 라이선스 키(<b>XXXXXXXX-…</b>)를 입력해 주세요. 키 하나로 최대 3회까지 인증되며, 한 번 인증한 기기는 다시 입력하지 않아도 됩니다.</p>
       <p class="code-msg" id="codeMsg"></p>
     </div>
   </div>
@@ -339,11 +403,11 @@
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/solar-terms.js?v=20261124d"></script>
-<script src="assets/js/saju-core.js?v=20261124d"></script>
-<script src="assets/js/content.js?v=20261124d"></script>
-<script src="assets/js/report.js?v=20261124d"></script>
-<script src="assets/js/config.js?v=20261124e"></script>
-<script src="assets/js/app.js?v=20261124e"></script>
+<script src="assets/js/solar-terms.js?v=20261124f"></script>
+<script src="assets/js/saju-core.js?v=20261124f"></script>
+<script src="assets/js/content.js?v=20261124f"></script>
+<script src="assets/js/report.js?v=20261124f"></script>
+<script src="assets/js/config.js?v=20261124f"></script>
+<script src="assets/js/app.js?v=20261124f"></script>
 </body>
 </html>
