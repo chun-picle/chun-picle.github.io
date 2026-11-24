@@ -134,7 +134,7 @@ check_file("gunghap-ui.js 게이트·유료 지연 렌더", "assets/js/gunghap-u
             "ghGateBottomText"])
 check_file("gunghap-content.js funnel 번들", "assets/js/gunghap-content.js",
            ["funnel", "첫 장을 열어봤어요", "총점은 봤어요", "가장 좋은 달 1개만 봤어요",
-            "나의 2027년 리포트 보기"])
+            "구매에 포함 · 나의 2027년 리포트 바로 보기"])
 check_file("v2 스타일", "assets/css/style.css",
            [".fr-keyword", ".gate-card", ".lock-skeleton", ".premium.is-locked .lock-skeleton"])
 check_file("콘텐츠 빌드 스크립트", "scripts/build_gunghap_content.py",

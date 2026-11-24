@@ -252,7 +252,7 @@
   check('Gate B 하단 문구', FN.previewBottom.text,
     '가장 좋은 달 1개만 봤어요. 나머지 11개월, 조심할 달까지 알고 가세요.');
   check('Gate C 문구', FN.crossSell.text, "두 사람의 2027년은 봤어요. 이제 '나'의 2027년을 볼 차례예요.");
-  check('Gate C 버튼', FN.crossSell.cta, '나의 2027년 리포트 보기 — 4,900원');
+  check('Gate C 버튼 = 추가 결제 없음 안내', FN.crossSell.cta, '구매에 포함 · 나의 2027년 리포트 바로 보기');
   check('오늘의 운세 3등급', FN.todayFortune.map(function (x) { return x.level; }).join(','), 'good,mid,care');
   check('2027 키워드 5종', FN.keyword2027.length, 5);
 
