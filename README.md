@@ -122,7 +122,7 @@ python3 scripts/build_seo.py --check  # 생성 없이 검증만 (HTML 구조·�
 
 > 📌 도메인 확정 시 `scripts/build_seo.py`의 `BASE_URL` 한 줄만 실제 도메인으로 바꾸고 다시 실행하면
 > 60개 페이지의 canonical·og:url·JSON-LD와 `sitemap.xml`·`robots.txt`가 한 번에 치환됩니다.
-> (현재 기본값: `https://wolryeong.vercel.app`)
+> (현재 기본값: `https://wolryeong-saju.vercel.app` — Vercel 프로덕션 도메인)
 
 ---
 

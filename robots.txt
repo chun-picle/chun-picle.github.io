@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://wolryeong.vercel.app/sitemap.xml
+Sitemap: https://wolryeong-saju.vercel.app/sitemap.xml

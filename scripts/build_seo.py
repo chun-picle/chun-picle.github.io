@@ -38,8 +38,8 @@ except ImportError:  # pragma: no cover
 # 1. 기본 설정
 # ─────────────────────────────────────────────────────────────
 
-#: 사이트 기본 도메인 (Vercel 도메인 확정 시 이 줄만 교체)
-BASE_URL = "https://wolryeong.vercel.app"
+#: 사이트 기본 도메인 (Vercel 프로덕션 도메인 — 변경 시 이 줄만 교체)
+BASE_URL = "https://wolryeong-saju.vercel.app"
 BRAND = "월령"
 BRAND_HAN = "月令"
 SERVICE_YEAR = 2027
