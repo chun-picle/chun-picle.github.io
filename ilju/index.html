@@ -421,6 +421,12 @@
   }
  ]
 }</script>
+<!-- Vercel Web Analytics — 방문·유입경로·전환 측정 (스크립트가 없어도 페이지 동작에 지장 없음) -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+window.wolryeongTrack = function (name, data) {
+  try { window.va('event', data ? { name: name, data: data } : { name: name }); } catch (e) {}
+};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body class="ilju-page">
 

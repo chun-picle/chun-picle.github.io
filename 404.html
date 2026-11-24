@@ -13,6 +13,12 @@
   .nf h1 { font-size: 40px; margin-bottom: 14px; letter-spacing: -.04em; }
   .nf p { color: var(--ink-3); font-size: 14.5px; margin-bottom: 26px; line-height: 1.75; }
 </style>
+<!-- Vercel Web Analytics — 방문·유입경로·전환 측정 (스크립트가 없어도 페이지 동작에 지장 없음) -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+window.wolryeongTrack = function (name, data) {
+  try { window.va('event', data ? { name: name, data: data } : { name: name }); } catch (e) {}
+};</script>
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <div class="nf">

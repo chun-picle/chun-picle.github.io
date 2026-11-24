@@ -140,6 +140,21 @@ check_file("v2 스타일", "assets/css/style.css",
 check_file("콘텐츠 빌드 스크립트", "scripts/build_gunghap_content.py",
            ["assets/data/gunghap-content.json", "gunghap-content.js"])
 
+# Vercel Web Analytics: 전 페이지 삽입 + 핵심 전환 이벤트 배선
+check_file("index.html Vercel Analytics", "index.html",
+           ["/_vercel/insights/script.js", "window.va", "window.wolryeongTrack"])
+check_file("terms.html Vercel Analytics", "terms.html",
+           ["/_vercel/insights/script.js", "window.wolryeongTrack"])
+check_file("일주 페이지 Vercel Analytics", "ilju/gapja.html",
+           ["/_vercel/insights/script.js"])
+check_file("SEO 생성기 Vercel Analytics", "scripts/build_seo.py",
+           ["ANALYTICS", "/_vercel/insights/script.js"])
+check_file("app.js 전환 이벤트", "assets/js/app.js",
+           ["free_diagnosis", "checkout_open", "checkout_click", "license_unlocked",
+            "typeof window.wolryeongTrack === 'function'"])
+check_file("gunghap-ui.js 전환 이벤트", "assets/js/gunghap-ui.js",
+           ["gate_a_to_gunghap", "gunghap_free_preview"])
+
 if static_lines:
     print("== 정적 검사 ==")
     print("\n".join(static_lines))

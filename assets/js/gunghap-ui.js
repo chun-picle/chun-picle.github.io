@@ -20,6 +20,11 @@
 
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
+  /* 전환 계측 — window.wolryeongTrack은 HTML <head> 스니펫이 정의한다(없으면 무시) */
+  function track(name, data) {
+    try { if (typeof window.wolryeongTrack === 'function') window.wolryeongTrack(name, data); } catch (e) {}
+  }
+
   var toastTimer = null;
   function toast(msg) {
     var t = $('toast');
@@ -430,6 +435,8 @@
     $('gateABtn').addEventListener('click', function () {
       var core = window.__app && window.__app.state ? window.__app.state.core : null;
       if (core && core.input) prefillA(core.input);
+      /* Gate A — 무료 1인 진단에서 2인 궁합으로 넘어가는 클릭 (결제 없음) */
+      track('gate_a_to_gunghap', { prefilled: !!(core && core.input) });
       setView('gunghap');
       var target = $('ghForm');
       if (!target) return;
@@ -465,6 +472,7 @@
       setUnlocked(state.unlocked || savedUnlocked());
       render(res);
       if ($('ghResult')) $('ghResult').hidden = false;
+      track('gunghap_free_preview', { mode: state.mode });
       setTimeout(function () {
         var y = $('ghResult').getBoundingClientRect().top + window.pageYOffset - 64;
         window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });

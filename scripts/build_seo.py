@@ -456,6 +456,18 @@ FAVICON = (
     "text-anchor='middle'%3E%E6%9C%88%3C/text%3E%3C/svg%3E"
 )
 
+#: Vercel Web Analytics — 모든 페이지 공통 삽입 스니펫.
+#: 정적 스크립트가 없는 환경(GitHub Pages 등)에서도 404만 나고 페이지 동작에는
+#: 영향이 없도록 stub(window.va) + defer 로드로만 둔다. 커스텀 이벤트는
+#: window.wolryeongTrack(name, data) 한 줄로 부르고, 무료 플랜에서 막혀도 조용히 무시된다.
+ANALYTICS = """<!-- Vercel Web Analytics — 방문·유입경로·전환 측정 (스크립트가 없어도 페이지 동작에 지장 없음) -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+window.wolryeongTrack = function (name, data) {
+  try { window.va('event', data ? { name: name, data: data } : { name: name }); } catch (e) {}
+};</script>
+<script defer src="/_vercel/insights/script.js"></script>"""
+
+
 HEAD_COMMON = """<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F7F4EE">
@@ -836,6 +848,7 @@ def render_ilju(ctx, it):
 <meta name="twitter:title" content="{esc(og_title)}">
 <meta name="twitter:description" content="{esc(desc)}">
 <script type="application/ld+json">{jsonld(page_schema)}</script>
+{ANALYTICS}
 </head>
 <body class="ilju-page">
 
@@ -948,6 +961,7 @@ def render_index(ctx):
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary">
 <script type="application/ld+json">{jsonld(page_schema)}</script>
+{ANALYTICS}
 </head>
 <body class="ilju-page">
 
@@ -1177,6 +1191,9 @@ def check_site():
                 continue
             target = href.split("#")[0].split("?")[0]
             if not target:
+                continue
+            # Vercel Web Analytics 시스템 라우트 — 저장소에 파일이 없고 배포된 Vercel이 응답한다
+            if target.startswith("/_vercel/"):
                 continue
             resolved = (path.parent / target).resolve()
             if target.endswith("/"):

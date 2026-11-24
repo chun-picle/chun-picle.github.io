@@ -7,6 +7,14 @@
   var $ = function (id) { return document.getElementById(id); };
   var state = { gender: 'f', core: null, report: null, unlocked: false };
 
+  /* ---------- 전환 계측 (Vercel Web Analytics) ----------
+     window.wolryeongTrack은 각 HTML <head>의 Analytics 스니펫이 정의한다.
+     스크립트가 없거나(로컬·GitHub Pages) 무료 플랜에서 커스텀 이벤트가 막혀도
+     조용히 지나가도록 try/catch로 감싼다. */
+  function track(name, data) {
+    try { if (typeof window.wolryeongTrack === 'function') window.wolryeongTrack(name, data); } catch (e) {}
+  }
+
   /* ---------- 저장소 ---------- */
   var LS_KEY = 'wolryeong.v1';
   function store(obj) {
@@ -564,6 +572,7 @@
         timeUnknown: data.timeUnknown, gender: state.gender
       }
     });
+    track('free_diagnosis', { gender: state.gender, time_unknown: !!data.timeUnknown });
     return true;
   }
 
@@ -681,6 +690,8 @@
     setMsg('', false);
     $('modal').hidden = false;
     document.body.style.overflow = 'hidden';
+    /* Gate B — 결제(라이선스 키) 화면 진입 */
+    track('checkout_open', { scene: scene || 'solo', paid: !noPay });
   }
   function closeModal() {
     $('modal').hidden = true;
@@ -693,7 +704,9 @@
   });
 
   if ($('gumroadBtn')) $('gumroadBtn').addEventListener('click', function (e) {
-    if (!window.CONFIG.gumroadUrl) { e.preventDefault(); toast('결제 링크를 준비 중입니다.'); }
+    if (!window.CONFIG.gumroadUrl) { e.preventDefault(); toast('결제 링크를 준비 중입니다.'); return; }
+    /* Gate B — 실제 결제 페이지로 나가는 클릭 */
+    track('checkout_click', { channel: 'gumroad' });
   });
   if ($('tossBtn')) $('tossBtn').addEventListener('click', function (e) {
     if (!window.CONFIG.tossUrl) { e.preventDefault(); toast('토스 송금 링크를 준비 중입니다.'); }
@@ -722,6 +735,8 @@
   function finishUnlock(msg) {
     state.unlocked = true;
     applyLock();
+    /* 전환 완료 — 라이선스 키 인증 성공 */
+    track('license_unlocked', {});
     store({ unlocked: true, input: state.core ? {
       year: state.core.input.year, month: state.core.input.month, day: state.core.input.day,
       hour: state.core.input.hour, minute: state.core.input.minute,
