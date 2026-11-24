@@ -196,11 +196,14 @@
     var yFavGan = favorOf(S.GAN[yGan].el, ys);
     var yFavJi = favorOf(S.JI[yJi].el, ys);
 
-    var favPhrase = (yFavGan === 'yong' || yFavGan === 'hui') && (yFavJi === 'yong' || yFavJi === 'hui')
-      ? '천간·지지가 모두 용신·희신 쪽이라 이 대운 안에서 가장 힘이 실리는 해입니다'
-      : (yFavGan === 'gi' && yFavJi === 'gi')
-        ? '천간·지지가 모두 기신 쪽이라 이 대운 안에서 가장 조심해야 하는 해입니다'
-        : '천간과 지지의 유불리가 엇갈려, 상반기와 하반기의 체감이 다릅니다';
+    var favPhrase;
+    if ((yFavGan === 'yong' || yFavGan === 'hui') && (yFavJi === 'yong' || yFavJi === 'hui')) {
+      favPhrase = '천간·지지가 모두 용신·희신 쪽이라 이 대운 안에서 가장 힘이 실리는 해입니다';
+    } else if ((yFavGan === 'gi' || yFavGan === 'mid') && (yFavJi === 'gi' || yFavJi === 'mid') && (yFavGan === 'gi' || yFavJi === 'gi')) {
+      favPhrase = '천간·지지에 기신이 깔려, 해가 갈수록 무거워지니 지출과 약속을 줄이는 쪽이 이깁니다';
+    } else {
+      favPhrase = '천간과 지지의 유불리가 엇갈려, 상반기와 하반기의 체감이 다릅니다';
+    }
 
     var with2027 = '2027 정미년은 ' + item.label + ' 대운 안에서 ' + ySS + '·' + yJiSS +
       '의 해입니다. ' + favPhrase + '. ';
@@ -511,7 +514,7 @@
       body: careerBody,
       bullets: [
         { k: '맞는 길', v: C.DOMAIN_TEXT.career.path[pathKey] },
-        { k: '타이밍', v: jobMonths.length ? jobMonths.map(function (m) { return m.no + '월(' + m.range + ')'; }).join(' · ') : '관성이 힘을 받는 달이 없어 하반기로 미루는 편이 안전합니다.' },
+        { k: '타이밍', v: jobMonths.length ? jobMonths.map(function (m) { return m.no + '월(' + m.range + ')'; }).join(' · ') : '관성 달이 뚜렷하지 않아 서류·실적을 쌓으며 ' + months.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 2).map(function (m) { return m.no + '월'; }).join('·') + '을 노리세요.' },
         { k: '2027 포지셔닝', v: career2027 }
       ]
     };

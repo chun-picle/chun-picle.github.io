@@ -295,9 +295,6 @@
     renderDomains(rep);
     renderQuarters(rep);
 
-    $('wealthHead').textContent = rep.wealth.head;
-    $('wealthBody').textContent = rep.wealth.body;
-
     $('attackList').textContent = rep.wealth.attack.length
       ? rep.wealth.attack.map(function (m) { return monthLabel(m) + ' ' + m.range; }).join(' · ')
       : '뚜렷한 공격 구간이 없습니다. 이 해는 벌기보다 지키는 쪽이 남습니다.';
