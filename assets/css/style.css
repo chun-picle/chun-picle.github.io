@@ -1291,3 +1291,6 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
   .gate-text { font-size: 16px; }
   .gate-text-sm { font-size: 14px; }
 }
+
+/* 결제 전에는 하단 면책 문구가 비어 있으므로 상자도 남기지 않는다 */
+#ghDisclaimer:empty { display: none; }
