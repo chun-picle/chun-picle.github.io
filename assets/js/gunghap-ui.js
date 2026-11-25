@@ -23,7 +23,7 @@
      Gate B(잠금 상자)·Gate C(1인 리포트 안내) 카드는 감춘다. */
   function isFreeOpen() { return !!(window.CONFIG && window.CONFIG.freeOpen); }
   if (isFreeOpen() && document.documentElement) {
-    document.documentElement.className += ' is-free-open';
+    document.documentElement.classList.add('is-free-open');
   }
 
   function pad(n) { return (n < 10 ? '0' : '') + n; }

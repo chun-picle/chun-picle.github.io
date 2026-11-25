@@ -12,7 +12,7 @@
      true면 결제·라이선스 키 없이 심층 리포트 전체를 처음부터 그린다. */
   function isFreeOpen() { return !!(window.CONFIG && window.CONFIG.freeOpen); }
   if (isFreeOpen() && document.documentElement) {
-    document.documentElement.className += ' is-free-open';
+    document.documentElement.classList.add('is-free-open');
   }
 
   /* ---------- 전환 계측 (Vercel Web Analytics) ----------
