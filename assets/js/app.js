@@ -7,6 +7,14 @@
   var $ = function (id) { return document.getElementById(id); };
   var state = { gender: 'f', core: null, report: null, unlocked: false };
 
+  /* ---------- 무료 오픈 모드 ----------
+     config.js의 freeOpen 한 줄로 유료 잠금과 무료 오픈을 갈아 끼운다.
+     true면 결제·라이선스 키 없이 심층 리포트 전체를 처음부터 그린다. */
+  function isFreeOpen() { return !!(window.CONFIG && window.CONFIG.freeOpen); }
+  if (isFreeOpen() && document.documentElement) {
+    document.documentElement.className += ' is-free-open';
+  }
+
   /* ---------- 전환 계측 (Vercel Web Analytics) ----------
      window.wolryeongTrack은 각 HTML <head>의 Analytics 스니펫이 정의한다.
      스크립트가 없거나(로컬·GitHub Pages) 무료 플랜에서 커스텀 이벤트가 막혀도
@@ -196,6 +204,8 @@
     if ($('gateAText')) $('gateAText').textContent = FR.gateAText || '';
     if ($('gateABtn')) $('gateABtn').textContent = FR.gateABtn || '';
     if ($('soloReportLink')) $('soloReportLink').textContent = FR.soloLink || '';
+    /* 무료 오픈 중에는 금액이 붙은 링크 문구를 쓰지 않는다 */
+    if ($('soloReportLink') && isFreeOpen()) $('soloReportLink').textContent = '심층 리포트 전체 보기 — 지금 무료';
   }
   document.addEventListener('DOMContentLoaded', function () {
     applyFunnelCopy();
@@ -558,14 +568,18 @@
     renderFree(rep, core);
     renderFreeReading(core);
 
-    state.unlocked = !!load().unlocked;
-    /* 유료 데이터는 잠금이 풀린 뒤에만 DOM에 올린다 (v2 5절 무료/유료 경계) */
+    var paidUnlocked = !!load().unlocked;
+    state.unlocked = isFreeOpen() || paidUnlocked;
+    /* 유료 데이터는 잠금이 풀린 뒤에만 DOM에 올린다 (v2 5절 무료/유료 경계)
+       freeOpen이면 처음부터 심층 리포트 전체를 그린다. */
     if (state.unlocked) renderPremium(rep);
     applyLock();
 
     $('result').hidden = false;
+    /* freeOpen 중에는 기기에 '유료 해제' 값을 저장하지 않는다 — 유료로 되돌렸을 때
+       이미 열린 기기로 남지 않도록, 실제 결제로 풀린 값(paidUnlocked)만 보존한다. */
     store({
-      unlocked: state.unlocked,
+      unlocked: paidUnlocked,
       input: {
         year: data.year, month: data.month, day: data.day,
         hour: data.hour, minute: data.minute,
@@ -578,8 +592,9 @@
 
   function applyLock() {
     var prem = $('premium');
-    if (state.unlocked) prem.classList.remove('is-locked');
-    else prem.classList.add('is-locked');
+    if (!prem) return;
+    var open = isFreeOpen() || state.unlocked;
+    prem.classList.toggle('is-locked', !open);
   }
 
   /* 라이선스 키 인증이 끝나면 그때 유료 리포트를 그린다 */
@@ -592,7 +607,7 @@
   /* S1 하단 링크 — 이미 열려 있으면 리포트로, 아니면 결제 모달로 */
   if ($('soloReportLink')) {
     $('soloReportLink').addEventListener('click', function () {
-      if (state.unlocked && state.report) {
+      if ((isFreeOpen() || state.unlocked) && state.report) {
         var y = $('premium').getBoundingClientRect().top + window.pageYOffset - 70;
         window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
       } else {
@@ -883,7 +898,7 @@
   /* ---------- 초기화 ---------- */
   (function init() {
     var saved = load();
-    if (saved.unlocked) state.unlocked = true;
+    state.unlocked = isFreeOpen() || !!saved.unlocked;
 
     if (window.CONFIG.contactEmail) {
       var footerInfo = '문의 <a href="mailto:' + window.CONFIG.contactEmail + '">' + window.CONFIG.contactEmail + '</a>';

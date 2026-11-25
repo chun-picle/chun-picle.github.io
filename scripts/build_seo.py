@@ -48,7 +48,7 @@ YEAR_LABEL = "2027 정미년"
 YEAR_SHORT = "丁未 · 2027"
 PUBLISH_DATE = "2026-11-24"          # 최초 발행일 (JSON-LD datePublished)
 BUILD_DATE = datetime.date.today().isoformat()   # 생성일 (sitemap lastmod, dateModified)
-CSS_VERSION = "20261124h"
+CSS_VERSION = "20261125m"
 CONTACT_EMAIL = "wolryeong.saju@gmail.com"   # 문의 메일 (사이트 푸터·약관과 동일)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -483,8 +483,8 @@ def cta_block(ctx, top=False):
     """메인(/)으로 보내는 CTA. 상단은 절제하고 하단은 크게."""
     cls = "cta-block"
     return f"""<div class="{cls}">
-  <a class="btn btn-primary btn-block" href="../#form">{CTA_TEXT} <span class="btn-arrow">→</span></a>
-  <p class="cta-note">생년월일과 시각만 넣으면 절기 시각까지 계산한 8글자 원국과 2027년 재물운·월별 흐름이 나옵니다. 원국·오행·일주 성격은 무료입니다.</p>
+  <a class="btn btn-primary btn-block" href="../#birthForm">{CTA_TEXT} <span class="btn-arrow">→</span></a>
+  <p class="cta-note">생년월일과 시각만 넣으면 절기 시각까지 계산한 8글자 원국과 2027년 재물운·월별 흐름이 나옵니다. 지금은 오픈 기념으로 원국 정밀 해부·12개월 운세까지 전부 무료입니다.</p>
 </div>"""
 
 
@@ -502,7 +502,7 @@ def topbar(ctx, root_prefix="../"):
   </a>
   <nav class="topbar-nav">
     <a class="topbar-link" href="./">일주 전체</a>
-    <a class="topbar-link" href="{root_prefix}#form">내 사주 보기</a>
+    <a class="topbar-link" href="{root_prefix}#birthForm">내 사주 보기</a>
   </nav>
 </header>"""
 
@@ -728,7 +728,7 @@ def render_ilju(ctx, it):
     <div class="divider"></div>
     <p class="mini-label">방어할 달</p>
     {defend_html}
-    <p class="note">월 구분은 달력이 아니라 절입일(節入日) 기준입니다. 달마다의 상세 등급과 투자 타이밍, 피해야 할 달은 <a href="../#form">정밀 리포트</a>에서 12개월 전체로 확인할 수 있습니다.</p>
+    <p class="note">월 구분은 달력이 아니라 절입일(節入日) 기준입니다. 달마다의 상세 등급과 투자 타이밍, 피해야 할 달은 <a href="../#birthForm">정밀 리포트</a>에서 12개월 전체로 확인할 수 있습니다.</p>
   </div>
 </section>"""
 
@@ -986,7 +986,7 @@ def render_index(ctx):
     <h2 class="ilju-h2">내 일주 찾기</h2>
     <p class="ilju-p">
       일주는 태어난 날의 간지라, 생년월일만 알면 확인할 수 있습니다. 아래에서 일주를 고르거나,
-      <a href="../#form">내 사주 보기</a>로 정확한 8글자를 먼저 확인하세요. 시각을 몰라도 일주는 그대로 나옵니다.
+      <a href="../#birthForm">내 사주 보기</a>로 정확한 8글자를 먼저 확인하세요. 시각을 몰라도 일주는 그대로 나옵니다.
     </p>
     <div class="spec">
       <div class="spec-row">

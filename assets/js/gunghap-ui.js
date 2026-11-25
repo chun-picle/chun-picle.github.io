@@ -18,6 +18,14 @@
     unlocked: false
   };
 
+  /* ---------- 무료 오픈 모드 ----------
+     config.js의 freeOpen이 true면 2인 궁합도 결제·라이선스 키 없이 전체가 열린다.
+     Gate B(잠금 상자)·Gate C(1인 리포트 안내) 카드는 감춘다. */
+  function isFreeOpen() { return !!(window.CONFIG && window.CONFIG.freeOpen); }
+  if (isFreeOpen() && document.documentElement) {
+    document.documentElement.className += ' is-free-open';
+  }
+
   function pad(n) { return (n < 10 ? '0' : '') + n; }
 
   /* 전환 계측 — window.wolryeongTrack은 HTML <head> 스니펫이 정의한다(없으면 무시) */
@@ -171,8 +179,9 @@
     if (state.unlocked) renderPaid(res);
     else renderSkeleton(res);
 
-    if ($('ghGateTop')) $('ghGateTop').hidden = !!state.unlocked;
-    if ($('ghCrossSell')) $('ghCrossSell').hidden = !state.unlocked;
+    if ($('ghGateTop')) $('ghGateTop').hidden = isFreeOpen() || !!state.unlocked;
+    /* Gate C — 1인 리포트로 잇는 카드도 결제를 전제하는 문구라 무료 오픈 중에는 감춘다 */
+    if ($('ghCrossSell')) $('ghCrossSell').hidden = isFreeOpen() ? true : !state.unlocked;
     applyLock();
   }
 
@@ -194,7 +203,9 @@
     head.appendChild(el('span', 'gh-good-label', pv.goodMonth.label + (pv.goodMonth.range ? ' · ' + pv.goodMonth.range : '')));
     card.appendChild(head);
     card.appendChild(el('p', 'gh-month-comment', pv.goodMonth.comment));
-    card.appendChild(el('p', 'note', '12개월 전체 캘린더는 전체 리포트에서 열립니다.'));
+    if (!isFreeOpen()) {
+      card.appendChild(el('p', 'note', '12개월 전체 캘린더는 전체 리포트에서 열립니다.'));
+    }
 
     if ($('ghDisclaimerTop')) $('ghDisclaimerTop').textContent = '* ' + (window.GUNGHAP_CONTENT.meta || {}).disclaimer;
   }
@@ -360,7 +371,7 @@
     setUnlocked(true);
     if (state.result) render(state.result);
     if ($('ghGateTop')) $('ghGateTop').hidden = true;
-    if ($('ghCrossSell')) $('ghCrossSell').hidden = false;
+    if ($('ghCrossSell')) $('ghCrossSell').hidden = isFreeOpen() ? true : false;
   });
 
   function openPay(scene) {
@@ -519,7 +530,7 @@
   })();
 
   /* ---------- 초기화 ---------- */
-  state.unlocked = savedUnlocked();
+  state.unlocked = isFreeOpen() || savedUnlocked();
   setUnlocked(state.unlocked);
   setView('solo');
 

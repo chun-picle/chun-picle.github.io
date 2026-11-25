@@ -155,6 +155,39 @@ check_file("app.js 전환 이벤트", "assets/js/app.js",
 check_file("gunghap-ui.js 전환 이벤트", "assets/js/gunghap-ui.js",
            ["gate_a_to_gunghap", "gunghap_free_preview"])
 
+# 무료 오픈 모드 (2026-11-25): config 토글로 잠금/오픈을 갈아 끼운다
+check_file("config.js 무료 오픈 토글", "assets/js/config.js",
+           ["freeOpen: true", "freeOpen: false", "maxCodeUses: 3", "priceLabel: '4,900원'",
+            "gumroadVerifyUrl"])
+check_file("app.js 무료 오픈 배선", "assets/js/app.js",
+           ["function isFreeOpen()", "state.unlocked = isFreeOpen() || paidUnlocked",
+            "unlocked: paidUnlocked", "is-free-open", "isFreeOpen() || state.unlocked",
+            "verifyGumroad"],
+           ["demoCode: 'TEST2027'"])
+check_file("gunghap-ui.js 무료 오픈 배선", "assets/js/gunghap-ui.js",
+           ["function isFreeOpen()", "state.unlocked = isFreeOpen() || savedUnlocked()",
+            "is-free-open", "isFreeOpen() ? true : !state.unlocked", "openUnlockModal"])
+check_file("style.css 무료 오픈 숨김 규칙", "assets/css/style.css",
+           ["html.is-free-open .section-title .tag", "html.is-free-open .premium .lock",
+            "html.is-free-open .lock-skeleton", "html.is-free-open .gate-b",
+            "html.is-free-open #ghCrossSell", ".free-open-note"])
+check_file("index.html 무료 오픈 안내", "index.html",
+           ["free-open-note", "오픈 기념", "리포트 전체 무료", "궁합 전체 무료"])
+check_file("terms.html 무료 기간 안내", "terms.html",
+           ["오픈 기념 기간", "모든 리포트를 무료"])
+
+# config.js를 그대로 실행해 freeOpen 값이 실제로 true인지 확인
+free_ctx = quickjs.Context()
+free_ctx.eval(
+    open(os.path.join(BASE, "assets", "js", "config.js"), encoding="utf-8").read()
+    + "\n;var __freeOpen = (typeof CONFIG !== 'undefined' && CONFIG.freeOpen === true);"
+)
+if free_ctx.get("__freeOpen"):
+    static_lines.append("PASS | config.js freeOpen 값 = true (무료 오픈 상태)")
+else:
+    static_lines.append("FAIL | config.js freeOpen 값이 true가 아닙니다")
+    fail += 1
+
 if static_lines:
     print("== 정적 검사 ==")
     print("\n".join(static_lines))
