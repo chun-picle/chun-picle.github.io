@@ -375,13 +375,13 @@
         '<p class="wk-ko">' + r.jiH + ' · ' + r.jiEl + '</p>' +
         '<p class="wk-ss">' + r.jiSS + '</p>';
     });
-    html += line('지장간', function (r) {
+    html += line('숨은 글자', function (r) {
       return '<div class="wk-hidden">' + r.hidden.map(function (h) {
         return '<p><span class="wkh-role">' + h.role + '</span><b>' + h.han + '</b>' +
           '<span class="wkh-ss">' + h.ss + '</span></p>';
       }).join('') + '</div>';
     });
-    html += line('12운성', function (r) {
+    html += line('기운 단계', function (r) {
       return '<p class="wk-us">' + r.unsung.name + '</p><p class="wk-han">' + r.unsung.han + '</p>';
     });
     html += line('공망', function (r) {
