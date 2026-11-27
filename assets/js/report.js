@@ -31,6 +31,18 @@
 
   var ELS = ['목', '화', '토', '금', '수'];
 
+  /* 십성 이름 옆에 붙이는 짧은 풀이 — 처음 나오는 자리에서 한 번씩 */
+  var SS_SHORT = {
+    비견: '내 주관·경쟁의 기운', 겁재: '몫을 나누는 경쟁의 기운',
+    식신: '재능·표현의 기운', 상관: '드러내는 표현의 기운',
+    편재: '크게 들고 나는 돈의 기운', 정재: '꾸준히 쌓이는 돈의 기운',
+    편관: '센 책임·압박의 기운', 정관: '반듯한 책임·평판의 기운',
+    편인: '남다른 배움의 기운', 정인: '배움·도움의 기운'
+  };
+  function ssShort(name) {
+    return name + (SS_SHORT[name] ? '(' + SS_SHORT[name] + ')' : '');
+  }
+
   function firstSentence(s) {
     var i = s.indexOf('. ');
     return i > 0 ? s.slice(0, i + 1) : s;
@@ -91,25 +103,37 @@
     var el = st.el, g = st.groups;
     var yongEl, huiEl, giEl, reason;
 
+    var kindGloss = {
+      bi: '나와 같은 편, 내 주관·추진의 기운',
+      in: '배움·생각·도움받는 기운',
+      sik: '아이디어·표현·실행의 기운',
+      jae: '돈과 결과를 만드는 기운',
+      gwan: '직장·책임·사회적 기준의 기운'
+    };
+    var kindLabel = { bi: '비겁', in: '인성', sik: '식상', jae: '재성', gwan: '관성' };
+    function g5(kind, elName) {
+      return elName + '(' + kindLabel[kind] + ' · ' + kindGloss[kind] + ')';
+    }
+
     if (st.label === '신강') {
       if (g.gwan > 0) {
         yongEl = el.gwan; huiEl = el.jae;
-        reason = '신강한데 관성(' + yongEl + ')이 ' + g.gwan + '개 있어, 넘치는 힘을 책임·역할·평판으로 받아내는 것이 가장 자연스럽습니다. 힘을 안으로만 쓰면 고집과 소모로 돌아섭니다.';
+        reason = '내 힘이 넘치는 편(신강)인데, 책임의 기운 ' + g5('gwan', yongEl) + '이 ' + g.gwan + '개 있어 넘치는 힘을 받아낼 그릇이 이미 있습니다. 그 힘을 일·직책·평판으로 쏟아내는 것이 가장 자연스럽고, 안으로만 쓰면 고집과 소모로 돌아섭니다.';
       } else if (g.jae > 0) {
         yongEl = el.jae; huiEl = el.sik;
-        reason = '신강한데 관성이 얇아, 벌고 쓰는 재성(' + yongEl + ')으로 힘을 빼는 편이 좋습니다. 재성은 내가 직접 다루는 돈이라 통제가 관건입니다.';
+        reason = '내 힘이 넘치는 편(신강)인데 책임의 기운이 얇습니다. 이때는 돈과 결과의 기운 ' + g5('jae', yongEl) + '으로 힘을 밖에 쓰는 편이 좋습니다. 내가 직접 다루는 돈이라 통제가 관건입니다.';
       } else {
         yongEl = el.sik; huiEl = el.bi;
-        reason = '신강하고 재·관이 모두 얇아, 식상(' + yongEl + ')으로 재능을 밖에 풀어내는 것이 처방입니다. 만들고 표현하는 일이 곧 조절 장치입니다.';
+        reason = '내 힘이 넘치는데 돈과 책임의 기운이 모두 얇습니다. 이때는 아이디어·표현의 기운 ' + g5('sik', yongEl) + '으로 재능을 밖에 풀어내는 것이 처방입니다. 만들고 표현하는 일이 곧 힘을 빼는 장치입니다.';
       }
       giEl = el.in;
     } else if (st.label === '신약') {
       if (g.in > 0) {
         yongEl = el.in; huiEl = el.bi;
-        reason = '신약한데 인성(' + yongEl + ')이 ' + g.in + '개 있어, 배움과 후원으로 뿌리를 채우는 것이 먼저입니다. 돈을 쫓기 전에 몸값과 기반을 올려야 힘이 남습니다.';
+        reason = '내 힘이 얇은 편(신약)인데, 배움의 기운 ' + g5('in', yongEl) + '이 ' + g.in + '개 있습니다. 공부·자격·사람의 도움으로 뿌리를 채우는 것이 먼저이고, 돈을 쫓기 전에 몸값과 기반을 올려야 힘이 남습니다.';
       } else {
         yongEl = el.bi; huiEl = el.in;
-        reason = '신약하고 인성도 얇아, 같은 편(동료·가족·협력자)의 힘으로 서야 합니다. 혼자 짊어지는 구조를 만들면 재능보다 체력이 먼저 바닥납니다.';
+        reason = '내 힘도 얇고 배움의 기운도 얇은 편이라, 나와 같은 편 ' + g5('bi', yongEl) + '의 힘으로 서야 합니다. 동료·가족·협력자를 곁에 두고, 혼자 다 짊어지면 재능보다 체력이 먼저 바닥납니다.';
       }
       giEl = g.jae > 0 ? el.jae : el.gwan;
     } else {
@@ -121,7 +145,7 @@
       yongEl = minEl;
       huiEl = S.inElement(minEl);
       giEl = maxEl === minEl ? el.gwan : maxEl;
-      reason = '일간의 힘과 소모가 균형을 이뤄 중화입니다. 이 경우 가장 얇은 ' + minEl + ' 기운을 채우는 쪽으로 환경을 고르면 흐름이 살아납니다.';
+      reason = '나를 돕는 힘과 소모되는 힘이 비슷해 균형이 잡힌 편(중화)입니다. 이때는 가장 얇은 ' + minEl + ' 기운을 채우는 쪽으로 사람·장소·일을 고르면 흐름이 살아납니다.';
     }
 
     var rx = C.ELEMENT_RX[yongEl];
@@ -173,19 +197,19 @@
     var upcoming = age < dn.startAge;
 
     var curRel = S.relation(item.ji, core.dayJi);
-    var body = '이 10년은 ' + item.ganH + item.jiH + '의 기운으로, 천간 ' + item.ganSS +
-      '·지지 ' + josa(item.jiSS, '이', '가') + ' 함께 걸린 구간입니다. ' + item.ganTheme + '. ' + item.jiTheme;
+    var body = '이 10년은 ' + item.ganH + item.jiH + '의 기운으로, 겉기운(천간)은 ' + ssShort(item.ganSS) +
+      ', 바탕기운(지지)은 ' + ssShort(item.jiSS) + '인 구간입니다. ' + item.ganTheme + '. ' + item.jiTheme;
     if (curRel.length) {
-      body += ' 대운지 ' + item.jiH + '가 내 일지 ' + core.dayPillar.jiH + '와 ' + curRel.join('·') +
+      body += ' 이 10년의 바탕 글자 ' + item.jiH + '가 내 자리(일지) ' + core.dayPillar.jiH + '와 ' + curRel.join('·') +
         '이라, 삶의 형태(사는 곳·일하는 자리·관계)가 실제로 바뀌는 사건이 이 안에서 일어납니다.';
     } else {
-      body += ' 대운지가 내 일지와 직접 부딪히지 않아, 바깥 환경보다 내 선택으로 판이 갈리는 구간입니다.';
+      body += ' 이 10년의 바탕 글자가 내 자리와 직접 부딪히지 않아, 바깥 환경보다 내 선택으로 판이 갈리는 구간입니다.';
     }
     body += item.tone === 'good'
-      ? ' 용신·희신이 실린 대운이라 밀어붙인 일이 남습니다.'
+      ? ' 나에게 힘이 되는 기운(용신·희신)이 실린 10년이라 밀어붙인 일이 남습니다.'
       : item.tone === 'bad'
-        ? ' 기신이 실린 대운이라 확장보다 지키는 운영이 필요합니다.'
-        : ' 용신도 기신도 아니라, 준비한 만큼 나오는 담백한 구간입니다.';
+        ? ' 줄여야 할 기운(기신)이 실린 10년이라 확장보다 지키는 운영이 필요합니다.'
+        : ' 특별히 힘이 되지도 걸리지도 않는, 준비한 만큼 나오는 담백한 구간입니다.';
 
     /* 2027 정미년 × 현재 대운 */
     var yGan = 3, yJi = 7;
@@ -198,33 +222,33 @@
 
     var favPhrase;
     if ((yFavGan === 'yong' || yFavGan === 'hui') && (yFavJi === 'yong' || yFavJi === 'hui')) {
-      favPhrase = '천간·지지가 모두 용신·희신 쪽이라 이 대운 안에서 가장 힘이 실리는 해입니다';
+      favPhrase = '겉기운과 바탕기운이 모두 나에게 힘이 되는 쪽(용신·희신)이라, 이 10년 안에서 가장 힘이 실리는 해입니다';
     } else if ((yFavGan === 'gi' || yFavGan === 'mid') && (yFavJi === 'gi' || yFavJi === 'mid') && (yFavGan === 'gi' || yFavJi === 'gi')) {
-      favPhrase = '천간·지지에 기신이 깔려, 해가 갈수록 무거워지니 지출과 약속을 줄이는 쪽이 이깁니다';
+      favPhrase = '겉기운과 바탕기운에 줄여야 할 기운(기신)이 깔려, 해가 갈수록 무거워지니 지출과 약속을 줄이는 쪽이 이깁니다';
     } else {
-      favPhrase = '천간과 지지의 유불리가 엇갈려, 상반기와 하반기의 체감이 다릅니다';
+      favPhrase = '겉기운과 바탕기운의 유불리가 엇갈려, 상반기와 하반기의 체감이 다릅니다';
     }
 
-    var with2027 = '2027 정미년은 ' + item.label + ' 대운 안에서 ' + ySS + '·' + yJiSS +
+    var with2027 = '2027 정미년은 ' + item.label + ' 대운 안에서 겉기운 ' + ssShort(ySS) + '·바탕기운 ' + ssShort(yJiSS) +
       '의 해입니다. ' + favPhrase + '. ';
     if (relDY.length) {
-      with2027 += '대운지 ' + item.jiH + '와 세운지 ' + S.JI[yJi].h + '가 ' + relDY.join('·') +
-        '이라, 이 대운의 큰 방향이 2027년에 한 번 크게 흔들리며 구체적인 사건으로 나타납니다. ';
+      with2027 += '이 10년의 바탕 글자 ' + item.jiH + '와 2027년의 글자 ' + S.JI[yJi].h + '가 ' + relDY.join('·') +
+        '이라, 이 10년의 큰 방향이 2027년에 한 번 크게 흔들리며 구체적인 사건으로 나타납니다. ';
     } else {
-      with2027 += '대운지와 세운지가 직접 부딪히지 않아, 대운의 흐름 위에 2027년의 색이 얹히는 해입니다. ';
+      with2027 += '10년의 바탕 글자와 2027년 글자가 직접 부딪히지 않아, 10년의 흐름 위에 2027년의 색이 얹히는 해입니다. ';
     }
     if (relDYD.length) {
-      with2027 += '여기에 세운지 ' + S.JI[yJi].h + '가 내 일지와 ' + relDYD.join('·') +
+      with2027 += '여기에 2027년의 글자 ' + S.JI[yJi].h + '가 내 자리(일지)와 ' + relDYD.join('·') +
         '이니, 관계·거처·소속의 변화가 실제로 생기는 해로 읽습니다.';
     } else {
-      with2027 += '세운지가 내 일지와 직접 부딪히지 않아, 관계의 큰 틀은 유지되는 편입니다.';
+      with2027 += '2027년의 글자가 내 자리와 직접 부딪히지 않아, 관계의 큰 틀은 유지되는 편입니다.';
     }
 
     var whoYear = S.GAN[core.yearPillar.gan].yang ? '양년' : '음년';
     var who = whoYear + (gender === 'm' ? ' 남성' : ' 여성');
     var dirText = (dn.forward ? '순행' : '역행');
     var dirReason = who + '이라 ' + (dn.forward ? '다음 절입일' : '이전 절입일') +
-      '까지의 날짜를 3일=1년으로 나눠 대운수를 잡습니다.';
+      '까지의 날짜를 3일=1년으로 나눠, 10년 운이 시작되는 나이(대운수)를 잡습니다.';
 
     return {
       forward: dn.forward,
@@ -410,20 +434,20 @@
     /* ---- 재물 ---- */
     var wealthHead, wealthBody;
     if (g.jae === 0) {
-      wealthHead = '재성이 겉으로 없는 구조 — 돈의 통로를 직접 설계해야 합니다';
-      wealthBody = '원국에 재성(' + el.jae + ')이 드러나 있지 않습니다. 돈이 없다는 뜻이 아니라, 돈이 저절로 굴러오는 구조가 아니라는 뜻입니다. ' +
+      wealthHead = '돈의 기운(재성)이 겉으로 없는 구조 — 돈의 통로를 직접 설계해야 합니다';
+      wealthBody = '여덟 글자에 돈과 결과를 만드는 기운(재성, ' + el.jae + ')이 겉으로 드러나 있지 않습니다. 돈이 없다는 뜻이 아니라, 돈이 저절로 굴러오는 구조가 아니라는 뜻입니다. ' +
         C.DOMAIN_TEXT.wealth.method.sik + ' 남이 만든 판에 얹혀 가는 방식은 오래 못 갑니다.';
     } else if (g.jae >= 3) {
-      wealthHead = '재성이 ' + g.jae + '개 — 돈이 크게 들고 나는 구조';
-      wealthBody = '재성이 많아 돈의 흐름 자체는 활발합니다. 다만 새는 구멍도 그만큼 많아 벌어도 남지 않는 패턴이 생기기 쉽습니다. ' +
+      wealthHead = '돈의 기운(재성) ' + g.jae + '개 — 돈이 크게 들고 나는 구조';
+      wealthBody = '돈과 결과를 만드는 기운이 많아 돈의 흐름 자체는 활발합니다. 다만 새는 구멍도 그만큼 많아 벌어도 남지 않는 패턴이 생기기 쉽습니다. ' +
         '2027년은 통제 장치(고정 저축·지출 상한·동업 서면화)를 먼저 만들고 움직여야 재물이 남습니다.';
     } else {
-      wealthHead = '재성이 ' + g.jae + '개 — 성실하게 쌓는 표준형 재물 구조';
-      wealthBody = '재성이 균형 있게 자리하고 있습니다. 큰 한 방보다 반복되는 수입을 설계할 때 가장 크게 남는 구조입니다. ' +
+      wealthHead = '돈의 기운(재성) ' + g.jae + '개 — 성실하게 쌓는 표준형 재물 구조';
+      wealthBody = '돈과 결과를 만드는 기운이 균형 있게 자리하고 있습니다. 큰 한 방보다 반복되는 수입을 설계할 때 가장 크게 남는 구조입니다. ' +
         (attack.length
           ? '2027년에는 ' + attack.map(function (m) { return m.no + '월(' + m.label + ')'; }).join('·') +
             '에 돈이 움직이므로, 그 달에 계약·단가·판매를 몰아넣는 방식이 효율적입니다.'
-          : '2027년에는 재성이 크게 힘을 받는 달이 없으니, 단가와 조건을 다듬어 두었다가 이듬해에 쓰는 편이 낫습니다.');
+          : '2027년에는 돈의 기운이 크게 힘을 받는 달이 없으니, 단가와 조건을 다듬어 두었다가 이듬해에 쓰는 편이 낫습니다.');
     }
 
     var methodKey = g.sik > 0 && g.sik >= g.jae ? 'sik'
@@ -433,20 +457,20 @@
 
     var wealthStrategy;
     if (ySS === '편인' || ySS === '정인') {
-      wealthStrategy = '2027년은 인성(' + ySS + ')이 들어오는 해입니다. 돈을 굴리기보다 실력·자격·장비에 쓰는 돈이 몸값으로 남습니다. 인성은 현금 회전이 느린 기운이라, 고정비를 낮추고 재성이 힘을 받는 달에만 결제·투자를 몰아넣는 운영이 맞습니다.';
+      wealthStrategy = '2027년은 배움·도움의 기운(인성·' + ySS + ')이 들어오는 해입니다. 돈을 굴리기보다 실력·자격·장비에 쓰는 돈이 몸값으로 남습니다. 이 기운은 현금이 도는 속도가 느리니, 고정비를 낮추고 돈의 기운이 힘을 받는 달에만 결제·투자를 몰아넣는 운영이 맞습니다.';
     } else if (ySS === '비견' || ySS === '겁재') {
-      wealthStrategy = '2027년은 비겁(' + ySS + ')이 들어오는 해입니다. 내 몫을 직접 챙기는 쪽이 유리하지만, 사람과 돈이 함께 나뉘기 쉽습니다. 동업·보증·공동구매는 서면으로 남기고, 현금 잔고를 먼저 확인한 뒤 움직이세요.';
+      wealthStrategy = '2027년은 나와 같은 편의 기운(비겁·' + ySS + ')이 들어오는 해입니다. 내 몫을 직접 챙기는 쪽이 유리하지만, 사람과 돈이 함께 나뉘기 쉽습니다. 동업·보증·공동구매는 서면으로 남기고, 현금 잔고를 먼저 확인한 뒤 움직이세요.';
     } else if (ySS === '식신' || ySS === '상관') {
-      wealthStrategy = '2027년은 식상(' + ySS + ')이 들어오는 해입니다. 가진 재능을 상품으로 바꿔 파는 쪽이 가장 크게 남습니다. 만들기만 하고 팔지 않으면 성과가 흩어지니, 판매·계약까지 한 세트로 묶으세요.';
+      wealthStrategy = '2027년은 재능을 꺼내 쓰는 기운(식상·' + ySS + ')이 들어오는 해입니다. 가진 재능을 상품으로 바꿔 파는 쪽이 가장 크게 남습니다. 만들기만 하고 팔지 않으면 성과가 흩어지니, 판매·계약까지 한 세트로 묶으세요.';
     } else if (ySS === '편재' || ySS === '정재') {
-      wealthStrategy = '2027년은 재성(' + ySS + ')이 직접 들어오는 해입니다. 기회가 넓게 오지만 관리하지 않으면 그대로 빠져나갑니다. 들어온 돈의 일정 비율을 자동이체로 묶는 규칙 하나만 정해두면 남는 장사가 됩니다.';
+      wealthStrategy = '2027년은 돈의 기운(재성·' + ySS + ')이 직접 들어오는 해입니다. 기회가 넓게 오지만 관리하지 않으면 그대로 빠져나갑니다. 들어온 돈의 일정 비율을 자동이체로 묶는 규칙 하나만 정해두면 남는 장사가 됩니다.';
     } else {
-      wealthStrategy = '2027년은 관성(' + ySS + ')이 들어오는 해입니다. 직책·계약·평판이 곧 돈이 되는 구조라, 이름이 걸린 일에 힘을 쓰면 그대로 수익이 됩니다. 규칙과 절차를 지킬수록 빨리 갑니다.';
+      wealthStrategy = '2027년은 책임의 기운(관성·' + ySS + ')이 들어오는 해입니다. 직책·계약·평판이 곧 돈이 되는 구조라, 이름이 걸린 일에 힘을 쓰면 그대로 수익이 됩니다. 규칙과 절차를 지킬수록 빨리 갑니다.';
     }
-    wealthStrategy += ' 세운의 기운은 ' + favWord(yFavGan) + '·' + favWord(yFavJi) +
+    wealthStrategy += ' 2027년의 기운은 ' + favWord(yFavGan) + '·' + favWord(yFavJi) +
       '에 걸려 있어, ' + (yFavGan === 'gi' || yFavJi === 'gi'
         ? '들어오는 돈보다 나가는 돈을 먼저 막는 쪽이 이깁니다.'
-        : '들어오는 흐름을 받아내기 좋은 편입니다.');
+        : '들어오는 흐름을 받아내기 좋은 편입니다. 용신은 나에게 힘이 되는 기운, 희신은 그 힘을 보태는 기운, 기신은 줄일수록 좋은 기운입니다.');
 
     var wealth = {
       key: 'wealth', title: '재물 · 투자운', mark: '財',
@@ -474,7 +498,7 @@
       return (m.ganSS === '식신' || m.ganSS === '상관') && m.grade >= 4;
     });
 
-    var careerHead = '관성 ' + g.gwan + ' · 인성 ' + g.in + ' · 식상 ' + g.sik + '의 구조 — ' +
+    var careerHead = '책임(관성) ' + g.gwan + ' · 배움(인성) ' + g.in + ' · 표현(식상) ' + g.sik + '의 구성 — ' +
       (pathKey === 'gwan' ? '조직에서 자리를 잡는 쪽'
         : pathKey === 'in' ? '전문성으로 몸값을 올리는 쪽'
           : pathKey === 'sik' ? '내 결과물로 이름을 만드는 쪽'
@@ -484,28 +508,28 @@
     if (jobMonths.length) {
       careerBody += '승진·이직·계약을 밀기 좋은 달은 ' + jobMonths.map(function (m) {
         return m.no + '월(' + m.label + ')';
-      }).join(', ') + '입니다. 관성이 힘을 받는 달이라 면접·발표·서류 통과가 쉽게 풀립니다.';
+      }).join(', ') + '입니다. 책임의 기운(관성)이 힘을 받는 달이라 면접·발표·서류 통과가 쉽게 풀립니다.';
     } else {
-      careerBody += '관성이 힘을 받는 달이 뚜렷하지 않아, 이직·승진을 서두르기보다 실적과 서류를 쌓아두는 편이 낫습니다. 굳이 움직여야 한다면 ' +
+      careerBody += '책임의 기운(관성)이 힘을 받는 달이 뚜렷하지 않아, 이직·승진을 서두르기보다 실적과 서류를 쌓아두는 편이 낫습니다. 굳이 움직여야 한다면 ' +
         months.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 2).map(function (m) { return m.no + '월'; }).join('·') + '처럼 흐름이 나은 달을 고르세요.';
     }
     if (g.sik > 0 && g.jae > 0 && st.label !== '태약') {
-      careerBody += ' 식상과 재성이 함께 있어 독립의 그릇은 있습니다' +
+      careerBody += ' 표현의 기운(식상)과 돈의 기운(재성)이 함께 있어 독립의 그릇은 있습니다' +
         (freeMonths.length ? '. 특히 ' + freeMonths.map(function (m) { return m.no + '월'; }).join('·') +
           '에 내 결과물을 밖으로 꺼내면 반응이 옵니다.' : '. 다만 당장 뛰어나가기보다 반년 단위로 준비하세요.');
     }
 
     var career2027;
     if (ySS === '편관' || ySS === '정관') {
-      career2027 = '2027년은 관성이 직접 들어오는 해라 직책·계약·평판이 실제로 바뀝니다. 규칙을 지키고 서류를 갖추는 사람이 자리를 가져갑니다.';
+      career2027 = '2027년은 책임의 기운(관성·' + ySS + ')이 직접 들어오는 해라 직책·계약·평판이 실제로 바뀝니다. 규칙을 지키고 서류를 갖추는 사람이 자리를 가져갑니다.';
     } else if (ySS === '정인' || ySS === '편인') {
-      career2027 = '2027년은 인성이 들어오는 해라, 새 자리를 벌이기보다 한 우물을 깊게 파는 포지셔닝이 맞습니다. 자격·교육·전문성이 다음 대운의 몸값이 됩니다.';
+      career2027 = '2027년은 배움의 기운(인성·' + ySS + ')이 들어오는 해라, 새 자리를 벌이기보다 한 우물을 깊게 파는 포지셔닝이 맞습니다. 자격·교육·전문성이 다음 10년의 몸값이 됩니다.';
     } else if (ySS === '식신' || ySS === '상관') {
-      career2027 = '2027년은 식상이 들어오는 해라, 내 이름으로 만든 결과물이 곧 이력서가 됩니다. 회사 안에서도 개인 프로젝트를 하나 남기세요.';
+      career2027 = '2027년은 표현의 기운(식상·' + ySS + ')이 들어오는 해라, 내 이름으로 만든 결과물이 곧 이력서가 됩니다. 회사 안에서도 개인 프로젝트를 하나 남기세요.';
     } else if (ySS === '편재' || ySS === '정재') {
-      career2027 = '2027년은 재성이 들어오는 해라, 영업·거래·단가 협상처럼 숫자로 남는 일에서 성과가 납니다.';
+      career2027 = '2027년은 돈의 기운(재성·' + ySS + ')이 들어오는 해라, 영업·거래·단가 협상처럼 숫자로 남는 일에서 성과가 납니다.';
     } else {
-      career2027 = '2027년은 비겁이 들어오는 해라, 내 이름을 걸고 판을 짜는 쪽이 유리합니다. 대신 동료와의 역할 경계를 처음부터 문서로 정하세요.';
+      career2027 = '2027년은 나와 같은 편의 기운(비겁·' + ySS + ')이 들어오는 해라, 내 이름을 걸고 판을 짜는 쪽이 유리합니다. 대신 동료와의 역할 경계를 처음부터 문서로 정하세요.';
     }
 
     var career = {
@@ -514,7 +538,7 @@
       body: careerBody,
       bullets: [
         { k: '맞는 길', v: C.DOMAIN_TEXT.career.path[pathKey] },
-        { k: '타이밍', v: jobMonths.length ? jobMonths.map(function (m) { return m.no + '월(' + m.range + ')'; }).join(' · ') : '관성 달이 뚜렷하지 않아 서류·실적을 쌓으며 ' + months.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 2).map(function (m) { return m.no + '월'; }).join('·') + '을 노리세요.' },
+        { k: '타이밍', v: jobMonths.length ? jobMonths.map(function (m) { return m.no + '월(' + m.range + ')'; }).join(' · ') : '책임의 기운이 센 달이 뚜렷하지 않아 서류·실적을 쌓으며 ' + months.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 2).map(function (m) { return m.no + '월'; }).join('·') + '을 노리세요.' },
         { k: '2027 포지셔닝', v: career2027 }
       ]
     };
@@ -524,14 +548,14 @@
     var yRel = S.relation(core.dayJi, 7);
     var yRelNote = [];
     yRel.forEach(function (r) {
-      if (r === '충') yRelNote.push('세운지 미(未)가 배우자궁과 충 — 동거·이사·이별·재회처럼 관계의 형태가 실제로 바뀌는 사건이 생기기 쉽습니다.');
-      else if (r === '합') yRelNote.push('세운지 미(未)가 배우자궁과 합 — 미뤄둔 인연이 붙거나 관계가 공식화되는 쪽으로 움직입니다.');
-      else if (r === '형') yRelNote.push('세운지 미(未)가 배우자궁과 형 — 말과 서류에서 마찰이 생기니 확인 절차를 두 배로 두세요.');
-      else if (r === '파') yRelNote.push('세운지 미(未)가 배우자궁과 파 — 작은 균열이 크게 번지기 쉬운 해입니다.');
-      else if (r === '해') yRelNote.push('세운지 미(未)가 배우자궁과 해 — 뜻밖의 소문·오해가 돌 수 있습니다.');
+      if (r === '충') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리와 부딪힙니다(충) — 동거·이사·이별·재회처럼 관계의 형태가 실제로 바뀌는 사건이 생기기 쉽습니다.');
+      else if (r === '합') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리와 붙습니다(합) — 미뤄둔 인연이 이어지거나 관계가 공식화되는 쪽으로 움직입니다.');
+      else if (r === '형') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리와 어긋납니다(형) — 말과 서류에서 마찰이 생기니 확인 절차를 두 배로 두세요.');
+      else if (r === '파') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리에 금을 냅니다(파) — 작은 균열이 크게 번지기 쉬운 해입니다.');
+      else if (r === '해') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리를 흠냅니다(해) — 뜻밖의 소문·오해가 돌 수 있습니다.');
     });
     var cheon = CHEONEUL[core.dayGan].indexOf(7) >= 0;
-    if (cheon) yRelNote.push('2027년 미(未)는 일간 ' + S.GAN[core.dayGan].h + '의 천을귀인 자리입니다. 흔들리는 자리에 귀인이 함께 오니, 갈등은 사람을 통해 풀립니다.');
+    if (cheon) yRelNote.push('2027년 미(未)는 나(' + S.GAN[core.dayGan].h + ')에게 천을귀인(막힐 때 길을 열어 주는 가장 센 좋은 별)이 서는 자리입니다. 흔들리는 자리에 귀인이 함께 오니, 갈등은 사람을 통해 풀립니다.');
 
     var dohwaYearJi = DOHWA[core.yearPillar.ji], dohwaDayJi = DOHWA[core.dayJi];
     var dohwaRelY = S.relation(7, dohwaYearJi);
@@ -540,23 +564,23 @@
     if (dohwaRelD.length || dohwaRelY.length) {
       var r0 = dohwaRelD.length ? dohwaRelD : dohwaRelY;
       var dwJi = dohwaRelD.length ? dohwaDayJi : dohwaYearJi;
-      dohwaNote = '도화는 ' + S.JI[dwJi].h + '(' + S.JI[dwJi].han + '·' + DIR_NAME[dwJi] + ') 자리인데, 2027 미(未)가 그와 ' + r0.join('·') +
+      dohwaNote = '사람을 끄는 힘(도화)은 ' + S.JI[dwJi].h + '(' + S.JI[dwJi].han + '·' + DIR_NAME[dwJi] + ') 자리에 있는데, 2027년 미(未)가 그와 ' + r0.join('·') +
         '이라 도화가 밖으로 터지기보다 한 사람·한 자리에 묶이는 모양입니다.';
     } else {
-      dohwaNote = '도화는 ' + S.JI[dohwaDayJi].h + ' 자리인데 2027 미(未)와 직접 얽히지 않아, 이 해의 인연은 화려한 만남보다 이미 아는 사람 사이에서 이어집니다.';
+      dohwaNote = '사람을 끄는 힘(도화)은 ' + S.JI[dohwaDayJi].h + ' 자리에 있는데 2027년 미(未)와 직접 얽히지 않아, 이 해의 인연은 화려한 만남보다 이미 아는 사람 사이에서 이어집니다.';
     }
 
     var loveBody = C.DOMAIN_TEXT.love.spouse[spouseSS] + ' ' + dohwaNote + ' ' +
-      (yJiSS === '비견' ? '세운의 지지가 비견이라 친구·동료 사이에서 내 자리를 세우는 해입니다. 관계의 경계를 말로 분명히 하는 것이 곧 예의입니다.' : '') +
-      ' ' + (g.bi >= 2 ? '원국에 비겁이 많아 가까운 사이일수록 몫과 주도권 이야기가 민감해집니다. 돈과 역할을 처음에 정해두면 다툼이 줄어듭니다.' : '');
+      (yJiSS === '비견' ? '2027년 바탕기운이 비견(내 주관·경쟁의 기운)이라 친구·동료 사이에서 내 자리를 세우는 해입니다. 관계의 경계를 말로 분명히 하는 것이 곧 예의입니다.' : '') +
+      ' ' + (g.bi >= 2 ? '사주에 나와 같은 편의 기운(비겁)이 많아 가까운 사이일수록 몫과 주도권 이야기가 민감해집니다. 돈과 역할을 처음에 정해두면 다툼이 줄어듭니다.' : '');
 
     var love = {
       key: 'love', title: '연애 · 대인 · 배우자운', mark: '緣',
-      head: '배우자궁 ' + core.dayPillar.jiH + '(' + spouseSS + ') — ' + (yRel.length ? '2027년에 ' + josa(yRel.join('·'), '이', '가') + ' 걸린 자리' : '2027년에 직접 흔들리지 않는 자리'),
+      head: '내 배우자 자리(일지) ' + core.dayPillar.jiH + ' — ' + spouseSS + '(그 자리에 앉은 기운) · ' + (yRel.length ? '2027년에 ' + josa(yRel.join('·'), '이', '가') + ' 걸린 자리' : '2027년에 직접 흔들리지 않는 자리'),
       body: loveBody,
       bullets: [
-        { k: '배우자궁', v: C.DOMAIN_TEXT.love.spouse[spouseSS] },
-        { k: '2027 인연', v: yRelNote.length ? yRelNote.join(' ') : '세운지가 배우자궁과 직접 얽히지 않아, 관계의 큰 틀은 유지됩니다. 새 인연은 일과 사람을 통해 천천히 들어옵니다.' },
+        { k: '배우자 자리', v: C.DOMAIN_TEXT.love.spouse[spouseSS] },
+        { k: '2027 인연', v: yRelNote.length ? yRelNote.join(' ') : '2027년 글자가 배우자 자리와 직접 얽히지 않아, 관계의 큰 틀은 유지됩니다. 새 인연은 일과 사람을 통해 천천히 들어옵니다.' },
         { k: '주의', v: '감정이 오른 상태의 메시지·통화는 하루 묵혔다가 보내세요. 이 사주는 말의 온도에서 관계가 갈립니다.' }
       ]
     };
@@ -567,7 +591,7 @@
     var strongEl = ELS.slice().sort(function (a, b) { return core.counts[b] - core.counts[a]; })[0];
     var weakOrgan = weakEls.map(function (e) { return e + '(' + C.DOMAIN_TEXT.health.organ[e] + ')'; }).join(', ');
 
-    var healthHead = '얇은 ' + weakEls.join('·') + ' · 두꺼운 ' + strongEl + ' — ' +
+    var healthHead = '부족한 ' + weakEls.join('·') + ' · 넘치는 ' + strongEl + ' — ' +
       josa(C.DOMAIN_TEXT.health.organ[weakEls[0]], '을', '를') + ' 먼저 보세요';
 
     var seasonRows = [
@@ -598,9 +622,9 @@
     var health = {
       key: 'health', title: '건강 · 컨디션', mark: '體',
       head: healthHead,
-      body: '원국에서 ' + josa(weakEls.join('·'), '이', '가') + ' 얇고 ' + josa(strongEl, '이', '가') + ' ' + core.counts[strongEl] +
-        '개로 두껍습니다. 얇은 쪽은 채워야 하고 두꺼운 쪽은 덜어내야 몸이 편합니다. ' +
-        '2027년은 ' + yJiSS + '의 기운이 들어오는 해라 ' + (strongEl === '토' ? '소화기와 체중' : '컨디션의 기복') +
+      body: '여덟 글자에서 ' + josa(weakEls.join('·'), '이', '가') + ' 얇고 ' + josa(strongEl, '이', '가') + ' ' + core.counts[strongEl] +
+        '개로 넘칩니다. 부족한 쪽은 채우고 넘치는 쪽은 덜어내야 몸이 편합니다. ' +
+        '2027년은 ' + yJiSS + '(바탕기운)이 들어오는 해라 ' + (strongEl === '토' ? '소화기와 체중' : '컨디션의 기복') +
         '을 먼저 살피세요. 병원 검진은 상반기에 미리 받아두면 하반기가 가볍습니다.',
       bullets: [
         { k: '취약 장기', v: weakOrgan },
@@ -686,20 +710,25 @@
     /* 격국 */
     var gk = S.gyeokguk(core);
     var gt = C.GYEOK_TEXT[gk.name] || { head: gk.name, body: '' };
-    var gyeokBody = '월지 ' + gk.monthJiH + '(' + gk.monthJiHan + ')의 정기 ' +
-      gk.jeonggiH + '(' + gk.jeonggiHan + ')' + josaS(gk.jeonggiH, '이', '가') + ' 일간에게 ' +
-      gk.ss + josaS(gk.ss, '으로', '로') + ' 작동해 ' + gk.name + '이 섭니다. ';
+    var SS_GLOSS = {
+      비견: '내 주관과 경쟁의 기운', 겁재: '몫을 나누는 경쟁의 기운',
+      식신: '재능을 편하게 꺼내 쓰는 기운', 상관: '표현하고 드러내는 기운',
+      편재: '크게 들고 나는 돈의 기운', 정재: '꾸준히 쌓이는 돈의 기운',
+      편관: '세게 조여오는 책임과 압박의 기운', 정관: '반듯한 책임과 평판의 기운',
+      편인: '남다르게 파고드는 배움의 기운', 정인: '배우고 도움받는 기운'
+    };
+    var gyeokBody = '태어난 달의 지지 ' + gk.monthJiH + '(' + gk.monthJiHan + ') 속 중심 기운인 ' +
+      gk.jeonggiH + '(' + gk.jeonggiHan + ')' + josaS(gk.jeonggiH, '이', '가') + ' 나(일간)에게 ' +
+      gk.ss + '(' + (SS_GLOSS[gk.ss] || '') + ')' + josaS(gk.ss, '으로', '로') + ' 작용해 ' + gk.name + '이 섭니다. ';
     gyeokBody += gk.tugan
-      ? '이 정기 ' + gk.jeonggiH + '이 ' + gk.tuganPillars.join('·') + ' 천간에 그대로 드러나(透出) 격이 겉으로도 뚜렷합니다. '
-      : '정기가 천간으로 올라오지 않아, 격이 밖으로 드러나기보다 안쪽에서 조용히 작동합니다. ';
+      ? '이 중심 기운 ' + gk.jeonggiH + '이 ' + gk.tuganPillars.join('·') + ' 기둥의 겉글자(천간)에도 그대로 올라와 있어, 성격의 뼈대가 겉으로도 또렷하게 보입니다. '
+      : '이 중심 기운이 겉글자(천간)로 올라오지는 않아, 성격의 뼈대가 밖으로 드러나기보다 안쪽에서 조용히 작동합니다. ';
     if (gk.junggi) {
       var jt = C.SS_TRAIT[gk.junggi.ss] || '';
-      gyeokBody += '월지 중기 ' + gk.junggi.h + '(' + gk.junggi.ss + ')도 함께 깔려 ' +
+      gyeokBody += '같은 지지 속 두 번째 기운 ' + gk.junggi.h + '(' + gk.junggi.ss + ')도 함께 깔려 ' +
         jt + josaS(jt, '이', '가') + ' 격의 결을 더합니다. ';
     }
-    gyeokBody += gt.body
-      .replace(/^월지 정기가 [^.]+입니다\. /, '')
-      .replace(/^월지가 일간의 [^.]+입니다\. /, '');
+    gyeokBody += gt.body;
 
     /* 십성 구조 패턴 */
     var sik = ssMap['식신'] + ssMap['상관'];
@@ -822,16 +851,16 @@
 
     var outer = {
       head: '겉으로 보이는 나 — 천간 ' + ganList,
-      body: '천간은 바깥에서 먼저 읽히는 자리입니다. ' + ganList + '이 드러나 ' +
-        (C.SS_TRAIT[ganTop] || '') + josaS(C.SS_TRAIT[ganTop] || '', '이', '가') + ' 사람을 만날 때의 첫인상이 됩니다. ' +
+      body: '천간은 여덟 글자 중 위쪽 네 글자로, 사람을 만날 때 바깥에서 먼저 읽히는 자리입니다. ' + ganList + '이 드러나 ' +
+        (C.SS_TRAIT[ganTop] || '') + josaS(C.SS_TRAIT[ganTop] || '', '이', '가') + ' 첫인상이 됩니다. ' +
         (ganCount[ganTop] >= 2
-          ? '같은 십성이 ' + ganCount[ganTop] + '개 겹쳐 그 성질이 처음 보는 사람에게도 강하게 각인됩니다.'
+          ? '같은 기운이 ' + ganCount[ganTop] + '개 겹쳐 그 성질이 처음 보는 사람에게도 강하게 각인됩니다.'
           : '한 글자씩 다른 결로 서 있어, 상대에 따라 다른 얼굴이 나옵니다.') +
         ' 다만 천간은 포장이기도 해서, 여기서 보이는 모습과 실제 판단이 다를 수 있습니다.'
     };
     var inner = {
       head: '속에 깔린 나 — 지장간 ' + mainHiddenAll.join('·'),
-      body: '지지는 겉글자보다 안쪽을 더 많이 담습니다. 지장간에서 가장 무거운 것은 ' + hidTop +
+      body: '지지(아래 네 글자)는 겉글자보다 안쪽을 더 많이 담습니다. 그 안에 숨어 있는 글자(지장간) 가운데 가장 무거운 것은 ' + hidTop +
         josaS(hidTop, '으로', '로') + ', ' + (C.SS_TRAIT[hidTop] || '') +
         josaS(C.SS_TRAIT[hidTop] || '', '이', '가') + ' 실제 판단과 행동의 바닥에 깔려 있습니다. ' +
         (hidTop === ganTop
@@ -849,18 +878,18 @@
       var mainHidden = r.hidden[r.hidden.length - 1];
       var trait = C.SS_TRAIT[r.ganSS] || '';
       var ganLine = r.key === 'day'
-        ? '천간 ' + r.ganH + '(' + r.ganHan + ')' + josaS(r.ganH, '은', '는') + ' 일간 자신입니다. 이 자리가 곧 ‘나’이고, 지지 ' + r.jiH + '(' + r.jiHan + ')' + josaS(r.jiH, '이', '가') + ' 내가 앉는 자리입니다.'
-        : '천간 ' + r.ganH + '(' + r.ganHan + ')' + josaS(r.ganH, '이', '가') + ' ' + r.ganSS + josaS(r.ganSS, '으로', '로') + ' 서서 ' + trait + josaS(trait, '으로', '로') + ' 이 자리를 씁니다.';
-      var unsLine = '지지 ' + r.jiH + '(' + r.jiHan + ')' + josaS(r.jiH, '은', '는') + ' ' + r.unsung.name + '(' + r.unsung.han + ') — ' +
+        ? '겉글자(천간) ' + r.ganH + '(' + r.ganHan + ')' + josaS(r.ganH, '은', '는') + ' 나 자신(일간)입니다. 이 자리가 곧 ‘나’이고, 아래 글자 ' + r.jiH + '(' + r.jiHan + ')' + josaS(r.jiH, '이', '가') + ' 내가 앉는 자리입니다.'
+        : '겉글자(천간) ' + r.ganH + '(' + r.ganHan + ')' + josaS(r.ganH, '이', '가') + ' ' + r.ganSS + '(나를 기준으로 본 기운의 이름)' + josaS(r.ganSS, '으로', '로') + ' 서서 ' + trait + josaS(trait, '으로', '로') + ' 이 자리를 씁니다.';
+      var unsLine = '아래 글자 ' + r.jiH + '(' + r.jiHan + ')' + josaS(r.jiH, '은', '는') + ' 기운의 단계로 ' + r.unsung.name + '(' + r.unsung.han + ') — ' +
         ((C.UNSUNG_TEXT[r.unsung.name] || {}).short || '') + '.';
       var hidTrait = mainHidden ? (C.SS_TRAIT[mainHidden.ss] || '') : '';
-      var hidLine = '속으로는 ' + r.hidden.map(function (h) {
+      var hidLine = '그 안에 숨은 글자(지장간)로는 ' + r.hidden.map(function (h) {
         return h.role + ' ' + h.h + '(' + h.ss + ')';
       }).join(' · ') + josaS(mainHidden ? mainHidden.h : '기', '이', '가') + ' 깔려 ' +
         (hidTrait ? hidTrait + josaS(hidTrait, '이', '가') + ' 이 자리의 실제 동력입니다.' : '있습니다.');
       var gmLine = r.gongmang
-        ? '일주 기준 공망에 든 자리입니다. 채워지지 않는 궁이라 여기서 얻으려 하기보다 다른 궁에서 채우는 편이 낫습니다.'
-        : (r.gongmangYear ? '년주 기준 공망에 걸려 있습니다. 집안·초년의 몫이 비어 있어 스스로 만들어야 하는 자리입니다.' : '');
+        ? '공망(비어서 잘 채워지지 않는 자리)에 듭니다. 여기서 얻으려 하기보다 다른 자리에서 채우는 편이 낫습니다.'
+        : (r.gongmangYear ? '년주 기준 공망(비어서 잘 채워지지 않는 자리)에 걸려 있습니다. 집안·초년의 몫이 비어 있어 스스로 만들어야 하는 자리입니다.' : '');
       var relLine = '';
       if (touch[r.label] && touch[r.label].length) {
         var lastRel = touch[r.label][touch[r.label].length - 1];
@@ -902,7 +931,7 @@
         unsungBody: uns2027Text ? uns2027Text.body : '',
         gongmang: y2027Gongmang,
         note: y2027Gongmang
-          ? '2027 정미년 미(未)가 내 일주 기준 공망에 듭니다. 그해에 잡은 기회가 채워지지 않고 지나가기 쉬우니, 벌이기보다 남기는 일에 집중하는 편이 낫습니다.'
+          ? '2027 정미년 미(未)가 내 공망(비어서 잘 채워지지 않는 자리)에 듭니다. 그해에 잡은 기회가 채워지지 않고 지나가기 쉬우니, 벌이기보다 남기는 일에 집중하는 편이 낫습니다.'
           : '2027 정미년 미(未)는 내 공망에 들지 않아, 그해의 움직임이 실제 결과로 남기 좋은 자리입니다.'
       }
     };

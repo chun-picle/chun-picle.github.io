@@ -133,7 +133,7 @@
     wrap.className = 'pillars' + (p.hour ? '' : ' three');
     wrap.innerHTML = html;
 
-    var note = '한자 위·아래 작은 글씨는 일간 기준 십성(十星)입니다. ';
+    var note = '한자 위·아래 작은 글씨는 나(일간)를 기준으로 본 그 글자의 기운 이름(십성)입니다. ';
     if (core.input.dstFixed) note += core.notes.join(' ') + ' ';
     if (!p.hour) note += '출생 시각을 몰라 시주를 제외한 6글자로 계산했습니다.';
     $('pillarNote').textContent = note;
@@ -162,7 +162,7 @@
 
   function renderFree(rep, core) {
     var p = core.pillarName;
-    $('resultEyebrow').textContent = '사주 원국 · 2027 정미년';
+    $('resultEyebrow').textContent = '내 사주 여덟 글자 · 2027 정미년';
     $('resultTitle').textContent = p.day.name + '일주 · ' + rep.dayMaster.name;
     $('resultSub').textContent = fmtBirth(core);
     $('iljuKey').innerHTML = rep.ilju.key.map(function (k) { return '<span>' + k + '</span>'; }).join('');
@@ -226,14 +226,14 @@
 
     $('strengthLabel').textContent = st.label;
     $('strengthSub').textContent = st.levelText;
-    $('strengthPct').textContent = '지원 세력 ' + st.ratio + '%';
-    $('strengthDrain').textContent = '소모 세력 ' + (100 - st.ratio) + '%';
+    $('strengthPct').textContent = '나를 돕는 힘 ' + st.ratio + '%';
+    $('strengthDrain').textContent = '빠져나가는 힘 ' + (100 - st.ratio) + '%';
     $('strengthFill').style.width = st.ratio + '%';
 
     var flags = [
-      { on: st.deukryeong, k: '월령', v: st.deukryeong ? '득령' : '실령' },
-      { on: st.deukji, k: '일지', v: st.deukji ? '득지' : '실지' },
-      { on: st.deukse, k: '세력', v: st.deukse ? '득세' : '약함' }
+      { on: st.deukryeong, k: '태어난 달', v: st.deukryeong ? '힘 받음' : '힘 못 받음' },
+      { on: st.deukji, k: '내 자리', v: st.deukji ? '힘 받음' : '힘 못 받음' },
+      { on: st.deukse, k: '주변 힘', v: st.deukse ? '넉넉함' : '부족함' }
     ];
     $('strengthFlags').innerHTML = flags.map(function (f) {
       return '<span class="flag ' + (f.on ? 'is-on' : '') + '"><b>' + f.k + '</b>' + f.v + '</span>';
@@ -247,12 +247,12 @@
         '<span>' + d.name + '</span><span>' + d.el + '</span>' +
         '<span>' + KIND_NAME[d.kind] + '</span><span>' + d.points + '점</span></div>';
     }).join('') +
-      '<p class="note">가중치 — 월지 30 · 일지 15 · 월간 15 · 시간 11 · 년지 10 · 시지 10 · 년간 9 (합 100). 비겁 1.0 · 인성 0.95 · 식상 0.9 · 재성 1.0 · 관성 1.15로 계산합니다.</p>';
+      '<p class="note">여덟 글자에 점수를 매긴 표입니다. 태어난 달의 아래 글자 30점 · 내 자리(일지) 15점 · 태어난 달의 위 글자 15점 · 시각의 위 글자 11점 · 태어난 해의 아래 글자 10점 · 시각의 아래 글자 10점 · 태어난 해의 위 글자 9점(합 100)으로 무게를 두고, 나를 돕는 기운(비겁 1.0 · 인성 0.95)과 빠져나가는 기운(식상 0.9 · 재성 1.0 · 관성 1.15)의 세기를 곱해 더합니다.</p>';
 
     var ysList = [
-      { k: '용신', el: ys.yongEl, han: ys.yongHan, cls: 'is-yong' },
-      { k: '희신', el: ys.huiEl, han: ys.huiHan, cls: 'is-hui' },
-      { k: '기신', el: ys.giEl, han: ys.giHan, cls: 'is-gi' }
+      { k: '용신 · 가장 힘이 되는 기운', el: ys.yongEl, han: ys.yongHan, cls: 'is-yong' },
+      { k: '희신 · 용신을 돕는 기운', el: ys.huiEl, han: ys.huiHan, cls: 'is-hui' },
+      { k: '기신 · 줄이면 좋은 기운', el: ys.giEl, han: ys.giHan, cls: 'is-gi' }
     ];
     $('yongsinGrid').innerHTML = ysList.map(function (x) {
       var info = window.CONTENT.ELEMENT_INFO[x.el];
@@ -264,7 +264,7 @@
     $('yongsinBody').textContent = ys.reason;
 
     var rx = ys.rx;
-    $('rxTitle').textContent = '개운 처방 — ' + ys.yongEl + '(' + ys.yongHan + ') 기운을 채우는 법';
+    $('rxTitle').textContent = '부족한 기운 채우기 — ' + ys.yongEl + '(' + ys.yongHan + ') 기운을 내 편으로 만드는 법';
     var rows = [
       { k: '색', v: rx.color },
       { k: '방위', v: rx.dir },
@@ -275,7 +275,7 @@
     $('rxGrid').innerHTML = rows.map(function (r) {
       return '<div class="rx-row"><span class="rx-k">' + r.k + '</span><span class="rx-v">' + r.v + '</span></div>';
     }).join('');
-    $('rxNote').textContent = '기신인 ' + ys.giEl + '(' + ys.giHan + ') 기운은 줄일수록 좋습니다. ' +
+    $('rxNote').textContent = '반대로 ' + ys.giEl + '(' + ys.giHan + ') 기운(기신)은 줄일수록 좋습니다. ' +
       ys.giRx.nature + ' 쪽으로 흐르는 습관 — ' + ys.giRx.avoid + ' — 을 먼저 정리하세요.';
   }
 
@@ -284,7 +284,7 @@
     if (!$('daeunStrip')) return;
     var d = rep.daeun;
     $('daeunMeta').textContent = d.whoText + ' · ' + d.directionText +
-      ' — ' + d.dayGap + '일 ÷ 3 = 대운수 ' + d.startAge + '세 · 지금 만 ' + d.age + '세';
+      ' — 10년 운이 시작되는 나이(대운수) ' + d.startAge + '세 · 지금 만 ' + d.age + '세';
     $('daeunStrip').innerHTML = d.list.map(function (x, i) {
       var now = i === d.currentIndex;
       return '<div class="daeun-cell tone-' + x.tone + (now ? ' is-now' : '') + '">' +
@@ -295,7 +295,7 @@
         (now ? '<span class="dc-now">지금</span>' : '') +
         '</div>';
     }).join('');
-    $('daeunNote').textContent = d.directionReason + ' 나이는 만 나이 기준이고, 시작 연도는 태어난 해에 대운수를 더해 표시합니다. 표는 옆으로 넘겨 8개 대운을 모두 볼 수 있습니다.';
+    $('daeunNote').textContent = d.directionReason + ' 대운(大運)은 10년마다 바뀌는 큰 흐름이고, 표의 나이는 만 나이 기준입니다. 시작 연도는 태어난 해에 대운수를 더해 표시하며, 옆으로 넘기면 여덟 구간을 모두 볼 수 있습니다.';
     $('daeunHead').textContent = d.head;
     $('daeunBody').textContent = d.body;
     $('daeun2027').textContent = d.with2027;
@@ -348,8 +348,8 @@
     var rows = w.rows;
 
     $('wongukLead').textContent =
-      '팔자를 네 기둥으로 쪼개, 기둥마다 천간·지지와 그 안에 숨은 지장간, 12운성, 공망까지 폅니다. ' +
-      '지지는 겉글자보다 안쪽을 더 많이 담기 때문에, 실제 성격과 운의 바탕은 지장간에서 드러납니다.';
+      '여덟 글자를 네 기둥(년·월·일·시)으로 나눠, 기둥마다 위 글자(천간)·아래 글자(지지)와 그 속에 숨은 글자(지장간), 기운의 단계(12운성), 비어 있는 자리(공망)까지 폅니다. ' +
+      '아래 글자는 겉글자보다 안쪽을 더 많이 담기 때문에, 실제 성격과 운의 바탕은 그 속에 숨은 글자에서 드러납니다.';
 
     var table = $('wongukTable');
     table.className = 'wk-table' + (rows.length === 3 ? ' three' : '');
@@ -454,8 +454,8 @@
       : '<p class="body-text">원국 안에서 뚜렷하게 성립한 합·충·형·파·해가 없습니다. 기둥끼리 서로 간섭하지 않아, 바깥 사건보다 자기 선택으로 판이 갈리는 사주입니다.</p>';
 
     $('relNote').textContent =
-      '천간합·천간충은 이웃한 기둥끼리 성립하고, 지지 관계는 거리가 멀수록 힘이 약해집니다. ' +
-      '대운·세운이 들어오면 여기서 잡힌 관계가 실제 사건으로 다시 흔들립니다.';
+      '합·충·형·파·해는 글자끼리 끌리거나 부딪히는 다섯 가지 관계입니다. 위 글자(천간)의 합·충은 이웃한 기둥끼리 성립하고, 아래 글자(지지)의 관계는 거리가 멀수록 힘이 약해집니다. ' +
+      '10년 운이나 해마다 들어오는 운이 여기 닿으면, 여기서 잡힌 관계가 실제 사건으로 다시 흔들립니다.';
 
     $('sinsalGrid').innerHTML = w.sinsal.length ? w.sinsal.map(function (s) {
       var kindText = s.kind === 'good' ? '귀인' : s.kind === 'caution' ? '주의' : '특성';
@@ -525,7 +525,7 @@
     $('nobleDirs').innerHTML = rep.noble.list.map(function (n) {
       return '<span class="noble-dir"><b>' + n.han + '</b>' + n.ji + ' · ' + n.dir + '</span>';
     }).join('');
-    var nb = '중요한 자리·계약·면담은 이 방향의 자리에서 잡으면 흐름이 덜 막힙니다. ';
+    var nb = '귀인(貴人)은 막힐 때 길을 열어 주는 사람을 뜻합니다. 중요한 자리·계약·면담은 이 방향의 자리에서 잡으면 흐름이 덜 막힙니다. ';
     if (rep.avoid.dir) {
       nb += '다만 2027년 미(未)의 방향인 ' + rep.avoid.dir + ' 방향은 올해 내 일지와 부딪히니, 큰 결정을 그 자리에서 즉석으로 내리지는 마세요.';
     } else {

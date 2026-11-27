@@ -236,9 +236,8 @@
 
     var ys = res.yongsin;
     $('ghYongsin').textContent =
-      'A의 부족한 오행은 ' + ys.a + ', B의 부족한 오행은 ' + ys.b + '입니다. ' +
-      'A의 강한 오행은 ' + ys.strongA + ', B의 강한 오행은 ' + ys.strongB + '입니다. ' +
-      '서로의 강한 오행이 상대의 부족한 자리를 채우면 재물 시너지에 가점이 붙습니다.';
+      'A에게 아쉬운 기운은 ' + ys.a + ', B에게 아쉬운 기운은 ' + ys.b + '입니다. 반대로 A가 센 기운은 ' + ys.strongA + ', B가 센 기운은 ' + ys.strongB + '입니다. ' +
+      '한 사람의 센 기운이 상대의 빈자리를 채워 주면, 함께할 때 서로가 편해지고 돈의 시너지에도 점수가 더 붙습니다.';
 
     /* 축 */
     var box = $('ghAxes');
@@ -303,13 +302,28 @@
       cl.appendChild(el('p', 'body-text', '일간과 지지에 직접 부딪히는 충·형·파·해가 없습니다.'));
     }
 
-    /* 십성 */
+    /* 십성 — 이름 옆에 일상어 풀이를 붙인다 */
+    var SS_MEAN = {
+      비견: '나와 같은 편, 편하지만 경쟁심도 생기는 사이',
+      겁재: '나와 같지만 더 센 편, 끌림과 소유욕이 함께 오는 사이',
+      식신: '나를 편안하게 해 주는 쪽',
+      상관: '나를 자극하고 긴장시키는 쪽',
+      편재: '나에게 즐거움과 돈 쓸 일을 가져오는 쪽',
+      정재: '나를 안정시켜 주는 쪽',
+      편관: '나를 조이고 긴장시키는 쪽',
+      정관: '나를 지켜주고 책임을 지는 쪽',
+      편인: '나를 남다르게 봐 주는 쪽',
+      정인: '나를 보살펴 주는 쪽'
+    };
+    function ssLabel(name) {
+      return name + (SS_MEAN[name] ? ' — ' + SS_MEAN[name] : '');
+    }
     var tg = $('ghTenGod');
     tg.innerHTML = '';
-    tg.appendChild(el('p', 'mini-label', 'B가 A에게 — ' + res.tenGod.nameAB));
+    tg.appendChild(el('p', 'mini-label', 'B가 A에게 — ' + ssLabel(res.tenGod.nameAB)));
     tg.appendChild(el('p', 'body-text', res.tenGod.textAB));
     tg.appendChild(el('div', 'divider'));
-    tg.appendChild(el('p', 'mini-label', 'A가 B에게 — ' + res.tenGod.nameBA));
+    tg.appendChild(el('p', 'mini-label', 'A가 B에게 — ' + ssLabel(res.tenGod.nameBA)));
     tg.appendChild(el('p', 'body-text dim', res.tenGod.textBA));
 
     /* 12개월 */
@@ -324,9 +338,10 @@
       body.appendChild(el('p', 'gh-month-label', m.label + (m.range ? ' · ' + m.range : '')));
       body.appendChild(el('p', 'gh-month-comment', m.comment));
       var badge = [];
-      if (m.personal.a) badge.push('A 일지와 ' + m.personal.a);
-      if (m.personal.b) badge.push('B 일지와 ' + m.personal.b);
-      if (badge.length) body.appendChild(el('p', 'gh-month-badge', '이 달 지지 · ' + badge.join(' / ')));
+      var relWord = { '육합': '붙음(합)', '삼합': '붙음(삼합)', '충': '부딪힘(충)', '형': '어긋남(형)', '파': '금 감(파)', '해': '흠(해)' };
+      if (m.personal.a) badge.push('A의 자리와 ' + (relWord[m.personal.a] || m.personal.a));
+      if (m.personal.b) badge.push('B의 자리와 ' + (relWord[m.personal.b] || m.personal.b));
+      if (badge.length) body.appendChild(el('p', 'gh-month-badge', '이 달 글자 · ' + badge.join(' / ')));
       row.appendChild(left);
       row.appendChild(body);
       cal.appendChild(row);

@@ -48,7 +48,7 @@ YEAR_LABEL = "2027 정미년"
 YEAR_SHORT = "丁未 · 2027"
 PUBLISH_DATE = "2026-11-24"          # 최초 발행일 (JSON-LD datePublished)
 BUILD_DATE = datetime.date.today().isoformat()   # 생성일 (sitemap lastmod, dateModified)
-CSS_VERSION = "20261125m"
+CSS_VERSION = "20261128a"
 CONTACT_EMAIL = "wolryeong.saju@gmail.com"   # 문의 메일 (사이트 푸터·약관과 동일)
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -96,7 +96,7 @@ REL_MEANING = {
 STRUCT = {
     "saeng": {
         "label": "지지가 일간을 생하는 구조",
-        "sub": "인성 통근 · 뿌리가 물을 얻은 자리",
+        "sub": "도움받는 기운이 뿌리내린 자리",
         "body": (
             "지지가 일간을 밀어주는 상생 구조입니다. 뿌리가 물을 얻은 자리라 배우고 버티는 힘이 좋고, "
             "어려울 때 도와주는 사람이 붙습니다. 반대로 기대는 데 익숙해지면 결정이 늦어지니, "
@@ -105,7 +105,7 @@ STRUCT = {
     },
     "same": {
         "label": "일간과 지지가 같은 기운인 구조",
-        "sub": "비화 · 힘이 겹치는 자리",
+        "sub": "같은 기운이 겹쳐 힘이 센 자리",
         "body": (
             "천간과 지지가 같은 오행으로 겹친 구조입니다. 자기 색이 선명하고 밀어붙이는 힘이 강해, "
             "한번 정하면 끝까지 가는 추진력이 나옵니다. 대신 유연함이 줄어 남의 말을 받아들이는 데 "
@@ -114,7 +114,7 @@ STRUCT = {
     },
     "seol": {
         "label": "일간이 지지를 생하는 구조",
-        "sub": "식상 설기 · 재능을 밖으로 꺼내 쓰는 자리",
+        "sub": "재능을 밖으로 꺼내 쓰는 자리",
         "body": (
             "일간이 지지를 생하며 기운을 밖으로 내보내는 설기 구조입니다. 가진 것을 꺼내 쓰는 힘이 좋아 "
             "표현·기획·영업에서 재능이 드러납니다. 다만 내보내기만 하면 정작 자기 몫이 비어 버리니, "
@@ -123,7 +123,7 @@ STRUCT = {
     },
     "jae": {
         "label": "일간이 지지를 극하는 구조",
-        "sub": "재성 · 손에 잡히는 것을 다루는 자리",
+        "sub": "돈과 손에 잡히는 것을 다루는 자리",
         "body": (
             "일간이 지지를 눌러 다스리는 재성 구조입니다. 돈·사람·일처럼 손에 잡히는 것을 직접 다루는 "
             "힘이 있어 실무와 계산에 강하고, 맡은 일의 숫자를 끝까지 확인합니다. 다만 통제하려는 습관이 "
@@ -132,7 +132,7 @@ STRUCT = {
     },
     "gwan": {
         "label": "지지가 일간을 극하는 구조",
-        "sub": "관성 · 압박이 실력을 만드는 자리",
+        "sub": "압박이 실력을 만드는 자리",
         "body": (
             "지지가 일간을 누르는 관성 구조입니다. 자리와 규칙이 나를 조이는 대신, 그 압박이 실력을 "
             "빨리 만들어 조직에서 자리를 잡습니다. 다만 무리하면 몸이 먼저 신호를 보내므로, "
@@ -573,7 +573,7 @@ def render_ilju(ctx, it):
   </div>
   <h1>{esc(name)}일주,<br><em>2027 정미년</em>에는 어떻게 흐르나</h1>
   <p class="ilju-desc">
-    태어난 날의 천간 <strong>{esc(gw)}({esc(it['ganHan'] + ctx.el(gan_el)['han'])})</strong>과 지지 <strong>{esc(jw)}({esc(it['jiHan'] + ctx.el(ji_el)['han'])})</strong>가 만난 자리,
+    태어난 날의 위 글자(천간) <strong>{esc(gw)}({esc(it['ganHan'] + ctx.el(gan_el)['han'])})</strong>와 아래 글자(지지) <strong>{esc(jw)}({esc(it['jiHan'] + ctx.el(ji_el)['han'])})</strong>가 만난 자리,
     <strong>'{esc(it['ilju']['t'])}'</strong>. {esc(name)}일주는 {esc(kws[0])}·{esc(kws[1])}·{esc(kws[2])}의 결이 겹쳐 있고,
     2027년에는 천간 정(丁)과 지지 미(未)가 함께 들어옵니다.
   </p>
@@ -620,12 +620,12 @@ def render_ilju(ctx, it):
       <div class="spec-v"><b>{esc(struct['label'])}</b><span class="spec-sub">{esc(struct['sub'])}</span></div>
     </div>
     <div class="spec-row">
-      <div class="spec-k">12운성</div>
+      <div class="spec-k">기운의 단계</div>
       <div class="spec-v"><b>{esc(stage)}{esc('(' + STAGE_HAN[stage] + ')')}</b><span class="spec-sub">{esc(STAGE_BODY[stage])}</span></div>
     </div>
     <div class="spec-row">
-      <div class="spec-k">지장간</div>
-      <div class="spec-v"><b>정기 {esc(jj['h'])}({esc(jj['han'])})</b><span class="spec-sub">지지 {esc(ji)} 속에 깔린 중심 기운입니다. 겉의 오행보다 속의 결을 이 기운이 정합니다.</span></div>
+      <div class="spec-k">숨은 기운</div>
+      <div class="spec-v"><b>정기 {esc(jj['h'])}({esc(jj['han'])})</b><span class="spec-sub">{esc(ji)} 속에 숨어 있는 중심 기운입니다. 겉으로 보이는 글자보다, 속에 깔린 이 기운이 실제 성격의 결을 정합니다.</span></div>
     </div>
   </div>
   <p class="ilju-p">{esc(struct['body'])}</p>
@@ -648,22 +648,22 @@ def render_ilju(ctx, it):
 
     relation_section = f"""<section class="ilju-body">
   <h2 class="ilju-h2">2027 정미년과의 관계</h2>
-  <p class="ilju-p">2027년의 간지는 <strong>정미(丁未)</strong>입니다. {esc(name)}일주가 이 해를 만나면 천간에서는 <strong>{esc(y['ganSS'])}</strong>, 지지에서는 <strong>{esc(y['jiSS'])}</strong>의 자리가 잡힙니다.</p>
+  <p class="ilju-p">2027년은 <strong>정미(丁未)</strong>년입니다. 사주는 위 글자(천간)와 아래 글자(지지)로 이루어지는데, {esc(name)}일주가 이 해를 만나면 위 글자에서는 <strong>{esc(y['ganSS'])}</strong>, 아래 글자에서는 <strong>{esc(y['jiSS'])}</strong>의 자리가 잡힙니다. 이 자리 이름(십성)이 그해 어떤 일이 들어오는지를 알려 줍니다.</p>
   <div class="spec">
     <div class="spec-row">
-      <div class="spec-k">천간 丁</div>
+      <div class="spec-k">2027년 위 글자 정(丁)</div>
       <div class="spec-v">{ss_cell(y['ganSS'])}</div>
     </div>
     <div class="spec-row">
-      <div class="spec-k">지지 未</div>
+      <div class="spec-k">2027년 아래 글자 미(未)</div>
       <div class="spec-v">{ss_cell(y['jiSS'])}<span class="spec-sub">미토의 정기 기(己)는 이 일간에게 <b>{esc(y['jjSS'])}({esc(SIPSUNG_HAN[y['jjSS']])})</b>{esc(particle(y['jjSS'], '으로', '로'))} 들어옵니다.</span></div>
     </div>
     <div class="spec-row">
-      <div class="spec-k">지지 관계</div>
+      <div class="spec-k">글자끼리 관계</div>
       <div class="spec-v">{rel_cell}</div>
     </div>
     <div class="spec-row">
-      <div class="spec-k">운성</div>
+      <div class="spec-k">2027년 기운의 단계</div>
       <div class="spec-v"><b>{esc(y['stage'])}{esc('(' + STAGE_HAN[y['stage']] + ')')}</b><span class="spec-sub">일간이 미토에서 만나는 2027년의 자리 — {esc(YEAR_STAGE[y['stage']])}입니다.</span></div>
     </div>
   </div>
@@ -792,6 +792,16 @@ def render_ilju(ctx, it):
     faq_section = f"""<section class="ilju-body">
   <h2 class="ilju-h2">자주 묻는 것</h2>
   <div class="faq">{faq_html}</div>
+</section>
+<section class="ilju-body">
+  <h2 class="ilju-h2">이 페이지에 나온 말, 이렇게 읽으면 됩니다</h2>
+  <div class="gloss">
+    <div class="gloss-row"><b>일주(日柱)</b><span>태어난 날의 두 글자. 위 글자는 ‘나’(일간), 아래 글자는 내가 앉는 자리를 뜻합니다.</span></div>
+    <div class="gloss-row"><b>천간 · 지지</b><span>사주의 위 글자(천간)와 아래 글자(지지). 겉으로 드러난 모습과 안쪽 바탕을 각각 담당합니다.</span></div>
+    <div class="gloss-row"><b>십성 — 비겁·식상·재성·관성·인성</b><span>다른 글자가 나에게 어떤 역할을 하는지 붙인 이름. 비겁=내 주관·경쟁, 식상=아이디어·표현, 재성=돈과 결과, 관성=직장·책임·기준, 인성=배움·생각·도움.</span></div>
+    <div class="gloss-row"><b>기운의 단계(12운성)</b><span>기운이 태어나 자라고 힘을 다하는 열두 단계. 같은 성격이라도 지금 어느 단계에 있느냐에 따라 쓰임이 달라집니다.</span></div>
+    <div class="gloss-row"><b>합 · 충 · 형 · 파 · 해</b><span>글자끼리 끌리거나 부딪히는 다섯 가지 관계. 합은 붙는 것, 충은 정면으로 부딪히는 것, 형·파·해는 은근히 어긋나는 것입니다.</span></div>
+  </div>
 </section>"""
 
     # ── 구조화 데이터
