@@ -316,7 +316,7 @@
       정인: '나를 보살펴 주는 쪽'
     };
     function ssLabel(name) {
-      return name + (SS_MEAN[name] ? ' — ' + SS_MEAN[name] : '');
+      return name + (SS_MEAN[name] ? ': ' + SS_MEAN[name] : '');
     }
     var tg = $('ghTenGod');
     tg.innerHTML = '';

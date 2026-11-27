@@ -200,7 +200,7 @@
     var body = '이 10년은 ' + item.ganH + item.jiH + '의 기운으로, 겉기운(천간)은 ' + ssShort(item.ganSS) +
       ', 바탕기운(지지)은 ' + ssShort(item.jiSS) + '인 구간입니다. ' + item.ganTheme + '. ' + item.jiTheme;
     if (curRel.length) {
-      body += ' 이 10년의 바탕 글자 ' + item.jiH + '가 내 자리(일지) ' + core.dayPillar.jiH + '와 ' + curRel.join('·') +
+      body += ' 이 10년의 바탕 글자 ' + item.jiH + '가 내 자리(일지) ' + core.dayPillar.jiH + josaS(core.dayPillar.jiH, '과', '와') + ' ' + curRel.join('·') +
         '이라, 삶의 형태(사는 곳·일하는 자리·관계)가 실제로 바뀌는 사건이 이 안에서 일어납니다.';
     } else {
       body += ' 이 10년의 바탕 글자가 내 자리와 직접 부딪히지 않아, 바깥 환경보다 내 선택으로 판이 갈리는 구간입니다.';
@@ -406,7 +406,7 @@
       var relWord = q.label === '공격' ? '네 분기 중 흐름이 가장 좋은 구간입니다. '
         : q.label === '방어' ? '네 분기 중 가장 눌리는 구간입니다. '
           : '';
-      q.body = relWord + t.body + ' 이 분기의 중심 십성은 ' + q.dominant + '이고, 가장 힘이 실리는 달은 ' +
+      q.body = relWord + t.body + ' 이 분기의 중심 기운은 ' + ssShort(q.dominant) + '이고, 가장 힘이 실리는 달은 ' +
         q.best.no + '월(' + q.best.label + '), 가장 눌리는 달은 ' + q.worst.no + '월(' + q.worst.label + ')입니다.';
       q.action = C.MONTH_ACT.money[q.dominant];
     });
@@ -972,7 +972,7 @@
       balanceBody = '다섯 기운이 크게 치우치지 않았습니다. 어느 한 곳에 몰리지 않아 판단이 균형적이고, 환경이 바뀌어도 적응이 빠릅니다. 대신 한 가지에 미치듯 파고드는 힘은 상대적으로 약하니, 스스로 기한과 목표를 정해 몰입을 만들어야 합니다.';
     } else {
       balanceTitle = top.el + ' 기운이 이끄는 구조';
-      balanceBody = top.el + '(' + top.count + '개)와 ' + second.el + '(' + second.count + '개)가 중심을 잡고 있습니다. ' +
+      balanceBody = top.el + '(' + top.count + '개)' + josaS(top.el, '과', '와') + ' ' + second.el + '(' + second.count + '개)' + josaS(second.el, '이', '가') + ' 중심을 잡고 있습니다. ' +
         '이 두 기운이 무의식의 판단 기준이 되니, 잘 쓰면 사람을 읽고 판을 짜는 감각이 되고, 잘못 쓰면 같은 실수를 반복하는 이유가 됩니다.';
     }
 

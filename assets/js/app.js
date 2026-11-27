@@ -394,11 +394,11 @@
 
     var y = w.year2027, gm = w.gongmang;
     $('wonguk2027').innerHTML =
-      '<p class="mini-label">2027 정미년 세운 12운성</p>' +
+      '<p class="mini-label">2027년, 내 기운은 어느 단계인가(12운성)</p>' +
       '<p class="wk-2027-head">' + y.unsung.name + '(' + y.unsung.han + ') — ' + y.unsungShort + '</p>' +
       '<p class="body-text">' + y.unsungBody + '</p>' +
       '<div class="divider"></div>' +
-      '<p class="mini-label">공망(空亡) 감정</p>' +
+      '<p class="mini-label">공망(비어 있는 자리) 살펴보기</p>' +
       '<div class="gm-box">' +
       '<p class="gm-line"><b>일주 기준</b> ' + gm.dayText + ' — ' +
       (gm.pillars.length ? gm.pillars.join('·') + '가 공망에 듭니다' : '해당하는 기둥 없음') + '</p>' +
