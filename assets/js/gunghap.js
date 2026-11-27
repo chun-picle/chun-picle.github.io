@@ -144,6 +144,15 @@
     return best;
   }
 
+  /* 두 사람을 합쳐 가장 얇은 오행 — 함께 살 집·사무실에서 채울 기운 */
+  function commonWeakestElement(a, b) {
+    var els = S().ELEMENTS, best = els[0];
+    for (var i = 1; i < els.length; i++) {
+      if (a.counts[els[i]] + b.counts[els[i]] < a.counts[best] + b.counts[best]) best = els[i];
+    }
+    return best;
+  }
+
   /* ---------- 두 사람의 관계 사실 ---------- */
   function collect(a, b) {
     var pa = pillarsOf(a), pb = pillarsOf(b);
@@ -467,6 +476,24 @@
     var P = K.moneyPrescription;
     var pres = P.byAxis[weakest.id] || { risk: '', fixes: [] };
 
+    /* 집·사무실 방위·입지 — 두 사람을 합쳐 가장 얇은 오행을 기준으로 고른다 */
+    var HF = K.houseFengshui, house = null;
+    if (HF && HF.byElement) {
+      var hEl = commonWeakestElement(a, b);
+      var hInfo = HF.byElement[hEl];
+      house = {
+        title: HF.title,
+        element: hEl,
+        lead: fillLine(HF.lead, { el: hEl, han: hanOf(hEl), count: a.counts[hEl] + b.counts[hEl] }),
+        rows: [
+          { k: '방위', v: hInfo.dir },
+          { k: '입지·지형', v: hInfo.place },
+          { k: '피할 곳', v: hInfo.avoid }
+        ],
+        modeNote: normMode(mode) === 'business' ? HF.office : HF.couple
+      };
+    }
+
     return {
       mode: mode,
       modeLabel: MODE_LABEL[mode],
@@ -486,7 +513,8 @@
         title: P.title, lead: P.lead,
         weakestName: weakest.name, weakestScore: weakest.score, weakestMax: weakest.max,
         risk: pres.risk, fixes: pres.fixes,
-        roles: P.roles, household: P.household, business: P.business
+        roles: P.roles, household: P.household, business: P.business,
+        house: house
       },
       closing: K.closing[mode],
       yongsin: {
@@ -638,6 +666,7 @@
     axisLevel: axisLevel,
     weakestElement: weakestElement,
     strongestElement: strongestElement,
+    commonWeakestElement: commonWeakestElement,
     monthPersonal: monthPersonal,
     branchFacts: branchFacts,
     isSamhap: isSamhap,

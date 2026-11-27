@@ -429,6 +429,41 @@
     return arr.slice(0, max || 3).map(function (m) { return m.no + '월(' + m.label + ')'; }).join('·');
   }
 
+  /* ---------- 나에게 맞는 부동산 방위·입지 (오행 풍수) ----------
+     용신 기운이 들어오는 방향·자리를 쉽게 풀고, 넘치는 기신 쪽 집은 피하도록 한 줄 붙인다. */
+  function buildFengshui(core, ys) {
+    var FS = C.FENGSHUI;
+    var fsEl = ys.yongEl, giEl = ys.giEl;
+    var f = FS.el[fsEl], gf = FS.el[giEl];
+    var n = core.counts[fsEl];
+
+    var lead = '이 사주에서 채워 주면 좋은 기운(용신)은 ' + fsEl + '(' + S.ELEMENT_HAN[fsEl] + ')' +
+      (n === 0
+        ? ' — 여덟 글자에 하나도 없어 그 자리가 비어 있습니다.'
+        : ' — ' + n + '개로 얇게 자리하고 있습니다.') +
+      ' 그래서 집·사무실도 ' + fsEl + ' 기운이 들어오는 방향과 자리를 골라야 마음이 덜 조급하고 일이 덜 막힙니다. ' +
+      FS.howto;
+
+    var avoid = f.avoid;
+    if (gf && giEl !== fsEl) {
+      avoid += ' 반대로 ' + giEl + ' 기운이 넘치는 집도 부담이 됩니다 — ' + gf.giAvoid + '.';
+    }
+
+    return {
+      title: '나에게 맞는 부동산 방위·입지 (오행 풍수)',
+      el: fsEl, giEl: giEl,
+      lead: lead,
+      rows: [
+        { k: '기본 원칙', v: FS.basanimsu },
+        { k: '방위', v: f.dir },
+        { k: '입지·지형', v: f.place },
+        { k: '피할 곳', v: avoid },
+        { k: '지역 그림', v: f.area }
+      ],
+      note: '특정 동네를 콕 집어 추천하는 것이 아니라, 이런 성격의 자리를 고르라는 뜻입니다. 실제 매수 전에는 등기·권리관계와 3년치 현금흐름을 숫자로 따로 확인하세요.'
+    };
+  }
+
   function buildDomains(core, st, ys, months, daeun, ySS, yJiSS) {
     var g = st.groups, el = st.el, counts = core.counts;
     var DT = C.DOMAIN_TEXT;
@@ -602,7 +637,8 @@
         { k: '맞는 자산', v: DT.assets.path[assetKey] },
         { k: '부동산 타이밍', v: assetYear },
         { k: '명의·권리 체크', v: DT.assets.check[assetKey] }
-      ]
+      ],
+      fengshui: buildFengshui(core, ys)
     };
 
     return {

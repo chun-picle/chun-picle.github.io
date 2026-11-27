@@ -269,6 +269,22 @@
   ok('축 이름이 돈·계약 관점', K.axes.map(function (a) { return a.name; }).join(','),
     '수익 시너지,계약·의사결정 소통,현금흐름·씀씀이 균형,리스크 방어·신뢰 안정성,2027 공동 재물·사업 흐름');
 
+  /* ---- 13-2. 함께 살 집·사무실 방위·입지 ---- */
+  var H = r1.prescription.house;
+  ok('집·사무실 방위·입지 실림', !!H && H.rows.length === 3);
+  check('집·사무실 방위 3줄', H.rows.map(function (r) { return r.k; }).join(','), '방위,입지·지형,피할 곳');
+  check('공통 부족 오행 = 두 원국 합산 최소', H.element,
+    G.commonWeakestElement(r1.cores.a, r1.cores.b));
+  ok('방위 안내에 오행 이름 포함', H.lead.indexOf(H.element + '(') >= 0 && H.lead.indexOf('개입니다') >= 0);
+  ok('연인 모드 = 신혼집·이사 안내', H.modeNote.indexOf('신혼집') >= 0);
+  check('동업 모드 = 사무실 안내', G.fromBirth(A, B, 'business').prescription.house.modeNote.indexOf('사무실') >= 0, true);
+  ok('방위 문구 = JSON 문구', H.rows[0].v === K.houseFengshui.byElement[H.element].dir);
+  ok('오행 5종 방위·입지 문구',
+    ['목', '화', '토', '금', '수'].every(function (e) {
+      var x = K.houseFengshui.byElement[e];
+      return x && x.dir && x.place && x.avoid;
+    }));
+
   /* ---- 14. 무료 1인 진단(S1) — 무료 범위만 ---- */
   var coreA = r1.cores.a;
   var fr = G.freeReading(coreA, '2026-11-25');

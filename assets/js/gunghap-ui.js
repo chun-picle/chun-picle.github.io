@@ -344,6 +344,16 @@
       }).join('');
       $('ghPrescriptionHousehold').textContent = pr.household;
       $('ghPrescriptionBusiness').textContent = pr.business;
+
+      /* 함께 살 집·사무실 방위·입지 */
+      if (pr.house && $('ghPrescriptionHouse')) {
+        $('ghPrescriptionHouseTitle').textContent = pr.house.title;
+        $('ghPrescriptionHouseLead').textContent = pr.house.lead;
+        $('ghPrescriptionHouseRows').innerHTML = pr.house.rows.map(function (r) {
+          return '<div class="dm-row"><span class="dm-k">' + r.k + '</span><span class="dm-v">' + r.v + '</span></div>';
+        }).join('');
+        $('ghPrescriptionHouseMode').textContent = pr.house.modeNote;
+      }
     }
 
     /* 12개월 */

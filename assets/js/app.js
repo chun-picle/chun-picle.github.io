@@ -309,6 +309,16 @@
         return '<div class="dm-row"><span class="dm-k">' + b.k + '</span><span class="dm-v">' + b.v + '</span></div>';
       }).join('');
       var extra = '';
+      var feng = '';
+      if (dm.fengshui) {
+        feng = '<div class="divider"></div>' +
+          '<p class="mini-label">' + dm.fengshui.title + '</p>' +
+          '<p class="body-text dim fs-lead">' + dm.fengshui.lead + '</p>' +
+          '<div class="fs-rows">' + dm.fengshui.rows.map(function (r) {
+            return '<div class="dm-row"><span class="dm-k">' + r.k + '</span><span class="dm-v">' + r.v + '</span></div>';
+          }).join('') + '</div>' +
+          '<p class="fs-note">' + dm.fengshui.note + '</p>';
+      }
       if (dm.seasons) {
         extra = '<div class="divider"></div><p class="mini-label">계절별 주의 루틴</p><div class="season-list">' +
           dm.seasons.map(function (s) {
@@ -319,7 +329,7 @@
         '<div class="dm-head"><span class="dm-mark">' + dm.mark + '</span>' +
         '<div><p class="dm-title">' + dm.title + '</p><p class="dm-lead">' + dm.head + '</p></div></div>' +
         '<p class="body-text">' + dm.body + '</p>' +
-        '<div class="divider"></div>' + bullets + extra + '</div>';
+        '<div class="divider"></div>' + bullets + feng + extra + '</div>';
     }).join('');
   }
 

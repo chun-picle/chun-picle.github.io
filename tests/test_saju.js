@@ -162,6 +162,22 @@
     rep.domains.contract.body.indexOf('2027') >= 0, true);
   check('부동산 영역 토 기운 표기',
     rep.domains.assets.head.indexOf('토 기운') >= 0, true);
+
+  /* ---- 부동산 방위·입지 (오행 풍수) ---- */
+  var fsh = rep.domains.assets.fengshui;
+  check('방위·입지 5줄', fsh.rows.map(function (r) { return r.k; }).join(','),
+    '기본 원칙,방위,입지·지형,피할 곳,지역 그림');
+  check('방위·입지 용신 오행 = 용신', fsh.el, rep.yongsin.yongEl);
+  check('방위·입지 빈 칸 없음',
+    fsh.rows.every(function (r) { return r.k && r.v && r.v.length > 20; }) && !!fsh.lead && !!fsh.note, true);
+  check('방위 문구 = 용신 오행 문구', fsh.rows[1].v, CONTENT.FENGSHUI.el[fsh.el].dir);
+  check('피할 곳에 기신 주의', fsh.rows[3].v.indexOf('부담') >= 0, true);
+  check('배산임수 쉬운 말 풀이', fsh.rows[0].v.indexOf('배산임수(뒤는 산이나 언덕으로') >= 0, true);
+  check('오행 5종 방위·입지 문구',
+    ['목', '화', '토', '금', '수'].every(function (e) {
+      var x = CONTENT.FENGSHUI.el[e];
+      return x && x.dir && x.place && x.avoid && x.area && x.giAvoid;
+    }), true);
   check('보완 처방 4줄', rep.leakFix.fixes.length, 4);
   check('돈 새는 구멍 1개 이상', rep.leakFix.leaks.length >= 1, true);
   check('보완 처방 빈 칸 없음',
