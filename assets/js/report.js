@@ -4,7 +4,8 @@
  *
  *  - 신강/신약 판정(득령·득지·득세)과 용신·희신·기신
  *  - 10년 대운 계산과 현재 대운 × 2027 세운
- *  - 2027 4대 영역(재물·직업·연애·건강)
+ *  - 2027 4대 재물 영역(현금흐름·사업·계약·부동산)
+ *  - 돈 새는 구멍 & 현실 보완 전략
  *  - 12개월 심화(천간 십성 × 지지 십성 × 일지 관계 × 신강/신약)
  *  - 분기별 로드맵
  * ============================================================ */
@@ -33,11 +34,11 @@
 
   /* 십성 이름 옆에 붙이는 짧은 풀이 — 처음 나오는 자리에서 한 번씩 */
   var SS_SHORT = {
-    비견: '내 주관·경쟁의 기운', 겁재: '몫을 나누는 경쟁의 기운',
-    식신: '재능·표현의 기운', 상관: '드러내는 표현의 기운',
-    편재: '크게 들고 나는 돈의 기운', 정재: '꾸준히 쌓이는 돈의 기운',
-    편관: '센 책임·압박의 기운', 정관: '반듯한 책임·평판의 기운',
-    편인: '남다른 배움의 기운', 정인: '배움·도움의 기운'
+    비견: '독립사업·경쟁의 기운', 겁재: '지출·몫의 변수가 되는 기운',
+    식신: '아이템·현금창출의 기운', 상관: '영업·표현의 기운',
+    편재: '유동현금·큰돈의 기운', 정재: '고정수입·정산의 기운',
+    편관: '압박·리스크의 기운', 정관: '법인·계약·제도의 기운',
+    편인: '문서·권리의 기운', 정인: '부동산·후원의 기운'
   };
   function ssShort(name) {
     return name + (SS_SHORT[name] ? '(' + SS_SHORT[name] + ')' : '');
@@ -413,11 +414,25 @@
     return arr;
   }
 
-  /* ---------- 4대 영역 ---------- */
+  /* ---------- 4대 재물 영역 (현금흐름·사업·계약·부동산) ---------- */
+
+  /* 계약서에 반드시 넣어야 하는 안전장치 — 계약 유형별 */
+  var DOC_SAFE = {
+    gwan: '표준 계약서·승인 절차·해지 조항을 먼저 두고, 구두 합의는 그 자리에서 문자로 남기세요.',
+    in: '등기부·권리관계·보증 조항을 계약 전에 직접 읽고, 검토 기한을 정해 그날 결론을 내세요.',
+    jae: '선금·중도금·잔금과 지연이자, 검수 기준을 숫자로 못 박으세요.',
+    bi: '지분·의결권·역할·출구(매도) 조건을 계약 첫 장에 적으세요.',
+    sik: '결과물 단위 대금, 검수 기준, 청구일을 계약서에 넣으세요.'
+  };
+
+  function monthNames(arr, max) {
+    return arr.slice(0, max || 3).map(function (m) { return m.no + '월(' + m.label + ')'; }).join('·');
+  }
 
   function buildDomains(core, st, ys, months, daeun, ySS, yJiSS) {
-    var g = st.groups, el = st.el;
-    var yGanEl = S.GAN[3].el, yJiEl = S.JI[7].el; /* 2027 丁未 */
+    var g = st.groups, el = st.el, counts = core.counts;
+    var DT = C.DOMAIN_TEXT;
+    var yGanEl = S.GAN[3].el, yJiEl = S.JI[7].el;
     var yFavGan = favorOf(yGanEl, ys), yFavJi = favorOf(yJiEl, ys);
     var favWord = function (f) { return f === 'yong' ? '용신' : f === 'hui' ? '희신' : f === 'gi' ? '기신' : '중립'; };
 
@@ -430,211 +445,210 @@
       return m.grade <= 2 && (m.rel.indexOf('충') >= 0 || m.rel.indexOf('형') >= 0 || m.ganSS === '편관' || m.ganSS === '겁재');
     });
     var best = months.slice().sort(function (a, b) { return b.score - a.score; })[0];
+    var worst = months.slice().sort(function (a, b) { return a.score - b.score; })[0];
+    var attackText = attack.length ? monthNames(attack, 4) : '뚜렷한 공격 달이 없음';
+    var defendText = defend.length ? monthNames(defend, 4) : '큰 방어 달이 없음';
 
-    /* ---- 재물 ---- */
-    var wealthHead, wealthBody;
+    /* ---- ① 현금흐름 · 투자 ---- */
+    var cashMethod = (g.sik > 0 && g.sik >= g.jae) ? 'sik' : g.jae > 0 ? 'jae' : g.gwan >= 2 ? 'gwan' : 'bi';
+    var leakKey = g.bi >= 2 ? 'bi' : g.jae >= 3 ? 'jae' : g.in >= 2 ? 'in' : g.sik >= 3 ? 'sik' : g.gwan >= 3 ? 'gwan' : 'none';
+    var leak = C.LEAK_FIX[leakKey];
+
+    var cashHead, cashBody;
     if (g.jae === 0) {
-      wealthHead = '돈의 기운(재성)이 겉으로 없는 구조 — 돈의 통로를 직접 설계해야 합니다';
-      wealthBody = '여덟 글자에 돈과 결과를 만드는 기운(재성, ' + el.jae + ')이 겉으로 드러나 있지 않습니다. 돈이 없다는 뜻이 아니라, 돈이 저절로 굴러오는 구조가 아니라는 뜻입니다. ' +
-        C.DOMAIN_TEXT.wealth.method.sik + ' 남이 만든 판에 얹혀 가는 방식은 오래 못 갑니다.';
+      cashHead = '돈의 기운(재성)이 겉으로 없는 구조 — 현금 통로를 직접 설계해야 합니다';
+      cashBody = '여덟 글자에 돈과 결과를 만드는 기운(재성, ' + el.jae + ')이 겉으로 드러나 있지 않습니다. 돈이 없다는 뜻이 아니라, 돈이 저절로 굴러오는 구조가 아니라는 뜻입니다. ' +
+        DT.cashflow.method[cashMethod] + ' 남이 만든 판에 얹혀 가는 방식은 오래 못 갑니다.';
     } else if (g.jae >= 3) {
-      wealthHead = '돈의 기운(재성) ' + g.jae + '개 — 돈이 크게 들고 나는 구조';
-      wealthBody = '돈과 결과를 만드는 기운이 많아 돈의 흐름 자체는 활발합니다. 다만 새는 구멍도 그만큼 많아 벌어도 남지 않는 패턴이 생기기 쉽습니다. ' +
-        '2027년은 통제 장치(고정 저축·지출 상한·동업 서면화)를 먼저 만들고 움직여야 재물이 남습니다.';
+      cashHead = '돈의 기운(재성) ' + g.jae + '개 — 매출은 크지만 새는 구멍도 큰 구조';
+      cashBody = '돈과 결과를 만드는 기운이 많아 매출의 흐름 자체는 활발합니다. 다만 새는 구멍도 그만큼 커서, 벌어도 남지 않는 패턴이 생기기 쉽습니다. ' +
+        '2027년은 통제 장치(고정 저축·지출 상한·동업 서면화)를 먼저 만들고 움직여야 현금이 남습니다.';
     } else {
-      wealthHead = '돈의 기운(재성) ' + g.jae + '개 — 성실하게 쌓는 표준형 재물 구조';
-      wealthBody = '돈과 결과를 만드는 기운이 균형 있게 자리하고 있습니다. 큰 한 방보다 반복되는 수입을 설계할 때 가장 크게 남는 구조입니다. ' +
+      cashHead = '돈의 기운(재성) ' + g.jae + '개 — 성실하게 쌓는 표준형 현금 구조';
+      cashBody = '돈과 결과를 만드는 기운이 균형 있게 자리하고 있습니다. 큰 한 방보다 반복되는 수입과 정산을 설계할 때 가장 크게 남는 구조입니다. ' +
         (attack.length
-          ? '2027년에는 ' + attack.map(function (m) { return m.no + '월(' + m.label + ')'; }).join('·') +
-            '에 돈이 움직이므로, 그 달에 계약·단가·판매를 몰아넣는 방식이 효율적입니다.'
-          : '2027년에는 돈의 기운이 크게 힘을 받는 달이 없으니, 단가와 조건을 다듬어 두었다가 이듬해에 쓰는 편이 낫습니다.');
+          ? '2027년에는 ' + monthNames(attack, 4) + '에 현금이 움직이므로, 그 달에 계약·단가·판매를 몰아넣는 방식이 효율적입니다.'
+          : '2027년에는 현금이 크게 힘을 받는 달이 없으니, 단가와 조건을 다듬어 두었다가 이듬해에 쓰는 편이 낫습니다.');
     }
 
-    var methodKey = g.sik > 0 && g.sik >= g.jae ? 'sik'
-      : g.jae > 0 ? 'jae'
-        : g.gwan >= 2 ? 'gwan' : 'bi';
-    var leakKey = g.bi >= 2 ? 'bi' : g.jae >= 3 ? 'jae' : g.in >= 2 ? 'in' : 'none';
-
-    var wealthStrategy;
+    var cash2027;
     if (ySS === '편인' || ySS === '정인') {
-      wealthStrategy = '2027년은 배움·도움의 기운(인성·' + ySS + ')이 들어오는 해입니다. 돈을 굴리기보다 실력·자격·장비에 쓰는 돈이 몸값으로 남습니다. 이 기운은 현금이 도는 속도가 느리니, 고정비를 낮추고 돈의 기운이 힘을 받는 달에만 결제·투자를 몰아넣는 운영이 맞습니다.';
+      cash2027 = '2027년은 문서·권리·자산의 기운(인성·' + ySS + ')이 들어오는 해입니다. 현금을 굴리기보다 등기·권리·자격·장비에 쓰는 돈이 자산으로 남습니다. 이 기운은 현금 회전이 느리니, 고정비를 낮추고 힘이 실리는 달에만 결제·투자를 몰아넣으세요.';
     } else if (ySS === '비견' || ySS === '겁재') {
-      wealthStrategy = '2027년은 나와 같은 편의 기운(비겁·' + ySS + ')이 들어오는 해입니다. 내 몫을 직접 챙기는 쪽이 유리하지만, 사람과 돈이 함께 나뉘기 쉽습니다. 동업·보증·공동구매는 서면으로 남기고, 현금 잔고를 먼저 확인한 뒤 움직이세요.';
+      cash2027 = '2027년은 나와 같은 편의 기운(비겁·' + ySS + ')이 들어오는 해입니다. 내 몫을 직접 챙기는 쪽이 유리하지만, 사람과 돈이 함께 나뉘기 쉽습니다. 동업·보증·공동구매는 서면으로 남기고, 현금 잔고를 먼저 확인한 뒤 움직이세요.';
     } else if (ySS === '식신' || ySS === '상관') {
-      wealthStrategy = '2027년은 재능을 꺼내 쓰는 기운(식상·' + ySS + ')이 들어오는 해입니다. 가진 재능을 상품으로 바꿔 파는 쪽이 가장 크게 남습니다. 만들기만 하고 팔지 않으면 성과가 흩어지니, 판매·계약까지 한 세트로 묶으세요.';
+      cash2027 = '2027년은 재능을 꺼내 파는 기운(식상·' + ySS + ')이 들어오는 해입니다. 가진 재능을 상품으로 바꿔 파는 쪽이 가장 크게 남습니다. 만들기만 하고 팔지 않으면 성과가 흩어지니, 판매·정산까지 한 세트로 묶으세요.';
     } else if (ySS === '편재' || ySS === '정재') {
-      wealthStrategy = '2027년은 돈의 기운(재성·' + ySS + ')이 직접 들어오는 해입니다. 기회가 넓게 오지만 관리하지 않으면 그대로 빠져나갑니다. 들어온 돈의 일정 비율을 자동이체로 묶는 규칙 하나만 정해두면 남는 장사가 됩니다.';
+      cash2027 = '2027년은 돈의 기운(재성·' + ySS + ')이 직접 들어오는 해입니다. 기회가 넓게 오지만 관리하지 않으면 그대로 빠져나갑니다. 들어온 돈의 일정 비율을 자동이체로 묶는 규칙 하나만 정해두면 남는 장사가 됩니다.';
     } else {
-      wealthStrategy = '2027년은 책임의 기운(관성·' + ySS + ')이 들어오는 해입니다. 직책·계약·평판이 곧 돈이 되는 구조라, 이름이 걸린 일에 힘을 쓰면 그대로 수익이 됩니다. 규칙과 절차를 지킬수록 빨리 갑니다.';
+      cash2027 = '2027년은 책임의 기운(관성·' + ySS + ')이 들어오는 해입니다. 법인·계약·평판이 곧 현금이 되는 구조라, 이름이 걸린 일에 힘을 쓰면 그대로 수익이 됩니다. 규칙과 절차를 지킬수록 빨리 갑니다.';
     }
-    wealthStrategy += ' 2027년의 기운은 ' + favWord(yFavGan) + '·' + favWord(yFavJi) +
-      '에 걸려 있어, ' + (yFavGan === 'gi' || yFavJi === 'gi'
+    cash2027 += ' 2027년의 기운은 ' + favWord(yFavGan) + '·' + favWord(yFavJi) + '에 걸려 있어, ' +
+      (yFavGan === 'gi' || yFavJi === 'gi'
         ? '들어오는 돈보다 나가는 돈을 먼저 막는 쪽이 이깁니다.'
-        : '들어오는 흐름을 받아내기 좋은 편입니다. 용신은 나에게 힘이 되는 기운, 희신은 그 힘을 보태는 기운, 기신은 줄일수록 좋은 기운입니다.');
+        : '들어오는 흐름을 받아내기 좋은 편입니다.');
 
-    var wealth = {
-      key: 'wealth', title: '재물 · 투자운', mark: '財',
-      head: wealthHead,
-      body: wealthBody,
+    var cashflow = {
+      key: 'cashflow', title: '현금흐름 · 투자', mark: '錢',
+      head: cashHead,
+      body: cashBody,
       bullets: [
-        { k: '벌이 구조', v: C.DOMAIN_TEXT.wealth.method[methodKey] },
-        { k: '새는 구멍', v: C.DOMAIN_TEXT.wealth.leak[leakKey] },
-        { k: '2027 전략', v: wealthStrategy }
+        { k: '벌이 구조', v: DT.cashflow.method[cashMethod] },
+        { k: '새는 구멍', v: leak.leak },
+        { k: '현금 규칙', v: leak.cash },
+        { k: '2027 투자', v: cash2027 }
       ],
-      attack: attack,
-      defend: defend,
-      best: best
+      attack: attack, defend: defend, best: best
     };
 
-    /* ---- 직업 ---- */
-    var pathKey = g.gwan >= 2 ? 'gwan'
-      : g.in >= 2 ? 'in'
-        : g.sik >= 2 ? 'sik'
-          : g.jae >= 2 ? 'jae' : 'bi';
-    var jobMonths = months.filter(function (m) {
-      return (m.ganSS === '정관' || m.ganSS === '편관') && m.grade >= 3;
-    });
-    var freeMonths = months.filter(function (m) {
-      return (m.ganSS === '식신' || m.ganSS === '상관') && m.grade >= 4;
-    });
+    /* ---- ② 사업 · 수익모델 ---- */
+    var modelKey = (g.sik >= 1 && g.sik >= g.jae) ? 'sik'
+      : g.jae >= 2 ? 'jae'
+        : g.gwan >= 2 ? 'gwan'
+          : g.in >= 2 ? 'in' : 'bi';
+    var bizSub = {
+      sik: '만든 것을 파는 구조', jae: '거래를 직접 쥐는 구조', gwan: '제도 안에서 자리를 잡는 구조',
+      in: '전문성과 권리로 버는 구조', bi: '내 이름을 거는 구조'
+    }[modelKey];
 
-    var careerHead = '책임(관성) ' + g.gwan + ' · 배움(인성) ' + g.in + ' · 표현(식상) ' + g.sik + '의 구성 — ' +
-      (pathKey === 'gwan' ? '조직에서 자리를 잡는 쪽'
-        : pathKey === 'in' ? '전문성으로 몸값을 올리는 쪽'
-          : pathKey === 'sik' ? '내 결과물로 이름을 만드는 쪽'
-            : pathKey === 'jae' ? '거래를 직접 쥐는 쪽' : '혼자 책임지는 전문가 쪽');
+    var bizBody = DT.business.model[modelKey] + ' ' +
+      '이 사주에는 표현(식상) ' + g.sik + ' · 돈(재성) ' + g.jae + ' · 책임(관성) ' + g.gwan + ' · 배움(인성) ' + g.in + ' · 같은 편(비겁) ' + g.bi + '이 있습니다. ' +
+      (g.sik >= 1 && g.jae >= 1
+        ? '만드는 힘과 파는 통로가 함께 있어 상품화에 유리합니다. '
+        : '만들기와 판매 중 한쪽이 비어 있으니, 부족한 쪽을 사람이나 계약으로 먼저 채워야 합니다. ') +
+      (g.gwan === 0
+        ? '법인·계약·자격 같은 제도가 얇아, 규모가 커질수록 서류와 절차를 대신 챙겨 줄 사람이 필요합니다.'
+        : '제도의 기운이 있어 계약과 자격을 갖출수록 신뢰가 곧 영업이 됩니다.');
 
-    var careerBody = C.DOMAIN_TEXT.career.path[pathKey] + ' ';
-    if (jobMonths.length) {
-      careerBody += '승진·이직·계약을 밀기 좋은 달은 ' + jobMonths.map(function (m) {
-        return m.no + '월(' + m.label + ')';
-      }).join(', ') + '입니다. 책임의 기운(관성)이 힘을 받는 달이라 면접·발표·서류 통과가 쉽게 풀립니다.';
-    } else {
-      careerBody += '책임의 기운(관성)이 힘을 받는 달이 뚜렷하지 않아, 이직·승진을 서두르기보다 실적과 서류를 쌓아두는 편이 낫습니다. 굳이 움직여야 한다면 ' +
-        months.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 2).map(function (m) { return m.no + '월'; }).join('·') + '처럼 흐름이 나은 달을 고르세요.';
-    }
-    if (g.sik > 0 && g.jae > 0 && st.label !== '태약') {
-      careerBody += ' 표현의 기운(식상)과 돈의 기운(재성)이 함께 있어 독립의 그릇은 있습니다' +
-        (freeMonths.length ? '. 특히 ' + freeMonths.map(function (m) { return m.no + '월'; }).join('·') +
-          '에 내 결과물을 밖으로 꺼내면 반응이 옵니다.' : '. 다만 당장 뛰어나가기보다 반년 단위로 준비하세요.');
-    }
-
-    var career2027;
-    if (ySS === '편관' || ySS === '정관') {
-      career2027 = '2027년은 책임의 기운(관성·' + ySS + ')이 직접 들어오는 해라 직책·계약·평판이 실제로 바뀝니다. 규칙을 지키고 서류를 갖추는 사람이 자리를 가져갑니다.';
-    } else if (ySS === '정인' || ySS === '편인') {
-      career2027 = '2027년은 배움의 기운(인성·' + ySS + ')이 들어오는 해라, 새 자리를 벌이기보다 한 우물을 깊게 파는 포지셔닝이 맞습니다. 자격·교육·전문성이 다음 10년의 몸값이 됩니다.';
-    } else if (ySS === '식신' || ySS === '상관') {
-      career2027 = '2027년은 표현의 기운(식상·' + ySS + ')이 들어오는 해라, 내 이름으로 만든 결과물이 곧 이력서가 됩니다. 회사 안에서도 개인 프로젝트를 하나 남기세요.';
+    var biz2027;
+    if (ySS === '식신' || ySS === '상관') {
+      biz2027 = '2027년은 내가 만든 것이 시장에 나가는 해입니다. 상품 목록·가격표·판매 페이지를 이 해에 완성해 두면, 다음 해 매출의 바탕이 됩니다.';
     } else if (ySS === '편재' || ySS === '정재') {
-      career2027 = '2027년은 돈의 기운(재성·' + ySS + ')이 들어오는 해라, 영업·거래·단가 협상처럼 숫자로 남는 일에서 성과가 납니다.';
+      biz2027 = '2027년은 거래와 단가가 직접 움직이는 해입니다. 새 사업을 벌이기보다 기존 거래처의 단가·물량을 올리는 쪽이 빠르게 남습니다.';
+    } else if (ySS === '정관' || ySS === '편관') {
+      biz2027 = '2027년은 법인·계약·자격이 힘을 받는 해입니다. 계약서와 약관을 정비하고, 공식 절차를 통과시키는 데 힘을 쓰면 그대로 수익이 됩니다.';
+    } else if (ySS === '정인' || ySS === '편인') {
+      biz2027 = '2027년은 전문성과 권리가 힘을 받는 해입니다. 새 판을 벌이기보다 한 우물을 깊게 파서 몸값을 올리는 포지셔닝이 맞습니다. 다만 검토가 길어지면 기회를 놓치니 기한을 두세요.';
     } else {
-      career2027 = '2027년은 나와 같은 편의 기운(비겁·' + ySS + ')이 들어오는 해라, 내 이름을 걸고 판을 짜는 쪽이 유리합니다. 대신 동료와의 역할 경계를 처음부터 문서로 정하세요.';
+      biz2027 = '2027년은 내 이름을 걸고 판을 짜는 해입니다. 단독 계약이 유리하지만, 동업 제안은 지분·역할을 문서로 남긴 뒤 답하세요.';
     }
 
-    var career = {
-      key: 'career', title: '직업 · 사업 · 이직', mark: '官',
-      head: careerHead,
-      body: careerBody,
+    var business = {
+      key: 'business', title: '사업 · 수익모델', mark: '業',
+      head: C.MONEY_NAMES.model[modelKey] + ' — ' + bizSub,
+      body: bizBody,
       bullets: [
-        { k: '맞는 길', v: C.DOMAIN_TEXT.career.path[pathKey] },
-        { k: '타이밍', v: jobMonths.length ? jobMonths.map(function (m) { return m.no + '월(' + m.range + ')'; }).join(' · ') : '책임의 기운이 센 달이 뚜렷하지 않아 서류·실적을 쌓으며 ' + months.slice().sort(function (a, b) { return b.score - a.score; }).slice(0, 2).map(function (m) { return m.no + '월'; }).join('·') + '을 노리세요.' },
-        { k: '2027 포지셔닝', v: career2027 }
+        { k: '수익모델', v: DT.business.model[modelKey] },
+        { k: '팔 것', v: DT.business.scope[modelKey] },
+        { k: '2027 사업', v: biz2027 }
       ]
     };
 
-    /* ---- 연애·대인 ---- */
-    var spouseSS = core.dayPillar.sipsungJi;
+    /* ---- ③ 계약 · 문서 · 리스크 관리 ---- */
+    var contractKey = g.gwan >= 2 ? 'gwan'
+      : g.in >= 2 ? 'in'
+        : g.jae >= 2 ? 'jae'
+          : g.bi >= 2 ? 'bi' : 'sik';
     var yRel = S.relation(core.dayJi, 7);
-    var yRelNote = [];
-    yRel.forEach(function (r) {
-      if (r === '충') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리와 부딪힙니다(충) — 동거·이사·이별·재회처럼 관계의 형태가 실제로 바뀌는 사건이 생기기 쉽습니다.');
-      else if (r === '합') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리와 붙습니다(합) — 미뤄둔 인연이 이어지거나 관계가 공식화되는 쪽으로 움직입니다.');
-      else if (r === '형') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리와 어긋납니다(형) — 말과 서류에서 마찰이 생기니 확인 절차를 두 배로 두세요.');
-      else if (r === '파') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리에 금을 냅니다(파) — 작은 균열이 크게 번지기 쉬운 해입니다.');
-      else if (r === '해') yRelNote.push('2027년 글자 미(未)가 내 배우자 자리를 흠냅니다(해) — 뜻밖의 소문·오해가 돌 수 있습니다.');
-    });
-    var cheon = CHEONEUL[core.dayGan].indexOf(7) >= 0;
-    if (cheon) yRelNote.push('2027년 미(未)는 나(' + S.GAN[core.dayGan].h + ')에게 천을귀인(막힐 때 길을 열어 주는 가장 센 좋은 별)이 서는 자리입니다. 흔들리는 자리에 귀인이 함께 오니, 갈등은 사람을 통해 풀립니다.');
+    var relKey = yRel.length ? yRel[0] : 'none';
+    var contractHead = C.MONEY_NAMES.contract[contractKey] + ' — ' +
+      (relKey === 'none' ? '2027년 계약은 큰 틀 유지' : '2027년에 ' + yRel.join('·') + '이 걸린 자리');
 
-    var dohwaYearJi = DOHWA[core.yearPillar.ji], dohwaDayJi = DOHWA[core.dayJi];
-    var dohwaRelY = S.relation(7, dohwaYearJi);
-    var dohwaRelD = S.relation(7, dohwaDayJi);
-    var dohwaNote;
-    if (dohwaRelD.length || dohwaRelY.length) {
-      var r0 = dohwaRelD.length ? dohwaRelD : dohwaRelY;
-      var dwJi = dohwaRelD.length ? dohwaDayJi : dohwaYearJi;
-      dohwaNote = '사람을 끄는 힘(도화)은 ' + S.JI[dwJi].h + '(' + S.JI[dwJi].han + '·' + DIR_NAME[dwJi] + ') 자리에 있는데, 2027년 미(未)가 그와 ' + r0.join('·') +
-        '이라 도화가 밖으로 터지기보다 한 사람·한 자리에 묶이는 모양입니다.';
-    } else {
-      dohwaNote = '사람을 끄는 힘(도화)은 ' + S.JI[dohwaDayJi].h + ' 자리에 있는데 2027년 미(未)와 직접 얽히지 않아, 이 해의 인연은 화려한 만남보다 이미 아는 사람 사이에서 이어집니다.';
-    }
+    var contractBody = DT.contract.style[contractKey] + ' ' + DT.contract.risk[contractKey] + ' ' + C.CONTRACT_REL[relKey];
 
-    var loveBody = C.DOMAIN_TEXT.love.spouse[spouseSS] + ' ' + dohwaNote + ' ' +
-      (yJiSS === '비견' ? '2027년 바탕기운이 비견(내 주관·경쟁의 기운)이라 친구·동료 사이에서 내 자리를 세우는 해입니다. 관계의 경계를 말로 분명히 하는 것이 곧 예의입니다.' : '') +
-      ' ' + (g.bi >= 2 ? '사주에 나와 같은 편의 기운(비겁)이 많아 가까운 사이일수록 몫과 주도권 이야기가 민감해집니다. 돈과 역할을 처음에 정해두면 다툼이 줄어듭니다.' : '');
+    var contractTiming = relKey === '충' || relKey === '형' || relKey === '파' || relKey === '해'
+      ? '큰 계약은 ' + attackText + '에 서명하고, ' + defendText + '에는 조건 변경·명의 이동을 미루세요.'
+      : '계약은 ' + attackText + '에 서명하고, ' + defendText + '에는 기존 계약을 점검하는 쪽이 안전합니다.';
 
-    var love = {
-      key: 'love', title: '연애 · 대인 · 배우자운', mark: '緣',
-      head: '내 배우자 자리(일지) ' + core.dayPillar.jiH + ' — ' + spouseSS + '(그 자리에 앉은 기운) · ' + (yRel.length ? '2027년에 ' + josa(yRel.join('·'), '이', '가') + ' 걸린 자리' : '2027년에 직접 흔들리지 않는 자리'),
-      body: loveBody,
+    var contract = {
+      key: 'contract', title: '계약 · 문서 · 리스크', mark: '契',
+      head: contractHead,
+      body: contractBody,
       bullets: [
-        { k: '배우자 자리', v: C.DOMAIN_TEXT.love.spouse[spouseSS] },
-        { k: '2027 인연', v: yRelNote.length ? yRelNote.join(' ') : '2027년 글자가 배우자 자리와 직접 얽히지 않아, 관계의 큰 틀은 유지됩니다. 새 인연은 일과 사람을 통해 천천히 들어옵니다.' },
-        { k: '주의', v: '감정이 오른 상태의 메시지·통화는 하루 묵혔다가 보내세요. 이 사주는 말의 온도에서 관계가 갈립니다.' }
+        { k: '계약 방식', v: DT.contract.style[contractKey] },
+        { k: '문서 안전장치', v: DOC_SAFE[contractKey] },
+        { k: '2027 계약 타이밍', v: contractTiming },
+        { k: '반복되는 약점', v: DT.contract.risk[contractKey] }
       ]
     };
 
-    /* ---- 건강 ---- */
-    var weakEls = ELS.filter(function (e) { return core.counts[e] <= 1; });
-    if (!weakEls.length) weakEls = [ELS.slice().sort(function (a, b) { return core.counts[a] - core.counts[b]; })[0]];
-    var strongEl = ELS.slice().sort(function (a, b) { return core.counts[b] - core.counts[a]; })[0];
-    var weakOrgan = weakEls.map(function (e) { return e + '(' + C.DOMAIN_TEXT.health.organ[e] + ')'; }).join(', ');
-
-    var healthHead = '부족한 ' + weakEls.join('·') + ' · 넘치는 ' + strongEl + ' — ' +
-      josa(C.DOMAIN_TEXT.health.organ[weakEls[0]], '을', '를') + ' 먼저 보세요';
-
-    var seasonRows = [
-      { q: '봄 (1~3월)', el: '목' },
-      { q: '여름 (4~6월)', el: '화' },
-      { q: '가을 (7~9월)', el: '금' },
-      { q: '겨울 (10~12월)', el: '수' }
-    ].map(function (s) {
-      var weak = weakEls.indexOf(s.el) >= 0;
-      var over = s.el === strongEl;
-      var txt;
-      if (weak) {
-        txt = s.el + ' 기운이 얇아 ' + s.q + '에 ' + josa(C.DOMAIN_TEXT.health.organ[s.el], '이', '가') +
-          ' 먼저 신호를 보냅니다. 무리한 일정을 피하고, 루틴은 ' + C.ELEMENT_RX[s.el].routine + ' 정도로 잡으세요.';
-      } else if (over) {
-        txt = s.el + ' 기운이 두꺼워 ' + s.q + '에 ' + C.DOMAIN_TEXT.health.organ[s.el] +
-          ' 쪽 부담이 커집니다. ' + C.ELEMENT_RX[s.el].avoid + ' 같은 패턴을 줄이세요.';
-      } else {
-        txt = s.q + '은 ' + s.el + ' 기운이 무난합니다. 수면 시간을 고정하면 컨디션이 크게 흔들리지 않습니다.';
-      }
-      return { q: s.q, v: txt };
-    });
-
-    if (strongEl === '토') {
-      seasonRows[0].v += ' 2027년 미(未)토까지 겹쳐 소화기·체중·부종이 늘기 쉬우니, 야식과 밀가루·당류를 줄이세요.';
+    /* ---- ④ 부동산 · 자산 증식 ---- */
+    var assetKey = g.in >= 2 ? 'in'
+      : g.jae >= 2 ? 'jae'
+        : g.gwan >= 2 ? 'gwan'
+          : g.bi >= 2 ? 'bi' : 'sik';
+    var toCount = counts['토'];
+    var assetYear;
+    if (toCount >= 3) {
+      assetYear = '2027년 미(未)토까지 겹쳐 부동산·토 자산의 기운이 강해집니다. 취득 타이밍은 좋지만 고정비·보유세·유지비도 함께 커지니, 매수 전 3년치 현금흐름을 숫자로 계산하세요.';
+    } else if (toCount === 0) {
+      assetYear = '토 기운이 얇아 부동산은 직접 보유보다 권리·현금흐름을 확인하는 쪽이 안전합니다. 큰 매수보다 임차·지분·소액 투자로 시작해 감각을 쌓으세요.';
+    } else {
+      assetYear = '토 기운이 무난해 부동산은 서두르지 않아도 됩니다. ' + attackText + '에 매물을 보고, ' + defendText + '에는 계약을 미루는 편이 안전합니다.';
     }
 
-    var health = {
-      key: 'health', title: '건강 · 컨디션', mark: '體',
-      head: healthHead,
-      body: '여덟 글자에서 ' + josa(weakEls.join('·'), '이', '가') + ' 얇고 ' + josa(strongEl, '이', '가') + ' ' + core.counts[strongEl] +
-        '개로 넘칩니다. 부족한 쪽은 채우고 넘치는 쪽은 덜어내야 몸이 편합니다. ' +
-        '2027년은 ' + yJiSS + '(바탕기운)이 들어오는 해라 ' + (strongEl === '토' ? '소화기와 체중' : '컨디션의 기복') +
-        '을 먼저 살피세요. 병원 검진은 상반기에 미리 받아두면 하반기가 가볍습니다.',
+    var assetHead = C.MONEY_NAMES.asset[assetKey] + ' — 토 기운 ' + toCount + '개 · 인성 ' + g.in + ' · 재성 ' + g.jae;
+    var assetBody = DT.assets.path[assetKey] + ' ' +
+      (g.in > 0
+        ? '문서·권리의 기운(인성)이 ' + g.in + '개 있어 등기·권리관계를 직접 읽는 힘이 있습니다. '
+        : '문서·권리의 기운(인성)이 얇아, 등기·권리관계는 전문가(법무사·세무사)와 함께 확인해야 합니다. ') +
+      assetYear;
+
+    var assets = {
+      key: 'assets', title: '부동산 · 자산 증식', mark: '宅',
+      head: assetHead,
+      body: assetBody,
       bullets: [
-        { k: '취약 장기', v: weakOrgan },
-        { k: '루틴', v: C.ELEMENT_RX[weakEls[0]].routine },
-        { k: '피할 것', v: C.ELEMENT_RX[weakEls[0]].avoid }
-      ],
-      seasons: seasonRows
+        { k: '맞는 자산', v: DT.assets.path[assetKey] },
+        { k: '부동산 타이밍', v: assetYear },
+        { k: '명의·권리 체크', v: DT.assets.check[assetKey] }
+      ]
     };
 
-    return { list: [wealth, career, love, health], wealth: wealth, career: career, love: love, health: health };
+    return {
+      list: [cashflow, business, contract, assets],
+      cashflow: cashflow, business: business, contract: contract, assets: assets,
+      wealth: cashflow
+    };
+  }
+
+  /* ---------- 돈 새는 구멍 & 현실 보완 전략 ---------- */
+
+  function buildLeakFix(core, st, ys, months) {
+    var g = st.groups;
+    var cand = [
+      { key: 'bi', over: g.bi - 2 },
+      { key: 'jae', over: g.jae - 3 },
+      { key: 'in', over: g.in - 2 },
+      { key: 'sik', over: g.sik - 3 },
+      { key: 'gwan', over: g.gwan - 3 }
+    ].filter(function (x) { return x.over >= 0; });
+    cand.sort(function (a, b) { return b.over - a.over; });
+
+    var keys = cand.slice(0, 2).map(function (x) { return x.key; });
+    if (!keys.length) keys = ['none'];
+
+    var leaks = keys.map(function (k) {
+      var d = C.LEAK_FIX[k];
+      return { key: k, title: d.title, leak: d.leak };
+    });
+    var primary = C.LEAK_FIX[keys[0]];
+
+    var yRel = S.relation(core.dayJi, 7);
+    var relKey = yRel.length ? yRel[0] : 'none';
+
+    return {
+      head: primary.title,
+      lead: '이 사주에서 돈이 새는 자리와, 계약이 반복해서 꼬이는 패턴을 먼저 짚었습니다. 아래 네 줄은 오늘부터 그대로 적용할 수 있는 현실 보완 규칙입니다.',
+      leaks: leaks,
+      contract: C.CONTRACT_REL[relKey],
+      fixes: [
+        { k: '계약 방식', v: primary.contract },
+        { k: '정산·현금 규칙', v: primary.cash },
+        { k: '필요한 파트너·역할', v: primary.partner },
+        { k: '피할 거래·투자', v: primary.avoid }
+      ]
+    };
   }
 
   /* ---------- 원국 심층 해부 ---------- */
@@ -1020,6 +1034,7 @@
     var quarters = buildQuarters(months);
     var domains = buildDomains(core, st, ys, months, daeun, ySS, yJiSS);
     var wonguk = buildWonguk(core, st, ss.map);
+    var leakFix = buildLeakFix(core, st, ys, months);
 
     var attack = domains.wealth.attack;
     var defend = domains.wealth.defend;
@@ -1065,6 +1080,7 @@
         attack: attack, defend: defend, best: best
       },
       domains: domains,
+      leakFix: leakFix,
       daeun: daeun,
       months: months,
       quarters: quarters,

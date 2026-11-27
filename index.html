@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>월령 · 2027 정미년 사주 무료 리포트 | 절기로 읽는 재물운</title>
-<meta name="description" content="절기(節氣) 시각까지 계산한 정밀 만세력. 생년월일만 넣으면 사주팔자와 오행 균형, 2027 정미년 재물운·월별 운세, 2인 궁합까지 바로 확인할 수 있습니다. 오픈 기념으로 전부 무료입니다.">
+<title>월령 · 2027 돈·사업·계약·부동산 사주 | 재물 사주 &amp; 돈 궁합</title>
+<meta name="description" content="절기(節氣) 시각까지 계산한 정밀 만세력. 생년월일만 넣으면 2027년 현금흐름·사업·계약·부동산 흐름과 돈이 새는 구멍·보완법까지. 두 사람의 돈 궁합·동업 궁합도 무료로 확인하세요.">
 <meta name="theme-color" content="#F7F4EE">
 <meta property="og:type" content="website">
-<meta property="og:title" content="월령 · 2027 정미년 사주 리포트">
-<meta property="og:description" content="절기로 읽는 정밀 만세력. 사주팔자부터 2027 재물운·월별 운세·2인 궁합까지 — 지금은 오픈 기념으로 전부 무료.">
+<meta property="og:title" content="월령 · 2027 돈·사업·계약·부동산 사주 리포트">
+<meta property="og:description" content="절기로 읽는 정밀 만세력. 2027년 현금흐름·사업·계약·부동산과 돈이 새는 구멍·보완법, 두 사람의 돈 궁합까지 — 지금은 오픈 기념으로 전부 무료.">
 <meta property="og:url" content="https://wolryeong-saju.vercel.app/">
 <meta name="naver-site-verification" content="11d4498dfd410f56a6d14d9fb39f48062d11580d">
 <link rel="canonical" href="https://wolryeong-saju.vercel.app/">
@@ -19,7 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-<link rel="stylesheet" href="assets/css/style.css?v=20261128a">
+<link rel="stylesheet" href="assets/css/style.css?v=20261128b">
 <!-- Vercel Web Analytics — 방문·유입경로·전환 측정 (스크립트가 없어도 페이지 동작에 지장 없음) -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
 window.wolryeongTrack = function (name, data) {
@@ -35,9 +35,9 @@ window.wolryeongTrack = function (name, data) {
     <span class="brand-name">월령</span>
   </a>
   <nav class="topbar-nav">
-    <a class="topbar-link" href="ilju/">일주별 운세</a>
-    <a class="topbar-link" href="#birthForm" data-view="solo">내 사주 보기</a>
-    <a class="topbar-link" href="#ghForm" data-view="gunghap">2인 궁합</a>
+    <a class="topbar-link" href="ilju/">일주별 돈 사주</a>
+    <a class="topbar-link" href="#birthForm" data-view="solo">내 재물 사주</a>
+    <a class="topbar-link" href="#ghForm" data-view="gunghap">2인 돈 궁합</a>
   </nav>
 </header>
 
@@ -46,18 +46,18 @@ window.wolryeongTrack = function (name, data) {
   <!-- ================= HERO ================= -->
   <section class="hero" id="top">
     <div class="modetabs" role="tablist" aria-label="리포트 선택">
-      <button type="button" class="modetab is-on" role="tab" aria-selected="true" data-view="solo">2027 내 리포트</button>
-      <button type="button" class="modetab" role="tab" aria-selected="false" data-view="gunghap">2인 궁합</button>
+      <button type="button" class="modetab is-on" role="tab" aria-selected="true" data-view="solo">2027 내 재물 사주</button>
+      <button type="button" class="modetab" role="tab" aria-selected="false" data-view="gunghap">2인 돈 궁합</button>
     </div>
 
     <div id="soloView">
     <p class="free-open-note">오픈 기념 · 리포트 전체 무료 공개 중</p>
-    <p class="eyebrow">2027 정미년 · 정밀 만세력</p>
-    <h1>내 사주로 읽는<br><em>2027년의 돈</em></h1>
+    <p class="eyebrow">2027 정미년 · 돈·사업·계약·부동산</p>
+    <h1>내 사주로 읽는<br><em>2027년의 돈과 계약</em></h1>
     <p class="lede">
       지금은 오픈 기념으로 <strong>리포트 전체가 무료</strong>입니다.<br>
       계절이 바뀌는 시각(절기·節氣)까지 계산한 만세력으로 사주 여덟 글자를 세웁니다.<br>
-      태어난 날과 시각만 넣으면, 2027년 어느 달에 돈이 움직이는지까지 나옵니다.
+      현금흐름·사업·계약·부동산 네 갈래로 2027년을 풀고, 돈이 새는 구멍과 보완법까지 적었습니다.
     </p>
 
     <form id="birthForm" class="card form" novalidate>
@@ -85,37 +85,37 @@ window.wolryeongTrack = function (name, data) {
       </div>
 
       <button class="btn btn-primary btn-block" type="submit">
-        무료로 내 운세 보기 <span class="btn-arrow">→</span>
+        무료로 내 재물 사주 보기 <span class="btn-arrow">→</span>
       </button>
-      <p class="gh-jump-line"><a class="gh-jump" href="#ghForm" data-view="gunghap">두 사람 궁합 바로 보기 →</a></p>
+      <p class="gh-jump-line"><a class="gh-jump" href="#ghForm" data-view="gunghap">두 사람 돈 궁합 바로 보기 →</a></p>
       <p class="privacy-line">입력한 정보는 서버로 전송되지 않고, 이 브라우저 안에서만 계산됩니다.</p>
     </form>
 
     <ul class="trust">
       <li><span>節</span><div><strong>절기 시각 계산</strong>입춘·경칩처럼 계절이 바뀌는 시각을 분 단위로 반영</div></li>
       <li><span>私</span><div><strong>서버 저장 없음</strong>생년월일이 어디에도 남지 않습니다</div></li>
-      <li><span>無</span><div><strong>리포트 전체 무료</strong>사주 풀이부터 12개월 운세까지 결제 없이</div></li>
+      <li><span>無</span><div><strong>리포트 전체 무료</strong>현금흐름·계약·부동산·12개월까지 결제 없이</div></li>
     </ul>
     </div><!-- /soloView -->
 
     <!-- ================= 2인 궁합 입력 ================= -->
     <div id="ghView" hidden>
       <p class="free-open-note">오픈 기념 · 궁합 리포트도 무료 공개 중</p>
-      <p class="eyebrow">2인 궁합 · 두 사람의 2027년</p>
-      <p class="gh-h1">두 사람의 사주로 보는<br><em>2027년의 궁합</em></p>
+      <p class="eyebrow">2인 돈 궁합 · 부부·동업</p>
+      <p class="gh-h1">두 사람의 사주로 보는<br><em>2027년 돈 궁합</em></p>
       <p class="lede">
-        두 사람의 생년월일시를 넣으면, 두 사주의 글자가 서로 끌리는지(합) 부딪히는지(충),<br>
-        기운이 서로를 채워주는지(오행·기운의 관계)를 계산해 궁합 점수와 2027년 월별 흐름을 냅니다.
+        두 사람의 생년월일시를 넣으면, 함께 돈을 벌고 지킬 때 어디서 시너지가 나고 어디서 새는지 계산합니다.<br>
+        결혼·예비부부의 공동자산과 부동산 매수 호흡부터, 동업·거래처의 지분·정산까지 같은 다섯 축으로 봅니다.
       </p>
 
       <form id="ghForm" class="card form" novalidate>
         <div class="field">
           <span class="field-label">관계 모드</span>
           <div class="segmented" role="radiogroup" aria-label="관계 모드">
-            <button type="button" class="seg mode-seg is-on" data-mode="lover" role="radio" aria-checked="true">연인</button>
-            <button type="button" class="seg mode-seg" data-mode="business" role="radio" aria-checked="false">동업자</button>
+            <button type="button" class="seg mode-seg is-on" data-mode="lover" role="radio" aria-checked="true">부부·커플</button>
+            <button type="button" class="seg mode-seg" data-mode="business" role="radio" aria-checked="false">동업·거래처</button>
           </div>
-          <p class="field-help" id="ghModeHelp">연인 모드 — 끌림과 마찰, 2027년 두 사람의 흐름을 봅니다.</p>
+          <p class="field-help" id="ghModeHelp">부부·커플 모드 — 공동자산·부동산·생활비 호흡과 2027년 두 사람의 재물 흐름을 봅니다.</p>
         </div>
 
         <div class="gh-pair">
@@ -144,7 +144,7 @@ window.wolryeongTrack = function (name, data) {
         <p class="field-help">음력이 아니라 <strong>양력</strong> 생일로 넣어 주세요. 음력만 아는 경우 변환 후 입력하면 됩니다.</p>
 
         <button class="btn btn-primary btn-block" type="submit" style="margin-top:18px">
-          궁합 보기 <span class="btn-arrow">→</span>
+          돈 궁합 보기 <span class="btn-arrow">→</span>
         </button>
         <p class="privacy-line">두 사람의 생년월일은 서버로 전송되지 않고, 이 브라우저 안에서만 계산됩니다.</p>
       </form>
@@ -152,7 +152,7 @@ window.wolryeongTrack = function (name, data) {
       <ul class="trust">
         <li><span>合</span><div><strong>합·충 계산</strong>글자끼리 붙는 합과 부딪히는 충·형·파·해를 규칙으로</div></li>
         <li><span>私</span><div><strong>서버 저장 없음</strong>두 사람의 생년월일이 어디에도 남지 않습니다</div></li>
-        <li><span>無</span><div><strong>궁합 전체 무료</strong>다섯 축·12개월 시너지 캘린더까지 결제 없이</div></li>
+        <li><span>無</span><div><strong>궁합 전체 무료</strong>수익 시너지·12개월·보완 처방까지 결제 없이</div></li>
       </ul>
     </div><!-- /ghView -->
   </section>
@@ -246,17 +246,18 @@ window.wolryeongTrack = function (name, data) {
       <!-- 잠금 상태의 자리표시자 — 유료 문구·점수는 결제 전 DOM에 넣지 않는다 -->
       <div class="lock-skeleton" id="premiumSkeleton" aria-hidden="true">
         <div class="sk-row"><p class="sk-title">내 힘의 세기와 채워야 할 기운</p><i style="width:94%"></i><i style="width:81%"></i><i style="width:52%"></i></div>
-        <div class="sk-row"><p class="sk-title">타고난 사주 기질</p><i style="width:88%"></i><i style="width:96%"></i><i style="width:44%"></i></div>
+        <div class="sk-row"><p class="sk-title">타고난 사주 기질과 돈 쓰는 방식</p><i style="width:88%"></i><i style="width:96%"></i><i style="width:44%"></i></div>
         <div class="sk-row"><p class="sk-title">성격의 뼈대와 인생 네 구간</p><i style="width:91%"></i><i style="width:72%"></i><i style="width:38%"></i></div>
         <div class="sk-row"><p class="sk-title">10년마다 바뀌는 큰 흐름과 지금</p><i style="width:86%"></i><i style="width:93%"></i><i style="width:47%"></i></div>
-        <div class="sk-row"><p class="sk-title">2027년 돈·일·사랑·건강과 12개월 흐름</p><i style="width:90%"></i><i style="width:78%"></i><i style="width:41%"></i></div>
+        <div class="sk-row"><p class="sk-title">2027년 현금흐름·사업·계약·부동산</p><i style="width:90%"></i><i style="width:78%"></i><i style="width:41%"></i></div>
+        <div class="sk-row"><p class="sk-title">돈 새는 구멍과 보완 전략</p><i style="width:87%"></i><i style="width:69%"></i><i style="width:36%"></i></div>
       </div>
       <div class="premium-inner" id="premiumInner">
 
         <!-- 1. 신강·신약 · 용신 -->
         <div class="section">
-          <h3 class="section-title">내 힘은 센 편일까, 약한 편일까 <span class="tag">유료</span></h3>
-          <p class="section-sub">신강·신약(내 힘의 세기)과 용신(나에게 가장 힘이 되는 기운)을 봅니다. 힘이 넘치면 덜어내고, 부족하면 채우는 방법까지 나옵니다.</p>
+          <h3 class="section-title">내 힘은 센 편일까, 약한 편일까 <span class="tag">돈 관점</span></h3>
+          <p class="section-sub">신강·신약(내 힘의 세기)과 용신(나에게 가장 힘이 되는 기운)을 돈·사업 관점에서 봅니다. 힘이 넘치면 지출도 커지고, 부족하면 현금이 먼저 마르니 채우는 방법까지 나옵니다.</p>
           <div class="card plain">
             <div class="strength-top">
               <div>
@@ -343,8 +344,8 @@ window.wolryeongTrack = function (name, data) {
 
         <!-- 2. 대운 -->
         <div class="section">
-          <h3 class="section-title">10년마다 바뀌는 큰 흐름과 지금 <span class="tag">유료</span></h3>
-          <p class="section-sub">대운(10년 단위로 바뀌는 큰 운)을 한눈에 놓고, 지금 내가 어느 구간에 서 있는지 봅니다.</p>
+          <h3 class="section-title">10년마다 바뀌는 큰 흐름과 지금 <span class="tag">돈 흐름</span></h3>
+          <p class="section-sub">대운(10년 단위로 바뀌는 큰 운)을 한눈에 놓고, 지금 내가 돈이 모이는 구간에 서 있는지 새는 구간에 서 있는지 봅니다.</p>
           <div class="card plain">
             <p class="mini-label" id="daeunMeta"></p>
             <div class="daeun-strip" id="daeunStrip"></div>
@@ -356,16 +357,29 @@ window.wolryeongTrack = function (name, data) {
           </div>
         </div>
 
-        <!-- 3. 4대 영역 -->
+        <!-- 3. 4대 재물 영역 -->
         <div class="section">
-          <h3 class="section-title">2027년 돈·일·사랑·건강 <span class="tag">유료</span></h3>
-          <p class="section-sub">2027 정미년의 기운이 재물·직업·연애·건강 네 영역에 각각 어떻게 들어오는지 봅니다.</p>
+          <h3 class="section-title">2027년 4대 재물 영역 <span class="tag">돈·사업</span></h3>
+          <p class="section-sub">현금흐름·투자, 사업·수익모델, 계약·문서·리스크, 부동산·자산 증식 — 네 갈래로 2027 정미년을 풉니다.</p>
           <div class="domain-grid" id="domainGrid"></div>
         </div>
 
+        <!-- 3-1. 돈 새는 구멍 & 보완 전략 -->
+        <div class="section" id="leakFixSection">
+          <h3 class="section-title">돈 새는 구멍 &amp; 현실 보완 전략 <span class="tag">보완</span></h3>
+          <p class="section-sub">사주에서 돈이 새고 계약이 꼬이는 자리를 짚고, 계약 방식·정산 규칙·역할 분담·피해야 할 거래까지 현실적인 말로 적었습니다.</p>
+          <div class="card plain">
+            <p class="body-text" id="leakLead"></p>
+            <div class="leak-grid" id="leakGrid"></div>
+            <div class="divider"></div>
+            <p class="mini-label">현실 보완 처방 — 오늘부터 적용할 규칙</p>
+            <div class="fix-grid" id="fixGrid"></div>
+          </div>
+        </div>
+
         <div class="section">
-          <h3 class="section-title">돈이 움직이는 달 · 투자 타이밍 <span class="tag">유료</span></h3>
-          <p class="section-sub">밀어붙이면 남는 달(공격 구간)과 지키는 게 이기는 달(방어 구간)을 갈라 드립니다.</p>
+          <h3 class="section-title">돈이 움직이는 달 · 계약 타이밍 <span class="tag">타이밍</span></h3>
+          <p class="section-sub">계약을 밀어붙이면 남는 달(공격 구간)과 현금을 지키고 서명을 미뤄야 하는 달(방어 구간)을 갈라 드립니다.</p>
           <div class="card plain">
             <div class="timing">
               <div class="timing-row">
@@ -382,8 +396,8 @@ window.wolryeongTrack = function (name, data) {
         </div>
 
         <div class="section">
-          <h3 class="section-title">2027년 한 달씩 흐름 <span class="tag">유료</span></h3>
-          <p class="section-sub">12개월 심화 운세 — 달마다 무엇이 들어오고 무엇을 조심하면 되는지, 할 일까지 적었습니다.</p>
+          <h3 class="section-title">2027년 한 달씩 — 돈·계약·부동산 <span class="tag">12개월</span></h3>
+          <p class="section-sub">달마다 무엇이 들어오고, 어느 달에 계약을 밀고 어느 달에 현금·서류를 점검해야 하는지 적었습니다.</p>
           <div class="card plain">
             <div class="months" id="months"></div>
             <p class="note">사주에서 한 달은 1일이 아니라 계절이 바뀌는 날(절입일·節入日)에 시작합니다. 예: 1월은 소한~입춘 구간, 2월은 입춘~경칩 구간.</p>
@@ -392,8 +406,8 @@ window.wolryeongTrack = function (name, data) {
 
         <!-- 5. 분기 로드맵 -->
         <div class="section">
-          <h3 class="section-title">2027년 네 구간 전략 <span class="tag">유료</span></h3>
-          <p class="section-sub">분기 로드맵 — 3개월씩 묶어 공격·수확·정비·방어 중 어느 쪽으로 움직일지 정리했습니다.</p>
+          <h3 class="section-title">2027년 네 구간 자금 전략 <span class="tag">분기</span></h3>
+          <p class="section-sub">분기 로드맵 — 3개월씩 묶어 공격(계약·매수)·수확(대금 회수)·정비(계약서 고침)·방어(현금 지킴) 중 어느 쪽으로 움직일지 정리했습니다.</p>
           <div class="card plain">
             <div class="quarter-grid" id="quarterGrid"></div>
             <p class="note">12개월 점수를 석 달씩 묶어 집계한 것입니다. 공격(밀어붙이기)·수확(거두기)·정비(구조 고치기)·방어(지키기)는 절대 점수가 아니라 내 네 구간을 서로 비교해 정해집니다.</p>
@@ -401,8 +415,8 @@ window.wolryeongTrack = function (name, data) {
         </div>
 
         <div class="section">
-          <h3 class="section-title">조심할 달과 도움을 주는 방향 <span class="tag">유료</span></h3>
-          <p class="section-sub">피해야 할 달과 귀인(貴人: 막힐 때 길을 열어 주는 사람)이 있는 방향을 봅니다.</p>
+          <h3 class="section-title">조심할 달과 도움을 주는 방향 <span class="tag">주의</span></h3>
+          <p class="section-sub">큰 결제·계약·이사를 피할 달과 귀인(貴人: 막힐 때 길을 열어 주는 사람)이 있는 방향을 봅니다.</p>
           <div class="card plain">
             <div class="avoid-block">
               <p class="mini-label">주의할 달</p>
@@ -430,9 +444,9 @@ window.wolryeongTrack = function (name, data) {
           <p class="lock-icon">◈</p>
           <p class="lock-title">프리미엄 리포트</p>
           <p class="lock-desc">
-            타고난 기질과 성격의 뼈대, 내 힘의 세기와 보완 포인트,<br>
-            10년 큰 흐름, 2027년 돈·일·사랑·건강,<br>
-            12개월 흐름과 네 구간 전략까지 — 전부 열립니다.
+            타고난 기질과 내 힘의 세기, 돈이 새는 구멍과 보완 전략,<br>
+            10년 큰 흐름, 2027년 현금흐름·사업·계약·부동산,<br>
+            12개월 타이밍과 네 구간 자금 전략까지 — 전부 열립니다.
           </p>
           <p class="lock-price">
             <s class="price-was" id="lockPriceWas">9,900원</s>
@@ -461,7 +475,7 @@ window.wolryeongTrack = function (name, data) {
 
     <div class="result-head">
       <div>
-        <p class="eyebrow" id="ghEyebrow">2인 궁합 · 연인</p>
+        <p class="eyebrow" id="ghEyebrow">2인 돈 궁합 · 부부·커플</p>
         <h2 class="result-title" id="ghTitle">두 사람의 2027년</h2>
         <p class="result-sub" id="ghSub">생년월일은 결과에 표시하지 않습니다</p>
       </div>
@@ -470,11 +484,11 @@ window.wolryeongTrack = function (name, data) {
 
     <!-- 무료: 총점 · 구간 · 끝림 · 좋은 달 -->
     <div class="accent-card gh-hero">
-      <p class="year-label">궁합 총점</p>
+      <p class="year-label">돈 궁합 총점</p>
       <p class="gh-score"><b id="ghScore">0</b><span>점</span></p>
       <p class="gh-band" id="ghBand"></p>
       <div class="gh-free-axis">
-        <p class="mini-label" id="ghAttractionName">끌림</p>
+        <p class="mini-label" id="ghAttractionName">수익 시너지</p>
         <p class="body-text dim" id="ghAttraction"></p>
       </div>
     </div>
@@ -502,45 +516,65 @@ window.wolryeongTrack = function (name, data) {
       <div class="premium-inner" id="ghPremiumInner">
 
         <div class="section">
-          <h3 class="section-title">점수에 담긴 뜻 <span class="tag">유료</span></h3>
-          <p class="section-sub">총점이 이 구간인 두 사람이 실제로 어떤 사이인지, 무엇을 조심하면 되는지 풀었습니다.</p>
+          <h3 class="section-title">점수에 담긴 뜻 <span class="tag">총평</span></h3>
+          <p class="section-sub">총점이 이 구간인 두 사람이 함께 돈을 벌고 지킬 때 실제로 어떤 모습인지, 무엇을 조심하면 되는지 풀었습니다.</p>
           <div class="card plain">
             <p class="gh-band-title" id="ghBandTitle"></p>
             <p class="body-text" id="ghBandSummary"></p>
             <p class="body-text dim" id="ghBandAdvice"></p>
             <div class="divider"></div>
-            <p class="mini-label">서로의 기운이 채워주는 자리</p>
+            <p class="mini-label">서로의 빈자리를 채워 주는 기운</p>
             <p class="body-text dim" id="ghYongsin"></p>
           </div>
         </div>
 
         <div class="section">
-          <h3 class="section-title">다섯 축 — 끌림·소통·돈·안정·2027년 흐름 <span class="tag">유료</span></h3>
-          <p class="section-sub">궁합 점수를 다섯 갈래로 나눠 봤습니다. 어느 축이 세고 어느 축이 약한지 보이면, 어디를 손봐야 하는지도 보입니다.</p>
+          <h3 class="section-title">다섯 축 — 수익·계약소통·현금·안정·2027 공동재물 <span class="tag">5축</span></h3>
+          <p class="section-sub">돈 궁합을 다섯 갈래로 나눠 봤습니다. 어느 축이 세고 어느 축이 약한지 보이면, 역할을 어떻게 나눌지도 보입니다.</p>
           <div class="gh-axes" id="ghAxes"></div>
         </div>
 
         <div class="section">
-          <h3 class="section-title">두 사람을 붙여 주는 지점 <span class="tag">유료</span></h3>
-          <p class="section-sub">두 사주의 글자가 서로 끌어당기는 자리(합)를 짚었습니다. 잘 풀릴 때 무엇을 통해 풀리는지가 여기 있습니다.</p>
+          <h3 class="section-title">두 사람을 붙여 주는 지점 <span class="tag">합</span></h3>
+          <p class="section-sub">두 사주의 글자가 서로 끌어당기는 자리(합)를 짚었습니다. 잘 풀릴 때 어떤 거래·계약으로 풀리는지가 여기 있습니다.</p>
           <div class="card plain" id="ghLinks"></div>
         </div>
 
         <div class="section">
-          <h3 class="section-title">부딪히는 지점 <span class="tag">유료</span></h3>
-          <p class="section-sub">서로 부딪히는 글자(충·형·파·해)를 짚었습니다. 싸움의 원인이 사람이 아니라 이 자리인 경우가 많습니다.</p>
+          <h3 class="section-title">부딪히는 지점 <span class="tag">충</span></h3>
+          <p class="section-sub">서로 부딪히는 글자(충·형·파·해)를 짚었습니다. 돈 문제로 싸울 때 원인이 사람이 아니라 이 자리인 경우가 많습니다.</p>
           <div class="card plain" id="ghClashes"></div>
         </div>
 
         <div class="section">
-          <h3 class="section-title">상대가 나에게 어떤 사람인가 <span class="tag">유료</span></h3>
-          <p class="section-sub">십성(내 사주에서 본 상대의 기운)으로 두 사람의 관계를 풀었습니다. 상대가 나를 편하게 하는지, 긴장시키는지가 드러납니다.</p>
+          <h3 class="section-title">상대가 내 돈·사업에 맡는 역할 <span class="tag">십성</span></h3>
+          <p class="section-sub">십성(내 사주에서 본 상대의 기운)으로 두 사람의 경제적 관계를 풀었습니다. 상대가 자금을 대는 쪽인지, 영업을 열어주는 쪽인지, 지출을 키우는 쪽인지가 드러납니다.</p>
           <div class="card plain" id="ghTenGod"></div>
         </div>
 
         <div class="section">
-          <h3 class="section-title">2027년, 두 사람에게 좋은 달 <span class="tag">유료</span></h3>
-          <p class="section-sub">월별 시너지 캘린더 — 함께 움직이면 힘이 붙는 달과, 각자 숨을 고르는 게 나은 달을 갈랐습니다.</p>
+          <h3 class="section-title">돈 궁합 보완 처방 <span class="tag">처방</span></h3>
+          <p class="section-sub">두 사람 조합에서 생기는 돈·계약 리스크를 짚고, 역할 분담·자금·지분·정산 규칙·부동산 결정 방식까지 구체적으로 적었습니다.</p>
+          <div class="card plain">
+            <p class="body-text" id="ghPrescriptionLead"></p>
+            <div class="divider"></div>
+            <p class="mini-label" id="ghPrescriptionWeak"></p>
+            <p class="body-text" id="ghPrescriptionRisk"></p>
+            <div class="fix-grid" id="ghPrescriptionFixes"></div>
+            <div class="divider"></div>
+            <p class="mini-label">역할 분담</p>
+            <div class="rx-grid" id="ghPrescriptionRoles"></div>
+            <div class="divider"></div>
+            <div class="pair-notes">
+              <div><p class="mini-label">부부·예비부부에게</p><p class="body-text dim" id="ghPrescriptionHousehold"></p></div>
+              <div><p class="mini-label">동업·거래처에게</p><p class="body-text dim" id="ghPrescriptionBusiness"></p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">2027년, 두 사람의 돈이 움직이는 달 <span class="tag">12개월</span></h3>
+          <p class="section-sub">월별 시너지 캘린더 — 함께 계약·매수에 나가면 힘이 붙는 달과, 각자 현금을 지키는 게 나은 달을 갈랐습니다.</p>
           <div class="card plain">
             <div class="gh-cal" id="ghMonths"></div>
             <p class="note">월 구분은 달력이 아니라 절입일(節入日) 기준입니다.</p>
@@ -548,7 +582,7 @@ window.wolryeongTrack = function (name, data) {
         </div>
 
         <div class="section">
-          <h3 class="section-title">싸울 때 이렇게 풀어 보세요 <span class="tag">유료</span></h3>
+          <h3 class="section-title">돈 문제로 부딪힐 때 이렇게 푸세요 <span class="tag">대처</span></h3>
           <p class="section-sub">갈등 대처법 — 두 사람에게 실제로 생기는 상황별로, 말을 꺼내는 순서를 적었습니다.</p>
           <div class="card plain" id="ghAdvice"></div>
         </div>
@@ -583,7 +617,7 @@ window.wolryeongTrack = function (name, data) {
           <button class="btn btn-primary btn-block" id="ghUnlockBtn" type="button">
             <span id="ghUnlockBtnLabel">전체 리포트 보기 — 4,900원</span>
           </button>
-          <p class="lock-sub">총점·끌림·좋은 달 1개는 계속 무료입니다</p>
+          <p class="lock-sub">총점·수익 시너지·좋은 달 1개는 계속 무료입니다</p>
         </div>
       </div>
     </div>
@@ -630,12 +664,12 @@ window.wolryeongTrack = function (name, data) {
     <h3 class="section-title">사주 용어, 이렇게 읽으면 됩니다</h3>
     <p class="section-sub">리포트에 나오는 말은 어렵게 들리지만, 뜻은 하나씩 단순합니다. 여덟 개만 알면 리포트 전체가 읽힙니다.</p>
     <div class="gloss">
-      <div class="gloss-row"><b>사주(四柱) · 여덟 글자</b><span>태어난 해·달·날·시각을 각각 두 글자로 적은 것. 여덟 글자가 내 성격과 흐름의 재료가 됩니다.</span></div>
-      <div class="gloss-row"><b>일간(日干)</b><span>태어난 날의 위 글자. 사주에서 ‘나’ 자신을 뜻합니다. 모든 해석은 이 글자를 기준으로 합니다.</span></div>
-      <div class="gloss-row"><b>십성 — 비겁·식상·재성·관성·인성</b><span>다른 글자가 나에게 어떤 역할을 하는지 붙인 이름. 비겁=내 주관·경쟁, 식상=아이디어·표현, 재성=돈과 결과, 관성=직장·책임·기준, 인성=배움·생각·도움.</span></div>
-      <div class="gloss-row"><b>신강 · 신약</b><span>내 힘이 센 편인지 얇은 편인지. 신강은 내 힘으로 밀고 나가는 편, 신약은 주변의 도움과 환경에 좌우되는 편입니다. 좋고 나쁨이 아니라 쓰는 법이 다를 뿐입니다.</span></div>
-      <div class="gloss-row"><b>용신 · 희신 · 기신</b><span>용신은 나에게 가장 힘이 되는 기운, 희신은 그 힘을 보태는 기운, 기신은 줄일수록 좋은 기운입니다.</span></div>
-      <div class="gloss-row"><b>합 · 충 · 형 · 파 · 해</b><span>글자끼리 끌리거나 부딪히는 다섯 가지 관계. 합은 붙는 것, 충은 정면으로 부딪히는 것, 형·파·해는 은근히 어긋나는 것입니다.</span></div>
+      <div class="gloss-row"><b>사주(四柱) · 여덟 글자</b><span>태어난 해·달·날·시각을 각각 두 글자로 적은 것. 여덟 글자가 내 성격과 돈의 흐름을 만드는 재료가 됩니다.</span></div>
+      <div class="gloss-row"><b>일간(日干)</b><span>태어난 날의 위 글자. 사주에서 ‘나’ 자신을 뜻합니다. 돈·사업 해석도 이 글자를 기준으로 합니다.</span></div>
+      <div class="gloss-row"><b>십성 — 비겁·식상·재성·관성·인성</b><span>다른 글자가 나에게 어떤 역할을 하는지 붙인 이름. 돈·사업 관점에서는 <b>비겁=독립사업·경쟁과 지출 변수, 식상=아이템·영업, 재성=현금·매출, 관성=법인·계약·제도, 인성=부동산·문서·권리</b>로 읽습니다.</span></div>
+      <div class="gloss-row"><b>신강 · 신약</b><span>내 힘이 센 편인지 얇은 편인지. 신강은 내 힘으로 밀어붙이는 편(지출도 커짐), 신약은 주변의 도움과 환경에 좌우되는 편입니다. 좋고 나쁨이 아니라 돈을 다루는 법이 다를 뿐입니다.</span></div>
+      <div class="gloss-row"><b>용신 · 희신 · 기신</b><span>용신은 나에게 가장 힘이 되는 기운, 희신은 그 힘을 보태는 기운, 기신은 줄일수록 좋은 기운입니다. 현금이 마르면 용신 쪽으로, 지출이 넘치면 기신 쪽을 줄입니다.</span></div>
+      <div class="gloss-row"><b>합 · 충 · 형 · 파 · 해</b><span>글자끼리 끌리거나 부딪히는 다섯 가지 관계. 돈·계약에서는 합은 거래가 붙는 자리, 충은 이사·명의·계약 조건이 흔들리는 자리로 읽습니다.</span></div>
       <div class="gloss-row"><b>대운 · 세운</b><span>대운은 10년마다 바뀌는 큰 흐름, 세운은 해마다 들어오는 1년의 기운입니다. 2027 정미년은 세운입니다.</span></div>
       <div class="gloss-row"><b>지장간 · 12운성 · 공망</b><span>지장간은 아래 글자 속에 숨은 기운, 12운성은 기운이 태어나 자라고 힘을 다하는 열두 단계, 공망은 비어서 잘 채워지지 않는 자리입니다.</span></div>
     </div>
@@ -645,8 +679,16 @@ window.wolryeongTrack = function (name, data) {
   <section class="faq" id="faq">
     <h3 class="section-title">자주 묻는 것</h3>
     <details>
+      <summary>이 리포트는 어떤 사람에게 맞나요?</summary>
+      <p>2027년에 돈이 어떻게 들어오고 어디로 새는지, 사업은 어떤 형태가 맞는지, 계약·부동산에서 언제 밀고 언제 멈춰야 하는지를 알고 싶은 분께 맞습니다. 연애·건강 같은 일반 운세는 다루지 않고, 돈·사업·계약·부동산에만 초점을 맞췄습니다.</p>
+    </details>
+    <details>
+      <summary>돈 궁합은 어떤 경우에 보나요?</summary>
+      <p>결혼·동거를 앞두고 공동자산·생활비·부동산 매수 호흡을 맞추고 싶을 때, 동업·공동투자·거래처와 지분·정산 규칙을 정하기 전에 볼 수 있습니다. 부부·커플과 동업·거래처 두 모드로 같은 다섯 축을 계산하고, 약한 축에는 역할 분담·자금 관리·명의·계약 규칙을 처방으로 적어 드립니다.</p>
+    </details>
+    <details>
       <summary>출생 시각을 모르면 어떻게 되나요?</summary>
-      <p>태어난 시각의 기둥(시주·時柱)을 빼고 여섯 글자로 계산합니다. 성격·오행·재물운의 큰 틀은 그대로 나오고, 시각에서 나오는 자녀·말년 이야기만 빠집니다. 시각을 알면 여덟 글자로 더 정확해집니다.</p>
+      <p>태어난 시각의 기둥(시주·時柱)을 빼고 여섯 글자로 계산합니다. 오행·십성·현금 구조의 큰 틀은 그대로 나오고, 시각에서 나오는 말년·자녀 자리의 이야기만 빠집니다. 시각을 알면 여덟 글자로 더 정확해집니다.</p>
     </details>
     <details>
       <summary>음력 생일인데 어떻게 넣나요?</summary>
@@ -654,7 +696,11 @@ window.wolryeongTrack = function (name, data) {
     </details>
     <details>
       <summary>결제는 어떻게 하나요?</summary>
-      <p>지금은 오픈 기념으로 모든 리포트를 무료로 열고 있습니다. 생년월일을 넣으면 심층 리포트와 2인 궁합 리포트가 결제 없이 바로 열립니다. 무료 기간이 끝나면 Gumroad에서 4,900원(정가 9,900원)에 판매할 예정이고, 그때는 결제 후 메일로 받은 라이선스 키를 넣으면 이 기기에서 계속 열람됩니다. 키 하나로 최대 3회까지 인증됩니다.</p>
+      <p>지금은 오픈 기념으로 모든 리포트를 무료로 열고 있습니다. 생년월일을 넣으면 돈·사업 심층 리포트와 2인 돈 궁합 리포트가 결제 없이 바로 열립니다. 무료 기간이 끝나면 Gumroad에서 4,900원(정가 9,900원)에 판매할 예정이고, 그때는 결제 후 메일로 받은 라이선스 키를 넣으면 이 기기에서 계속 열람됩니다. 키 하나로 최대 3회까지 인증됩니다.</p>
+    </details>
+    <details>
+      <summary>리포트를 투자·계약 판단에 써도 되나요?</summary>
+      <p>아니요. 월령은 전통 명리학의 계산 규칙을 프로그램으로 옮긴 참고·오락용 콘텐츠입니다. 실제 투자·대출·계약·부동산 거래는 반드시 본인의 판단과 전문가(세무·법률) 확인을 거쳐 결정하세요.</p>
     </details>
     <details>
       <summary>내 생년월일이 저장되나요?</summary>
@@ -668,11 +714,11 @@ window.wolryeongTrack = function (name, data) {
 
   <!-- ================= 일주 60편 ================= -->
   <section class="faq" id="ilju">
-    <h3 class="section-title">60갑자 일주별 운세</h3>
+    <h3 class="section-title">60갑자 일주별 돈 사주</h3>
     <a class="ilju-teaser" href="ilju/">
       <span class="ilju-teaser-txt">
-        <strong>갑자일주부터 계해일주까지, 일주 60편의 2027 정미년 풀이</strong>
-        <span>태어난 날의 간지로 보는 성격·기질과 재물운, 재물이 트이는 달까지.</span>
+        <strong>갑자일주부터 계해일주까지, 일주 60편의 2027 돈·사업·계약·부동산 풀이</strong>
+        <span>태어난 날의 간지로 보는 재물 성향과 약점 보완 포인트, 돈이 트이는 달까지.</span>
       </span>
       <span class="ilju-teaser-arrow">→</span>
     </a>
@@ -685,11 +731,11 @@ window.wolryeongTrack = function (name, data) {
     <span class="brand-mark small">月</span>
     <div>
       <p class="footer-name">월령 <span>月令</span></p>
-      <p class="footer-tag">절기로 읽는 사주 리포트</p>
+      <p class="footer-tag">절기로 읽는 재물 사주</p>
     </div>
   </div>
   <p class="footer-links">
-    <a href="ilju/">60갑자 일주별 운세</a>
+    <a href="ilju/">60갑자 일주별 돈 사주</a>
     <a href="terms.html">이용약관·환불정책</a>
     <a href="#how">계산 방식</a>
     <a href="#terms">사주 용어</a>
@@ -707,12 +753,12 @@ window.wolryeongTrack = function (name, data) {
     <p class="eyebrow">프리미엄 리포트</p>
     <h3 id="modalTitle">2027 정미년 전체 리포트</h3>
     <ul class="modal-list" id="modalList">
-      <li>타고난 사주 기질 — 여덟 글자와 숨은 기운, 성격의 뼈대</li>
-      <li>내 힘의 세기(신강·신약)와 채워야 할 기운(용신·희신·기신)</li>
+      <li>타고난 사주 기질 — 여덟 글자와 숨은 기운, 돈 쓰는 방식</li>
+      <li>내 힘의 세기(신강·신약)와 현금을 채우는 기운(용신·희신·기신)</li>
       <li>10년마다 바뀌는 큰 흐름과 지금 구간 × 2027년</li>
-      <li>2027년 돈·일·사랑·건강 네 영역</li>
-      <li>1~12월 흐름과 달마다 할 일</li>
-      <li>네 구간 전략 · 돈이 움직이는 달 · 도움을 주는 방향</li>
+      <li>2027년 현금흐름·사업·계약·부동산 네 영역</li>
+      <li>돈 새는 구멍과 현실 보완 전략(계약·정산·역할 분담)</li>
+      <li>1~12월 돈·계약·부동산 타이밍과 네 구간 자금 전략</li>
     </ul>
     <p class="modal-price"><strong id="modalPrice">4,900원</strong> <s class="price-was" id="modalPriceWas">9,900원</s> <span class="price-off" id="modalPriceOff">50% 할인</span> <span id="modalAnchor">커피 한 잔 값</span></p>
 
@@ -737,14 +783,14 @@ window.wolryeongTrack = function (name, data) {
 
 <div class="toast" id="toast" hidden></div>
 
-<script src="assets/js/solar-terms.js?v=20261128a"></script>
-<script src="assets/js/saju-core.js?v=20261128a"></script>
-<script src="assets/js/content.js?v=20261128a"></script>
-<script src="assets/js/report.js?v=20261128a"></script>
-<script src="assets/js/config.js?v=20261128a"></script>
-<script src="assets/js/app.js?v=20261128a"></script>
-<script src="assets/js/gunghap-content.js?v=20261128a"></script>
-<script src="assets/js/gunghap.js?v=20261128a"></script>
-<script src="assets/js/gunghap-ui.js?v=20261128a"></script>
+<script src="assets/js/solar-terms.js?v=20261128b"></script>
+<script src="assets/js/saju-core.js?v=20261128b"></script>
+<script src="assets/js/content.js?v=20261128b"></script>
+<script src="assets/js/report.js?v=20261128b"></script>
+<script src="assets/js/config.js?v=20261128b"></script>
+<script src="assets/js/app.js?v=20261128b"></script>
+<script src="assets/js/gunghap-content.js?v=20261128b"></script>
+<script src="assets/js/gunghap.js?v=20261128b"></script>
+<script src="assets/js/gunghap-ui.js?v=20261128b"></script>
 </body>
 </html>

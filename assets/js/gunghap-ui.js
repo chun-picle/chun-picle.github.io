@@ -81,8 +81,8 @@
 
   /* ---------- 관계 모드 ---------- */
   var MODE_HELP = {
-    lover: '연인 모드 — 끌림과 마찰, 2027년 두 사람의 흐름을 봅니다.',
-    business: '동업자 모드 — 재물 시너지에 가중치를 두고, 함께 돈을 버는 구조를 봅니다.'
+    lover: '부부·커플 모드 — 공동자산·부동산·생활비 호흡과 2027년 두 사람의 재물 흐름을 봅니다.',
+    business: '동업·거래처 모드 — 지분·정산·수익 배분에 가중치를 두고, 함께 돈을 버는 구조를 봅니다.'
   };
 
   Array.prototype.forEach.call(document.querySelectorAll('.mode-seg'), function (b) {
@@ -187,8 +187,8 @@
 
   /* 무료 미리보기 — 총점·구간·끌림·좋은 달 1개 */
   function renderFree(pv, res) {
-    $('ghEyebrow').textContent = '2인 궁합 · ' + res.modeLabel;
-    $('ghTitle').textContent = '두 사람의 2027년';
+    $('ghEyebrow').textContent = '2인 돈 궁합 · ' + res.modeLabel;
+    $('ghTitle').textContent = '두 사람의 2027년 돈 흐름';
     $('ghScore').textContent = pv.score;
     $('ghBand').textContent = pv.bandTitle;
     $('ghAttractionName').textContent = pv.attractionName;
@@ -204,7 +204,7 @@
     card.appendChild(head);
     card.appendChild(el('p', 'gh-month-comment', pv.goodMonth.comment));
     if (!isFreeOpen()) {
-      card.appendChild(el('p', 'note', '12개월 전체 캘린더는 전체 리포트에서 열립니다.'));
+      card.appendChild(el('p', 'note', '12개월 공동 재물 캘린더는 전체 리포트에서 열립니다.'));
     }
 
     if ($('ghDisclaimerTop')) $('ghDisclaimerTop').textContent = '* ' + (window.GUNGHAP_CONTENT.meta || {}).disclaimer;
@@ -224,7 +224,7 @@
       row.appendChild(el('i'));
       box.appendChild(row);
     });
-    box.appendChild(el('p', 'note', '2027 월별 시너지 캘린더 · 조합 해석 · 갈등 대처법은 전체 리포트에서 열립니다.'));
+    box.appendChild(el('p', 'note', '2027 월별 공동 재물 캘린더 · 조합 해석 · 돈 갈등 대처법은 전체 리포트에서 열립니다.'));
   }
 
   /* 유료 전체 리포트 (S5) */
@@ -238,7 +238,6 @@
     $('ghYongsin').textContent =
       'A에게 아쉬운 기운은 ' + ys.a + ', B에게 아쉬운 기운은 ' + ys.b + '입니다. 반대로 A가 센 기운은 ' + ys.strongA + ', B가 센 기운은 ' + ys.strongB + '입니다. ' +
       '한 사람의 센 기운이 상대의 빈자리를 채워 주면, 함께할 때 서로가 편해지고 돈의 시너지에도 점수가 더 붙습니다.';
-
     /* 축 */
     var box = $('ghAxes');
     box.innerHTML = '';
@@ -302,18 +301,18 @@
       cl.appendChild(el('p', 'body-text', '일간과 지지에 직접 부딪히는 충·형·파·해가 없습니다.'));
     }
 
-    /* 십성 — 이름 옆에 일상어 풀이를 붙인다 */
+    /* 십성 — 돈·사업에서의 역할을 붙여 읽는다 */
     var SS_MEAN = {
-      비견: '나와 같은 편, 편하지만 경쟁심도 생기는 사이',
-      겁재: '나와 같지만 더 센 편, 끌림과 소유욕이 함께 오는 사이',
-      식신: '나를 편안하게 해 주는 쪽',
-      상관: '나를 자극하고 긴장시키는 쪽',
-      편재: '나에게 즐거움과 돈 쓸 일을 가져오는 쪽',
-      정재: '나를 안정시켜 주는 쪽',
-      편관: '나를 조이고 긴장시키는 쪽',
-      정관: '나를 지켜주고 책임을 지는 쪽',
-      편인: '나를 남다르게 봐 주는 쪽',
-      정인: '나를 보살펴 주는 쪽'
+      비견: '같은 결의 경제 파트너, 결정권이 흐려지기 쉬운 사이',
+      겁재: '추진력과 지출이 함께 커지는 사이',
+      식신: '수입을 안정시키는 쪽',
+      상관: '돈 벌 아이디어가 많은 쪽',
+      편재: '큰돈의 감각이 있는 쪽',
+      정재: '정산과 저축을 맡아줄 쪽',
+      편관: '압박 속에서 돈을 지켜내는 쪽',
+      정관: '규칙으로 자산을 지키는 쪽',
+      편인: '남다른 관점으로 자산을 보는 쪽',
+      정인: '기반과 보증을 대는 쪽'
     };
     function ssLabel(name) {
       return name + (SS_MEAN[name] ? ': ' + SS_MEAN[name] : '');
@@ -325,6 +324,27 @@
     tg.appendChild(el('div', 'divider'));
     tg.appendChild(el('p', 'mini-label', 'A가 B에게 — ' + ssLabel(res.tenGod.nameBA)));
     tg.appendChild(el('p', 'body-text dim', res.tenGod.textBA));
+
+    /* 돈 궁합 보완 처방 — 가장 약한 축 기준으로 역할·계약·정산 규칙을 렌더 */
+    var pr = res.prescription;
+    if (pr && $('ghPrescriptionLead')) {
+      $('ghPrescriptionLead').textContent = pr.lead;
+      $('ghPrescriptionWeak').textContent = '가장 약한 축 — ' + pr.weakestName + ' (' + pr.weakestScore + ' / ' + pr.weakestMax + ')';
+      $('ghPrescriptionRisk').textContent = pr.risk;
+      $('ghPrescriptionFixes').innerHTML = pr.fixes.map(function (f) {
+        return '<div class="fix-row"><span class="fix-k">' + f.k + '</span><span class="fix-v">' + f.v + '</span></div>';
+      }).join('');
+      $('ghPrescriptionRoles').innerHTML = [
+        { k: '수익 창출', v: pr.roles.income },
+        { k: '자금 관리', v: pr.roles.cash },
+        { k: '부동산·큰돈', v: pr.roles.property },
+        { k: '최종 점검', v: pr.roles.check }
+      ].map(function (r) {
+        return '<div class="rx-row"><span class="rx-k">' + r.k + '</span><span class="rx-v">' + r.v + '</span></div>';
+      }).join('');
+      $('ghPrescriptionHousehold').textContent = pr.household;
+      $('ghPrescriptionBusiness').textContent = pr.business;
+    }
 
     /* 12개월 */
     var cal = $('ghMonths');
@@ -356,7 +376,7 @@
     });
 
     /* 마무리 */
-    $('ghClosingLabel').textContent = res.mode === 'business' ? '2027년, 두 사람의 돈' : '2027년, 두 사람에게';
+    $('ghClosingLabel').textContent = res.mode === 'business' ? '2027년, 두 사람의 돈' : '2027년, 두 사람의 재물';
     $('ghClosing').textContent = res.closing;
     $('ghDisclaimer').textContent = '* ' + res.disclaimer;
   }

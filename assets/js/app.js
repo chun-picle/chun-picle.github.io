@@ -323,6 +323,23 @@
     }).join('');
   }
 
+  /* ---------- 돈 새는 구멍 & 보완 전략 ---------- */
+  function renderLeakFix(rep) {
+    if (!$('leakGrid') || !rep.leakFix) return;
+    var lf = rep.leakFix;
+    $('leakLead').textContent = lf.lead;
+    $('leakGrid').innerHTML = lf.leaks.map(function (x) {
+      return '<div class="leak-card"><p class="leak-title">' + x.title + '</p>' +
+        '<p class="leak-body">' + x.leak + '</p></div>';
+    }).join('') +
+      '<div class="leak-card is-contract"><p class="leak-title">2027년 계약·명의 리스크</p>' +
+      '<p class="leak-body">' + lf.contract + '</p></div>';
+
+    $('fixGrid').innerHTML = lf.fixes.map(function (f) {
+      return '<div class="fix-row"><span class="fix-k">' + f.k + '</span><span class="fix-v">' + f.v + '</span></div>';
+    }).join('');
+  }
+
   /* ---------- 분기 로드맵 ---------- */
   function renderQuarters(rep) {
     if (!$('quarterGrid')) return;
@@ -479,6 +496,7 @@
     renderRelations(rep);
     renderDaeun(rep);
     renderDomains(rep);
+    renderLeakFix(rep);
     renderQuarters(rep);
 
     $('attackList').textContent = rep.wealth.attack.length
@@ -507,8 +525,8 @@
         '<div class="month-main">' +
         '<p class="month-title">' + m.title + '</p>' +
         '<p class="month-body">' + m.body + '</p>' +
-        '<p class="month-act"><span>재물·일</span>' + m.actMoney + '</p>' +
-        '<p class="month-act"><span>관계·주의</span>' + m.actRelation + '</p>' +
+        '<p class="month-act"><span>돈·계약</span>' + m.actMoney + '</p>' +
+        '<p class="month-act"><span>거래처·주의</span>' + m.actRelation + '</p>' +
         '</div>' +
         '<div class="grade">' + bars + '</div>' +
         '</div>';
@@ -873,8 +891,8 @@
   $('shareBtn').addEventListener('click', function () {
     var url = location.origin + location.pathname;
     var payload = {
-      title: '월령 · 2027 정미년 사주 리포트',
-      text: '2027년 내 사주로 재물운 봤는데, 월별로 돈 움직이는 달이 딱 갈리네. 절기까지 계산하는 만세력이야.',
+      title: '월령 · 2027 돈·사업·부동산 사주 리포트',
+      text: '2027년 내 사주로 돈·계약·부동산 흐름 봤는데, 어느 달에 계약을 밀고 어느 달에 현금을 지켜야 하는지가 딱 갈리네. 절기까지 계산하는 만세력이야.',
       url: url
     };
     if (navigator.share) {

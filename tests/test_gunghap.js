@@ -45,7 +45,7 @@
   check('총점 정수(내림)', r1.score, Math.floor(r1.score));
   ok('구간 타이틀 존재', r1.band.title.length > 0);
   check('구간 타이틀 = scoreBands 매칭', r1.band.title, G.bandOf(r1.score).title);
-  check('모드 라벨', r1.modeLabel, '연인');
+  check('모드 라벨', r1.modeLabel, '부부·커플');
 
   r1.axes.forEach(function (ax) {
     ok('축 ' + ax.id + ' 점수 ≤ 배점', ax.score <= ax.max);
@@ -84,7 +84,7 @@
 
   /* ---- 5. 관계 모드 ---- */
   var rBiz = G.fromBirth(A, B, 'business');
-  check('동업 모드 라벨', rBiz.modeLabel, '동업자');
+  check('동업 모드 라벨', rBiz.modeLabel, '동업·거래처');
   check('동업 모드 총점 구조(배점) 동일', rBiz.axes.reduce(function (s, x) { return s + x.max; }, 0), 100);
   ok('동업 모드 총점 ≤ 100', rBiz.score <= 100);
   ok('모드별 십성 문구 다름', r1.tenGod.textAB !== rBiz.tenGod.textAB);
@@ -198,11 +198,11 @@
   }
 
   /* ---- 10. 점수 구간 ---- */
-  check('구간 90~100 = 천생연분', G.bandOf(95).title, '천생연분');
-  check('구간 90 경계', G.bandOf(90).title, '천생연분');
-  check('구간 89 = 좋은 궁합', G.bandOf(89).title, '좋은 궁합');
-  check('구간 0 = 극과 극', G.bandOf(0).title, '극과 극 궁합');
-  check('구간 100 상한', G.bandOf(100).title, '천생연분');
+  check('구간 90~100 = 재물 상승 동맹', G.bandOf(95).title, '재물 상승 동맹');
+  check('구간 90 경계', G.bandOf(90).title, '재물 상승 동맹');
+  check('구간 89 = 돈이 트이는 짝', G.bandOf(89).title, '돈이 트이는 짝');
+  check('구간 0 = 역할 분담이 먼저', G.bandOf(0).title, '역할 분담이 먼저');
+  check('구간 100 상한', G.bandOf(100).title, '재물 상승 동맹');
 
   /* ---- 11. 콘텐츠 출처(JSON) ---- */
   ok('tenGods 연인 문구 사용', K.tenGods.lover[r1.tenGod.nameAB] === r1.tenGod.textAB);
@@ -240,21 +240,34 @@
   var FN = K.funnel;
   check('funnel 키 6개', Object.keys(FN).sort().join(','),
     'crossSell,freeReading,keyword2027,previewBottom,previewTop,todayFortune');
-  check('무료 진단 타이틀', FN.freeReading.title, '당신의 2027년, 첫 장을 열어봤어요');
+  check('무료 진단 타이틀', FN.freeReading.title, '당신의 2027년 돈, 첫 장을 열어봤어요');
   check('Gate A 문구', FN.freeReading.gateAText,
-    '나 혼자만 아는 걸로는 부족해요. 상대방과 함께 보면, 2027년이 달라져요.');
-  check('Gate A 버튼', FN.freeReading.gateABtn, '두 사람의 궁합 보기 (무료 미리보기)');
+    '내 돈의 흐름만으로는 반쪽이에요. 함께하는 사람과 맞춰 보면 2027년 재물이 달라져요.');
+  check('Gate A 버튼', FN.freeReading.gateABtn, '두 사람의 돈 궁합 보기 (무료 미리보기)');
   check('S1 하단 링크', FN.freeReading.soloLink, '나의 2027년 리포트 전체 보기 — 4,900원');
-  check('Gate B 상단 문구', FN.previewTop.text, "총점은 봤어요. 이제 '왜'인지 볼 차례예요.");
+  check('Gate B 상단 문구', FN.previewTop.text, "총점은 봤어요. 이제 어디서 돈이 새는지 볼 차례예요.");
   check('Gate B 버튼에 가격 명시', FN.previewTop.cta, '전체 리포트 보기 — 4,900원');
   check('Gate B 보조 문구', FN.previewTop.sub,
-    '나머지 4개 축 · 모든 조합 해석 · 12개월 시너지 캘린더 · 갈등 대처법을 모두 열어드립니다.');
+    '나머지 4개 축 · 모든 조합 해석 · 12개월 공동 재물 캘린더 · 돈 갈등 대처법과 보완 처방을 모두 열어드립니다.');
   check('Gate B 하단 문구', FN.previewBottom.text,
-    '가장 좋은 달 1개만 봤어요. 나머지 11개월, 조심할 달까지 알고 가세요.');
-  check('Gate C 문구', FN.crossSell.text, "두 사람의 2027년은 봤어요. 이제 '나'의 2027년을 볼 차례예요.");
+    '가장 좋은 달 1개만 봤어요. 나머지 11개월, 계약을 미뤄야 할 달까지 알고 가세요.');
+  check('Gate C 문구', FN.crossSell.text, "두 사람의 돈 궁합은 봤어요. 이제 '나'의 2027년 돈을 볼 차례예요.");
   check('Gate C 버튼 = 추가 결제 없음 안내', FN.crossSell.cta, '구매에 포함 · 나의 2027년 리포트 바로 보기');
   check('오늘의 운세 3등급', FN.todayFortune.map(function (x) { return x.level; }).join(','), 'good,mid,care');
   check('2027 키워드 5종', FN.keyword2027.length, 5);
+
+  /* ---- 13-1. 돈 궁합 보완 처방 ---- */
+  var PR = K.moneyPrescription;
+  ok('보완 처방 5축 모두 있음', ['attraction','communication','wealth','stability','flow2027']
+    .every(function (k) { return !!PR.byAxis[k] && PR.byAxis[k].fixes.length === 3; }));
+  ok('보완 처방 역할 4개', ['income','cash','property','check']
+    .every(function (k) { return !!PR.roles[k]; }));
+  ok('부부·동업 처방 모두 있음', PR.household.length > 30 && PR.business.length > 30);
+  check('리포트에 처방 실림', r1.prescription.weakestName,
+    r1.axes.slice().sort(function (x, y) { return (x.score / x.max) - (y.score / y.max); })[0].name);
+  ok('처방에 부동산·명의 언급', (PR.household + PR.business).indexOf('명의') >= 0);
+  ok('축 이름이 돈·계약 관점', K.axes.map(function (a) { return a.name; }).join(','),
+    '수익 시너지,계약·의사결정 소통,현금흐름·씀씀이 균형,리스크 방어·신뢰 안정성,2027 공동 재물·사업 흐름');
 
   /* ---- 14. 무료 1인 진단(S1) — 무료 범위만 ---- */
   var coreA = r1.cores.a;

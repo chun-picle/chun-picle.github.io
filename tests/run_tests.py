@@ -112,7 +112,7 @@ check_file("gunghap-ui.js 무료/유료 배선", "assets/js/gunghap-ui.js",
            ["freePreview", "applyLock", "is-locked", "wolryeong:unlocked", "openUnlockModal",
             "GUNGHAP_CONTENT"])
 check_file("gunghap-content.js 문구 번들", "assets/js/gunghap-content.js",
-           ["GUNGHAP_CONTENT", "천생연분", "monthlySynergy2027", "conflictAdvice"])
+           ["GUNGHAP_CONTENT", "재물 상승 동맹", "monthlySynergy2027", "conflictAdvice", "moneyPrescription"])
 check_file("궁합 스타일", "assets/css/style.css",
            [".modetabs", ".gh-axes", ".gh-month", ".pill.good", ".gh-score"])
 
@@ -121,7 +121,7 @@ check_file("index.html v2 전환 흐름 배선", "index.html",
            ["freeReading", "frIlju", "frBalance", "frYongsin", "frToday", "frKeyword",
             "gateA", "gateABtn", "soloReportLink", "ghGateTop", "ghGateTopBtn",
             "ghGateBottomText", "ghCrossSellBtn", "premiumSkeleton", "ghSkeleton",
-            "무료로 내 운세 보기"])
+            "무료로 내 재물 사주 보기"])
 check_file("app.js 무료 진단·유료 지연 렌더", "assets/js/app.js",
            ["renderFreeReading", "applyFunnelCopy", "soloReportLink",
             "wolryeong:unlocked", "if (state.unlocked) renderPremium(rep)"])

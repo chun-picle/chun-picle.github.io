@@ -156,11 +156,17 @@
   check('분기 4개', rep.quarters.length, 4);
   check('분기 전략 라벨',
     rep.quarters.map(function (q) { return q.label; }).sort().join(','), '공격,방어,수확,정비');
-  check('4대 영역', rep.domains.list.map(function (d) { return d.key; }).join(','),
-    'wealth,career,love,health');
-  check('연애 영역 배우자궁 관계',
-    rep.domains.love.head.indexOf('충') >= 0, true);
-  check('건강 영역 계절 4개', rep.domains.health.seasons.length, 4);
+  check('4대 재물 영역', rep.domains.list.map(function (d) { return d.key; }).join(','),
+    'cashflow,business,contract,assets');
+  check('계약 영역 2027 관계',
+    rep.domains.contract.body.indexOf('2027') >= 0, true);
+  check('부동산 영역 토 기운 표기',
+    rep.domains.assets.head.indexOf('토 기운') >= 0, true);
+  check('보완 처방 4줄', rep.leakFix.fixes.length, 4);
+  check('돈 새는 구멍 1개 이상', rep.leakFix.leaks.length >= 1, true);
+  check('보완 처방 빈 칸 없음',
+    rep.leakFix.fixes.every(function (f) { return !!f.k && !!f.v; }), true);
+  check('현금흐름 공격 달 존재', rep.wealth.attack.length >= 0, true);
 
   /* 시각 미상(6글자)도 신강/신약·대운이 계산된다 */
   var core6 = SajuCore.compute({ year: 1990, month: 3, day: 25, timeUnknown: true, gender: 'f' });
@@ -247,7 +253,8 @@
   out.push('대운 ' + (rep.daeun.forward ? '순행' : '역행') + ' ' + rep.daeun.startAge + '세 → ' +
     rep.daeun.list[0].label + ' … 현재 ' + rep.daeun.current.label + ' (' + rep.daeun.age + '세)');
   out.push('최고 달 ' + rep.wealth.best.no + '월(' + rep.wealth.best.label + ') / 분기 ' +
-    rep.quarters.map(function (q) { return q.key + ' ' + q.label; }).join(' '));
+    rep.quarters.map(function (q) { return q.key + ' ' + q.label; }).join(' ') +
+    ' / 보완 ' + rep.leakFix.head);
   out.push('원국 심층 — 격국 ' + w.gyeok.name + ' / 구조 ' +
     w.patterns.map(function (p) { return p.name; }).join('·') + ' / 신살 ' +
     w.sinsal.map(function (s) { return s.name; }).join('·'));

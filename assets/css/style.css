@@ -1341,3 +1341,24 @@ html:not(.is-free-open) .free-open-note { display: none; }
 
 /* 어두운 강조 카드 위의 본문은 밝게 — 궁합 마무리 카드(Gate C 위) 가독성 */
 .accent-card .body-text { color: rgba(243, 237, 226, .8); }
+
+/* ── 4대 재물 영역 · 돈 새는 구멍 · 보완 전략 (2026-11-28) ── */
+.leak-grid { display: grid; gap: 8px; margin-top: 14px; }
+.leak-card {
+  border: 1px solid var(--line); border-left: 2px solid var(--red);
+  border-radius: 12px; padding: 11px 13px; background: rgba(168, 68, 44, .035);
+}
+.leak-card.is-contract { border-left-color: var(--accent-2); background: rgba(176, 138, 79, .06); }
+.leak-title { font-size: 12.5px; font-weight: 700; color: var(--ink); margin-bottom: 4px; line-height: 1.5; }
+.leak-body { font-size: 12.4px; color: var(--ink-3); line-height: 1.7; }
+.fix-grid { display: grid; gap: 9px; }
+.fix-row { display: grid; gap: 2px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.fix-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.fix-k { font-size: 10.5px; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+.fix-v { font-size: 13px; color: var(--ink-2); line-height: 1.68; }
+.pair-notes { display: grid; gap: 14px; }
+@media (min-width: 720px) {
+  .domain-grid { grid-template-columns: 1fr 1fr; }
+  .leak-grid { grid-template-columns: 1fr 1fr; }
+  .pair-notes { grid-template-columns: 1fr 1fr; gap: 20px; }
+}

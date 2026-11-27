@@ -5,7 +5,8 @@
  *  - 입력: 두 사람의 사주 원국(SajuCore.compute 결과) + 관계 모드(lover|business)
  *  - 규칙: 명세서(wolryeong-gunghap-spec.md) 2.3 계산 규칙
  *         천간합·충, 지지 육합·삼합·충·형·파·해, 오행 생극, 십성, 용신 보완, 2027 정미년
- *  - 점수: 명세서 2.4 (끌림 30 · 소통 20 · 재물 시너지 25 · 안정 15 · 2027 흐름 10)
+ *  - 점수: 명세서 2.4 (수익 시너지 30 · 계약소통 20 · 현금흐름 25 · 리스크 안정 15 · 2027 흐름 10)
+ *  - v3(2026-11-28): 돈·사업·계약·부동산 특화 — 축 이름·해설·보완 처방만 교체, 산식·키는 유지
  *  - 무작위 없음. 같은 입력이면 언제나 같은 점수·같은 문구.
  *
  *  명세서가 수치를 고정하지 않은 부분(각 축의 가점·감점)은 아래 POINTS에 모았다.
@@ -38,7 +39,7 @@
 
   var POS = ['년', '월', '일', '시'];
   var MODES = ['lover', 'business'];
-  var MODE_LABEL = { lover: '연인', business: '동업자' };
+  var MODE_LABEL = { lover: '부부·커플', business: '동업·거래처' };
   var MI = 7, JEONG = 3;
 
   function S() { return root.SajuCore; }
@@ -459,6 +460,13 @@
     var sBA = SC.sipsung(col.dayGanB, col.dayGanA);
     var tg = K.tenGods[mode] || {};
 
+    /* v3 — 돈 궁합 보완 처방: 가장 약한 축을 기준으로 역할·계약·정산 규칙을 고른다 */
+    var weakest = axes.slice().sort(function (x, y) {
+      return (x.score / x.max) - (y.score / y.max);
+    })[0];
+    var P = K.moneyPrescription;
+    var pres = P.byAxis[weakest.id] || { risk: '', fixes: [] };
+
     return {
       mode: mode,
       modeLabel: MODE_LABEL[mode],
@@ -474,6 +482,12 @@
       links: buildLinks(col),
       clashes: buildClashes(col),
       advice: buildAdvice(col, mode),
+      prescription: {
+        title: P.title, lead: P.lead,
+        weakestName: weakest.name, weakestScore: weakest.score, weakestMax: weakest.max,
+        risk: pres.risk, fixes: pres.fixes,
+        roles: P.roles, household: P.household, business: P.business
+      },
       closing: K.closing[mode],
       yongsin: {
         a: weakestElement(a), b: weakestElement(b),
