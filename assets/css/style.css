@@ -1371,3 +1371,7 @@ html:not(.is-free-open) .free-open-note { display: none; }
   .brand-name { font-size: 15px; }
   .brand-mark { width: 27px; height: 27px; font-size: 14px; }
 }
+@media (max-width: 480px) {
+  /* 좁은 화면에서는 핵심 두 메뉴만 남긴다 (일주 60편은 본문·푸터에서 이어진다) */
+  .topbar-nav .topbar-link:first-child { display: none; }
+}
