@@ -5,7 +5,7 @@
   'use strict';
 
   var $ = function (id) { return document.getElementById(id); };
-  var state = { gender: 'f', core: null, report: null, unlocked: false };
+  var state = { gender: 'f', core: null, report: null, unlocked: false, concern: 'all', cal: null, calMonth: 1, calDay: null };
 
   /* ---------- 무료 오픈 모드 ----------
      config.js의 freeOpen 한 줄로 유료 잠금과 무료 오픈을 갈아 끼운다.
@@ -511,9 +511,12 @@
     renderGyeok(rep);
     renderRelations(rep);
     renderDaeun(rep);
+    renderConcern(rep);
     renderDomains(rep);
     renderLeakFix(rep);
     renderQuarters(rep);
+    renderCalendar(rep);
+    renderPrintDoc();
 
     $('attackList').textContent = rep.wealth.attack.length
       ? rep.wealth.attack.map(function (m) { return monthLabel(m) + ' ' + m.range; }).join(' · ')
@@ -578,6 +581,164 @@
     }).join('');
   }
 
+  /* ---------- 지금 고민 맞춤 처방 ----------
+     입력 화면의 <select>에서 고른 고민 하나를 원국·2027 흐름과 겹쳐 한 장으로 보여준다. */
+  function concernKey() {
+    var sel = $('concernSelect');
+    var v = sel ? sel.value : state.concern;
+    return (window.Concern && window.Concern.normKey) ? window.Concern.normKey(v) : 'all';
+  }
+
+  function renderConcern(rep) {
+    var box = $('concernBody');
+    if (!box || !window.Concern || !state.core) return;
+    var cn = window.Concern.build(state.core, rep, concernKey());
+    state.concern = cn.key;
+
+    var basis = cn.basis.map(function (t) { return '<p class="body-text dim">' + escapeHtml(t) + '</p>'; }).join('');
+    var moves = cn.moves.map(function (m) {
+      return '<div class="cn-row"><span class="cn-k">' + escapeHtml(m.k) + '</span>' +
+        '<span class="cn-v">' + escapeHtml(m.v) + '</span></div>';
+    }).join('');
+    var traps = cn.traps.map(function (t) {
+      return '<div class="cn-row is-trap"><span class="cn-k">' + escapeHtml(t.k) + '</span>' +
+        '<span class="cn-v">' + escapeHtml(t.v) + '</span></div>';
+    }).join('');
+
+    box.innerHTML =
+      '<div class="cn-head"><span class="cn-mark">' + escapeHtml(cn.mark) + '</span>' +
+      '<div><p class="cn-title">' + escapeHtml(cn.label) + '</p>' +
+      '<p class="cn-sub">' + escapeHtml(cn.sub) + '</p></div></div>' +
+      '<p class="body-text">' + escapeHtml(cn.lead) + '</p>' +
+      '<div class="divider"></div>' +
+      '<p class="mini-label">내 사주로 먼저 읽기</p>' + basis +
+      '<div class="divider"></div>' +
+      '<p class="mini-label">지금 할 일</p><div class="cn-list">' + moves + '</div>' +
+      '<div class="divider"></div>' +
+      '<p class="mini-label">피해야 할 함정</p><div class="cn-list">' + traps + '</div>' +
+      '<div class="divider"></div>' +
+      '<p class="mini-label">언제 움직일까 · 기운 채우기</p>' +
+      '<p class="body-text">' + escapeHtml(cn.timing) + '</p>' +
+      '<p class="body-text dim">' + escapeHtml(cn.rxLine) + '</p>' +
+      '<p class="cn-year">' + escapeHtml(cn.yearLine) + '</p>' +
+      '<p class="note">' + escapeHtml(cn.note) + '</p>';
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ---------- 2027 재물운 365일 캘린더 ---------- */
+  function renderCalendar(rep) {
+    if (!window.Calendar365 || !state.core || !$('cal365Grid')) return;
+    if (!state.cal) state.cal = window.Calendar365.build(state.core, rep);
+    var cal = state.cal;
+
+    var sum = $('cal365Summary');
+    if (sum) {
+      sum.innerHTML = '<div class="cal365-sum-row">' +
+        '<span class="cal365-sum-k">2027년 한 해</span>' +
+        '<span class="cal365-sum-v"><b class="is-good">좋은 흐름 ' + cal.summary.good + '일</b>' +
+        '<span>보통 ' + cal.summary.mid + '일</span>' +
+        '<b class="is-care">신중 ' + cal.summary.care + '일</b></span></div>' +
+        '<p class="cal365-sum-note">하루 점수는 그날 일진의 천간·지지가 내 일간·용신에 어떻게 닿는지로 계산했습니다. 굵은 날은 큰 결정을 미루지 말고, 신중한 날은 서명·결제를 하루 미루세요.</p>';
+    }
+
+    var mo = cal.months[state.calMonth - 1];
+    $('cal365Title').textContent = cal.year + '년 ' + mo.no + '월';
+
+    var cells = '';
+    var firstDow = mo.days[0].dow;
+    for (var b = 0; b < firstDow; b++) cells += '<span class="cal365-cell is-blank"></span>';
+    mo.days.forEach(function (day) {
+      var on = state.calDay === day.date ? ' is-on' : '';
+      cells += '<button type="button" class="cal365-cell is-' + day.grade + on + '" ' +
+        'data-date="' + day.date + '" aria-label="' + day.m + '월 ' + day.d + '일 ' + day.label + '일 ' + day.gradeLabel + '">' +
+        '<span class="cc-d">' + day.d + '</span>' +
+        '<span class="cc-g">' + day.label + '</span></button>';
+    });
+    $('cal365Grid').innerHTML = cells;
+
+    renderCalDay(mo);
+  }
+
+  function renderCalDay(mo) {
+    var box = $('cal365Day');
+    if (!box) return;
+    var day = null;
+    if (state.calDay) {
+      day = mo.days.filter(function (x) { return x.date === state.calDay; })[0];
+    }
+    if (!day) {
+      var best = mo.bestDays[0] || mo.days[0];
+      box.innerHTML = '<p class="cal365-day-empty">날짜를 누르면 그날의 일진과 재물운 해석이 여기 나옵니다. ' +
+        '이 달은 좋은 흐름 <b>' + mo.good + '일</b> · 신중 <b>' + mo.care + '일</b>입니다.</p>' +
+        '<p class="cal365-day-hint">이달 가장 좋은 날은 <b>' + best.m + '/' + best.d + '</b>(' + escapeHtml(best.label) + '일) — ' + escapeHtml(best.note) + '</p>';
+      return;
+    }
+    box.innerHTML = '<p class="cd-date">' + day.m + '월 ' + day.d + '일 (' + day.dowName + ')</p>' +
+      '<p class="cd-ganji">' + day.label + '(' + day.hanja + ')일 · ' + escapeHtml(day.ss) + ' · ' + escapeHtml(day.ssJi) +
+      (day.rel.length ? ' · ' + escapeHtml(day.rel.join('·')) : '') + '</p>' +
+      '<p class="cd-score">재물운 <b>' + (day.score > 0 ? '+' : '') + day.score + '점</b> ' +
+      '<span class="cd-grade is-' + day.grade + '">' + day.gradeLabel + '</span></p>' +
+      '<p class="cd-note">' + escapeHtml(day.note) + '</p>';
+  }
+
+  function bindCalendar() {
+    if (!$('cal365Grid') || !window.Calendar365) return;
+
+    $('cal365Grid').addEventListener('click', function (e) {
+      var cell = e.target.closest ? e.target.closest('[data-date]') : null;
+      if (!cell || !state.cal) return;
+      state.calDay = cell.getAttribute('data-date');
+      var mo = state.cal.months[state.calMonth - 1];
+      Array.prototype.forEach.call($('cal365Grid').children, function (c) {
+        c.classList.toggle('is-on', c.getAttribute('data-date') === state.calDay);
+      });
+      renderCalDay(mo);
+    });
+
+    $('cal365Prev').addEventListener('click', function () {
+      state.calMonth = state.calMonth <= 1 ? 12 : state.calMonth - 1;
+      state.calDay = null;
+      if (state.report) renderCalendar(state.report);
+    });
+    $('cal365Next').addEventListener('click', function () {
+      state.calMonth = state.calMonth >= 12 ? 1 : state.calMonth + 1;
+      state.calDay = null;
+      if (state.report) renderCalendar(state.report);
+    });
+
+    $('icsBtn').addEventListener('click', function () {
+      if (!state.cal || !state.core || !state.report) return;
+      var out = window.Calendar365.ics(state.core, state.report, { cal: state.cal });
+      var blob = new Blob([out.text], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = window.Calendar365.fileName(state.cal.year);
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function () { URL.revokeObjectURL(url); if (a.parentNode) a.parentNode.removeChild(a); }, 4000);
+      toast('캘린더 파일(.ics)을 저장했습니다. 열어서 가져오면 됩니다.');
+      track('ics_download', { events: out.events });
+    });
+  }
+
+  /* ---------- PDF 소장용 문서 ---------- */
+  function renderPrintDoc() {
+    var box = $('printDoc');
+    if (!box || !window.PrintDoc || !state.core || !state.report) return;
+    var cn = null;
+    try { cn = window.Concern.build(state.core, state.report, concernKey()); } catch (e) { cn = null; }
+    box.innerHTML = window.PrintDoc.build({
+      core: state.core, rep: state.report, concern: cn, cal: state.cal
+    });
+  }
+
   /* ---------- 계산 실행 ---------- */
   function run(data) {
     var core, rep;
@@ -596,6 +757,8 @@
     }
     state.core = core;
     state.report = rep;
+    state.cal = null;
+    state.calDay = null;
 
     renderPillars(core);
     renderElements(rep);
@@ -610,6 +773,7 @@
     applyLock();
 
     $('result').hidden = false;
+    if ($('reportActions')) $('reportActions').hidden = false;
     /* freeOpen 중에는 기기에 '유료 해제' 값을 저장하지 않는다 — 유료로 되돌렸을 때
        이미 열린 기기로 남지 않도록, 실제 결제로 풀린 값(paidUnlocked)만 보존한다. */
     store({
@@ -617,7 +781,8 @@
       input: {
         year: data.year, month: data.month, day: data.day,
         hour: data.hour, minute: data.minute,
-        timeUnknown: data.timeUnknown, gender: state.gender
+        timeUnknown: data.timeUnknown, gender: state.gender,
+        concern: concernKey()
       }
     });
     track('free_diagnosis', { gender: state.gender, time_unknown: !!data.timeUnknown });
@@ -649,6 +814,39 @@
       }
     });
   }
+
+  /* ---------- 고민 선택 · PDF ---------- */
+  if ($('concernSelect')) {
+    $('concernSelect').addEventListener('change', function () {
+      state.concern = concernKey();
+      if (state.report) {
+        renderConcern(state.report);
+        renderPrintDoc();
+        var saved = load();
+        if (saved && saved.input) {
+          saved.input.concern = state.concern;
+          store(saved);
+        }
+      }
+      track('concern_select', { concern: state.concern });
+    });
+  }
+
+  if ($('pdfBtn')) {
+    $('pdfBtn').addEventListener('click', function () {
+      if (!state.report) { toast('먼저 사주를 계산해 주세요.'); return; }
+      renderPrintDoc();
+      track('print_pdf', { concern: state.concern });
+      setTimeout(function () { window.print(); }, 60);
+    });
+  }
+
+  /* 인쇄 직전에 소장용 문서를 다시 조립해 화면과 어긋나지 않게 한다 */
+  window.addEventListener('beforeprint', function () {
+    if (state.report) renderPrintDoc();
+  });
+
+  bindCalendar();
 
   /* ---------- 폼 ---------- */
   $('birthForm').addEventListener('submit', function (e) {
@@ -960,6 +1158,10 @@
           x.classList.toggle('is-on', on);
           x.setAttribute('aria-checked', on ? 'true' : 'false');
         });
+      }
+      if (i.concern) {
+        state.concern = i.concern;
+        if ($('concernSelect')) $('concernSelect').value = i.concern;
       }
       run({
         year: i.year, month: i.month, day: i.day,

@@ -24,6 +24,9 @@ ENGINE_FILES = [
     os.path.join(BASE, "assets", "js", "content.js"),
     os.path.join(BASE, "assets", "js", "config.js"),
     os.path.join(BASE, "assets", "js", "report.js"),
+    os.path.join(BASE, "assets", "js", "concern.js"),
+    os.path.join(BASE, "assets", "js", "calendar365.js"),
+    os.path.join(BASE, "assets", "js", "printdoc.js"),
     os.path.join(BASE, "assets", "js", "gunghap-content.js"),
     os.path.join(BASE, "assets", "js", "gunghap.js"),
 ]
@@ -81,6 +84,8 @@ run_js_suite("1인 리포트 엔진 (test_saju.js)",
              os.path.join(BASE, "tests", "test_saju.js"), "__testText", "__testFail")
 run_js_suite("2인 궁합 엔진 (test_gunghap.js)",
              os.path.join(BASE, "tests", "test_gunghap.js"), "__ghText", "__ghFail")
+run_js_suite("v3 고민처방·365일캘린더·PDF (test_v3.js)",
+             os.path.join(BASE, "tests", "test_v3.js"), "__v3Text", "__v3Fail")
 
 
 # 잠금 코드 보안: 데모 코드 흔적 제거 + 사용 횟수 제한 배선
@@ -175,6 +180,67 @@ check_file("index.html 무료 오픈 안내", "index.html",
            ["free-open-note", "오픈 기념", "리포트 전체 무료", "궁합 전체 무료"])
 check_file("terms.html 무료 기간 안내", "terms.html",
            ["오픈 기념 기간", "모든 리포트를 무료"])
+
+# v3(2026-11-28): 고민 맞춤 처방 · 365일 캘린더 · PDF 소장용
+check_file("index.html v3 배선", "index.html",
+           ["concernSelect", "concernSection", "concernBody", "cal365Section", "cal365Grid",
+            "cal365Title", "cal365Prev", "cal365Next", "cal365Day", "icsBtn", "pdfBtn", "printDoc",
+            "concern.js", "calendar365.js", "printdoc.js", "2027 재물운 캘린더(.ics) 저장", "PDF 소장용 저장"])
+check_file("index.html 고민 선택지 7개", "index.html",
+           ['value="all"', 'value="startup"', 'value="growth"', 'value="job"',
+            'value="invest"', 'value="realestate"', 'value="debt"'])
+check_file("app.js v3 렌더·다운로드·인쇄", "assets/js/app.js",
+           ["renderConcern", "renderCalendar", "renderPrintDoc", "Calendar365.ics", "text/calendar",
+            "ics_download", "print_pdf", "beforeprint", "window.print()", "concern_select"])
+check_file("concern.js 고민 분기", "assets/js/concern.js",
+           ["var LIST", "BANK", "function build(", "moves", "traps", "timing", "startup", "realestate", "debt"])
+check_file("calendar365.js 365일·ics", "assets/js/calendar365.js",
+           ["function dayInfo", "function build", "function ics", "RFC", "BEGIN:VCALENDAR", "\\r\\n",
+            "GOOD_MIN", "CARE_MAX", "function fold", "VERSION:2.0", "DTSTART;VALUE=DATE:"])
+check_file("printdoc.js 소장용 문서", "assets/js/printdoc.js",
+           ["사주 명식표", "지금 고민 맞춤 처방", "4대 재물 영역", "12개월", "365일", "pd-doc"])
+check_file("style.css v3·인쇄 A4", "assets/css/style.css",
+           [".cn-head", ".cal365-grid", ".cal365-cell.is-good", "@media print", "@page",
+            "break-inside: avoid", "#printDoc { display: block !important", ".pd-doc"])
+
+# GEO/AI 검색 최적화: llms.txt · robots.txt · 구조화 데이터
+check_file("llms.txt AI 검색 요약", "llms.txt",
+           ["# 월령", "https://wolryeong-saju.vercel.app/guide/", "365일", ".ics",
+            "2027 정미년", "자주 묻는 질문", "robots.txt"])
+check_file("robots.txt AI 봇 허용", "robots.txt",
+           ["User-agent: Googlebot", "User-agent: Yeti", "User-agent: OAI-SearchBot",
+            "User-agent: ChatGPT-User", "User-agent: GPTBot", "User-agent: PerplexityBot",
+            "User-agent: ClaudeBot", "User-agent: Google-Extended",
+            "Sitemap: https://wolryeong-saju.vercel.app/sitemap.xml", "llms.txt"])
+check_file("index.html 구조화 데이터", "index.html",
+           ['"@type": "WebApplication"', '"@type": "FAQPage"', '"@type": "Organization"',
+            '"price": "0"', "priceCurrency", "href=\"guide/\""])
+check_file("build_seo.py 가이드·llms 생성", "scripts/build_seo.py",
+           ["GUIDE_SLUGS", "def render_guide(", "def render_guide_index(", "def render_llms(",
+            "def render_robots(", "llms.txt", "guide_url(slug)"])
+for _slug, _label in [("changup-saup-saju", "창업"), ("budongsan-bangwi-oheng", "부동산"),
+                      ("don-gunghap", "돈 궁합"), ("2027-jeongminyeon", "2027")]:
+    check_file("guide/%s.html 구조화 데이터" % _slug, "guide/%s.html" % _slug,
+               ['"@type": "Article"', '"@type": "FAQPage"', '"@type": "BreadcrumbList"',
+                'rel="canonical"', 'property="og:title"', _label])
+check_file("guide/index.html 목록", "guide/index.html",
+           ["g-index-grid", "changup-saup-saju.html", "budongsan-bangwi-oheng.html",
+            "don-gunghap.html", "2027-jeongminyeon.html"])
+
+# sitemap에 가이드 5개 URL이 모두 들어갔는지
+_sm = open(os.path.join(BASE, "sitemap.xml"), encoding="utf-8").read()
+_locs = _sm.count("<loc>")
+if _locs == 68:
+    static_lines.append("PASS | sitemap.xml 68 URL (가이드 5개 포함)")
+else:
+    static_lines.append("FAIL | sitemap.xml URL 수: %d" % _locs)
+    fail += 1
+for _slug in ["changup-saup-saju", "budongsan-bangwi-oheng", "don-gunghap", "2027-jeongminyeon"]:
+    if "/guide/%s.html" % _slug in _sm:
+        static_lines.append("PASS | sitemap 가이드 URL %s" % _slug)
+    else:
+        static_lines.append("FAIL | sitemap 가이드 URL 누락 %s" % _slug)
+        fail += 1
 
 # config.js를 그대로 실행해 freeOpen 값이 실제로 true인지 확인
 free_ctx = quickjs.Context()
