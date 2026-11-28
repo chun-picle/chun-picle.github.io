@@ -1837,3 +1837,9 @@ html:not(.is-free-open) .free-open-note { display: none; }
   .g-table tr { break-inside: avoid; }
   .g-el-block, .g-card, .g-index-card { break-inside: avoid; }
 }
+
+/* 390px: 소장 버튼 아래로 안내 문구가 내려오게 */
+@media (max-width: 560px) {
+  .report-actions { flex-direction: column; align-items: flex-start; gap: 9px; }
+  .report-actions-note { flex: none; }
+}
