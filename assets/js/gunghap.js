@@ -487,6 +487,7 @@
         lead: fillLine(HF.lead, { el: hEl, han: hanOf(hEl), count: a.counts[hEl] + b.counts[hEl] }),
         rows: [
           { k: '방위', v: hInfo.dir },
+          { k: '지역 콕 찝기', v: hInfo.area },
           { k: '입지·지형', v: hInfo.place },
           { k: '피할 곳', v: hInfo.avoid }
         ],

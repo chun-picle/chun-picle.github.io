@@ -166,7 +166,7 @@
   /* ---- 부동산 방위·입지 (오행 풍수) ---- */
   var fsh = rep.domains.assets.fengshui;
   check('방위·입지 5줄', fsh.rows.map(function (r) { return r.k; }).join(','),
-    '기본 원칙,방위,입지·지형,피할 곳,지역 그림');
+    '기본 원칙,방위,입지·지형,피할 곳,지역 콕 찝기');
   check('방위·입지 용신 오행 = 용신', fsh.el, rep.yongsin.yongEl);
   check('방위·입지 빈 칸 없음',
     fsh.rows.every(function (r) { return r.k && r.v && r.v.length > 20; }) && !!fsh.lead && !!fsh.note, true);
@@ -178,6 +178,12 @@
       var x = CONTENT.FENGSHUI.el[e];
       return x && x.dir && x.place && x.avoid && x.area && x.giAvoid;
     }), true);
+  check('지역 줄에 실제 권역·생활권 안내',
+    ['목', '화', '토', '금', '수'].every(function (e) {
+      var a = CONTENT.FENGSHUI.el[e].area;
+      return a.indexOf('서울·수도권') >= 0 && a.indexOf('본인 생활권') >= 0 && a.length > 60;
+    }), true);
+  check('면책은 맨 아래 한 줄', fsh.note.length < 80 && fsh.note.indexOf('등기') >= 0, true);
   check('보완 처방 4줄', rep.leakFix.fixes.length, 4);
   check('돈 새는 구멍 1개 이상', rep.leakFix.leaks.length >= 1, true);
   check('보완 처방 빈 칸 없음',

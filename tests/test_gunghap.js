@@ -271,8 +271,8 @@
 
   /* ---- 13-2. 함께 살 집·사무실 방위·입지 ---- */
   var H = r1.prescription.house;
-  ok('집·사무실 방위·입지 실림', !!H && H.rows.length === 3);
-  check('집·사무실 방위 3줄', H.rows.map(function (r) { return r.k; }).join(','), '방위,입지·지형,피할 곳');
+  ok('집·사무실 방위·입지 실림', !!H && H.rows.length === 4);
+  check('집·사무실 방위 4줄', H.rows.map(function (r) { return r.k; }).join(','), '방위,지역 콕 찝기,입지·지형,피할 곳');
   check('공통 부족 오행 = 두 원국 합산 최소', H.element,
     G.commonWeakestElement(r1.cores.a, r1.cores.b));
   ok('방위 안내에 오행 이름 포함', H.lead.indexOf(H.element + '(') >= 0 && H.lead.indexOf('개입니다') >= 0);
@@ -282,7 +282,12 @@
   ok('오행 5종 방위·입지 문구',
     ['목', '화', '토', '금', '수'].every(function (e) {
       var x = K.houseFengshui.byElement[e];
-      return x && x.dir && x.place && x.avoid;
+      return x && x.dir && x.area && x.place && x.avoid;
+    }));
+  ok('지역 줄에 실제 권역·생활권 안내',
+    ['목', '화', '토', '금', '수'].every(function (e) {
+      var a = K.houseFengshui.byElement[e].area;
+      return a.indexOf('서울·수도권') >= 0 && a.indexOf('본인 생활권') >= 0;
     }));
 
   /* ---- 14. 무료 1인 진단(S1) — 무료 범위만 ---- */
