@@ -491,7 +491,8 @@
           { k: '입지·지형', v: hInfo.place },
           { k: '피할 곳', v: hInfo.avoid }
         ],
-        modeNote: normMode(mode) === 'business' ? HF.office : HF.couple
+        modeNote: normMode(mode) === 'business' ? HF.office : HF.couple,
+        note: HF.note
       };
     }
 

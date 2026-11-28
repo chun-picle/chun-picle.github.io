@@ -353,6 +353,7 @@
           return '<div class="dm-row"><span class="dm-k">' + r.k + '</span><span class="dm-v">' + r.v + '</span></div>';
         }).join('');
         $('ghPrescriptionHouseMode').textContent = pr.house.modeNote;
+        if ($('ghPrescriptionHouseNote')) $('ghPrescriptionHouseNote').textContent = pr.house.note || '';
       }
     }
 

@@ -289,6 +289,7 @@
       var a = K.houseFengshui.byElement[e].area;
       return a.indexOf('서울·수도권') >= 0 && a.indexOf('본인 생활권') >= 0;
     }));
+  ok('집·사무실 한 줄 면책', !!H.note && H.note.indexOf('등기') >= 0 && H.note.length < 90);
 
   /* ---- 14. 무료 1인 진단(S1) — 무료 범위만 ---- */
   var coreA = r1.cores.a;
