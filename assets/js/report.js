@@ -429,6 +429,13 @@
     return arr.slice(0, max || 3).map(function (m) { return m.no + '월(' + m.label + ')'; }).join('·');
   }
 
+  /* 권역별 지역 콕 찝기([{ zone, picks }]) → 한 줄 텍스트. 화면은 zones 배열로 권역마다 줄을 나눠 그린다. */
+  function areaText(area) {
+    if (!area) return '';
+    if (typeof area === 'string') return area;
+    return area.map(function (z) { return z.zone + ' — ' + z.picks; }).join(' / ');
+  }
+
   /* ---------- 나에게 맞는 부동산 방위·입지 (오행 풍수) ----------
      용신 기운이 들어오는 방향·자리를 쉽게 풀고, 넘치는 기신 쪽 집은 피하도록 한 줄 붙인다. */
   function buildFengshui(core, ys) {
@@ -442,7 +449,7 @@
         ? ' — 여덟 글자에 하나도 없어 그 자리가 비어 있습니다.'
         : ' — ' + n + '개로 얇게 자리하고 있습니다.') +
       ' 집·사무실도 이 기운이 들어오는 쪽으로 잡아야 일이 덜 막히고 돈이 덜 새어 나갑니다. ' +
-      FS.howto + ' 맨 아래 지역 줄이 그 방위를 실제 동네로 옮긴 답입니다.' +
+      FS.howto + ' 맨 아래 지역 줄에서 사는 권역을 찾으면 그 방위를 실제 동네로 옮긴 답이 됩니다.' +
       ' (가장 적게 든 오행과 용신은 다를 수 있습니다.)';
 
     var avoid = f.avoid;
@@ -459,7 +466,7 @@
         { k: '방위', v: f.dir },
         { k: '입지·지형', v: f.place },
         { k: '피할 곳', v: avoid },
-        { k: '지역 콕 찝기', v: f.area }
+        { k: '지역 콕 찝기', v: areaText(f.area), zones: f.area }
       ],
       note: '사주·풍수 기준의 입지 궁합입니다. 실제 매수는 등기·시세·현금흐름을 함께 확인하세요.'
     };

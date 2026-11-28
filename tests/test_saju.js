@@ -178,11 +178,19 @@
       var x = CONTENT.FENGSHUI.el[e];
       return x && x.dir && x.place && x.avoid && x.area && x.giAvoid;
     }), true);
-  check('지역 줄에 실제 권역·생활권 안내',
+  check('지역 줄에 전국 6권역',
     ['목', '화', '토', '금', '수'].every(function (e) {
       var a = CONTENT.FENGSHUI.el[e].area;
-      return a.indexOf('서울·수도권') >= 0 && a.indexOf('본인 생활권') >= 0 && a.length > 60;
+      return Array.isArray(a) &&
+        a.map(function (z) { return z.zone; }).join(',') ===
+          '수도권,부산·경남,대구·경북,대전·충청,광주·전라,강원·제주' &&
+        a.every(function (z) { return z.picks && z.picks.length > 12; });
     }), true);
+  check('지역 줄 텍스트에 전국 권역 노출',
+    fsh.rows[4].v.indexOf('수도권') >= 0 && fsh.rows[4].v.indexOf('부산·경남') >= 0 &&
+    fsh.rows[4].v.indexOf('광주·전라') >= 0 && fsh.rows[4].v.indexOf('강원·제주') >= 0, true);
+  check('지역 줄 zones 배열 = 화면 권역 줄',
+    Array.isArray(fsh.rows[4].zones) && fsh.rows[4].zones.length === 6, true);
   check('면책은 맨 아래 한 줄', fsh.note.length < 80 && fsh.note.indexOf('등기') >= 0, true);
   check('보완 처방 4줄', rep.leakFix.fixes.length, 4);
   check('돈 새는 구멍 1개 이상', rep.leakFix.leaks.length >= 1, true);

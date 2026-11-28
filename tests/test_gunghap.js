@@ -284,11 +284,18 @@
       var x = K.houseFengshui.byElement[e];
       return x && x.dir && x.area && x.place && x.avoid;
     }));
-  ok('지역 줄에 실제 권역·생활권 안내',
+  ok('지역 줄에 전국 6권역',
     ['목', '화', '토', '금', '수'].every(function (e) {
       var a = K.houseFengshui.byElement[e].area;
-      return a.indexOf('서울·수도권') >= 0 && a.indexOf('본인 생활권') >= 0;
+      return Array.isArray(a) &&
+        a.map(function (z) { return z.zone; }).join(',') ===
+          '수도권,부산·경남,대구·경북,대전·충청,광주·전라,강원·제주' &&
+        a.every(function (z) { return z.picks && z.picks.length > 12; });
     }));
+  ok('지역 줄 zones 배열 = 화면 권역 줄', Array.isArray(H.rows[1].zones) && H.rows[1].zones.length === 6);
+  ok('지역 줄 텍스트에 전국 권역 노출',
+    H.rows[1].v.indexOf('수도권') >= 0 && H.rows[1].v.indexOf('부산·경남') >= 0 &&
+    H.rows[1].v.indexOf('광주·전라') >= 0 && H.rows[1].v.indexOf('강원·제주') >= 0);
   ok('집·사무실 한 줄 면책', !!H.note && H.note.indexOf('등기') >= 0 && H.note.length < 90);
 
   /* ---- 14. 무료 1인 진단(S1) — 무료 범위만 ---- */

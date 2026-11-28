@@ -315,6 +315,12 @@
           '<p class="mini-label">' + dm.fengshui.title + '</p>' +
           '<p class="body-text dim fs-lead">' + dm.fengshui.lead + '</p>' +
           '<div class="fs-rows">' + dm.fengshui.rows.map(function (r) {
+            if (r.zones) {
+              return '<div class="dm-row fs-area"><span class="dm-k">' + r.k + '</span>' +
+                '<div class="fs-zones">' + r.zones.map(function (z) {
+                  return '<div class="fs-zone"><b>' + z.zone + '</b><span>' + z.picks + '</span></div>';
+                }).join('') + '</div></div>';
+            }
             return '<div class="dm-row"><span class="dm-k">' + r.k + '</span><span class="dm-v">' + r.v + '</span></div>';
           }).join('') + '</div>' +
           '<p class="fs-note">' + dm.fengshui.note + '</p>';

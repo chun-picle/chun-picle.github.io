@@ -487,7 +487,7 @@
         lead: fillLine(HF.lead, { el: hEl, han: hanOf(hEl), count: a.counts[hEl] + b.counts[hEl] }),
         rows: [
           { k: '방위', v: hInfo.dir },
-          { k: '지역 콕 찝기', v: hInfo.area },
+          { k: '지역 콕 찝기', v: areaText(hInfo.area), zones: hInfo.area },
           { k: '입지·지형', v: hInfo.place },
           { k: '피할 곳', v: hInfo.avoid }
         ],
@@ -561,6 +561,13 @@
   function hanOf(el) {
     var H = S().ELEMENT_HAN || {};
     return H[el] || '';
+  }
+
+  /* 권역별 지역 콕 찝기([{ zone, picks }]) → 한 줄 텍스트. 화면은 zones 배열로 권역마다 줄을 나눠 그린다. */
+  function areaText(area) {
+    if (!area) return '';
+    if (typeof area === 'string') return area;
+    return area.map(function (z) { return z.zone + ' — ' + z.picks; }).join(' / ');
   }
 
   /* 십성 → 2027 키워드 묶음 */

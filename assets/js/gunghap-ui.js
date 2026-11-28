@@ -350,6 +350,12 @@
         $('ghPrescriptionHouseTitle').textContent = pr.house.title;
         $('ghPrescriptionHouseLead').textContent = pr.house.lead;
         $('ghPrescriptionHouseRows').innerHTML = pr.house.rows.map(function (r) {
+          if (r.zones) {
+            return '<div class="dm-row fs-area"><span class="dm-k">' + r.k + '</span>' +
+              '<div class="fs-zones">' + r.zones.map(function (z) {
+                return '<div class="fs-zone"><b>' + z.zone + '</b><span>' + z.picks + '</span></div>';
+              }).join('') + '</div></div>';
+          }
           return '<div class="dm-row"><span class="dm-k">' + r.k + '</span><span class="dm-v">' + r.v + '</span></div>';
         }).join('');
         $('ghPrescriptionHouseMode').textContent = pr.house.modeNote;

@@ -700,6 +700,23 @@ input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 .fs-rows .dm-row:last-child { padding-bottom: 10px; }
 .fs-note { font-size: 11.5px; color: var(--muted); line-height: 1.6; margin-top: 10px; }
 
+/* 지역 콕 찝기 — 전국 권역별 한 줄 (모바일 390px에서도 라벨·지역명이 겹치지 않게) */
+.fs-area { gap: 5px; }
+.fs-zones { display: grid; gap: 6px; }
+.fs-zone {
+  display: grid; grid-template-columns: 62px 1fr;
+  gap: 8px; align-items: baseline;
+}
+.fs-zone b {
+  font-size: 10.5px; font-weight: 700; color: var(--accent);
+  letter-spacing: -.01em; white-space: nowrap;
+}
+.fs-zone span {
+  font-size: 12.4px; color: var(--ink-2);
+  line-height: 1.62; letter-spacing: -.01em;
+  word-break: keep-all;
+}
+
 /* ---------- 분기 로드맵 ---------- */
 .quarter-grid { display: grid; gap: 9px; }
 .quarter-card {
